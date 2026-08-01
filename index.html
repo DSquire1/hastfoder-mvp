@@ -105,6 +105,13 @@
     color:#fff;font-weight:700;font-size:14px;line-height:1}
   .baraxel{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);
     margin-top:3px;letter-spacing:.02em}
+  .verdikt{background:var(--brand-soft);border-left:5px solid var(--brand);border-radius:0 7px 7px 0;
+    padding:14px 16px;margin:0 0 16px;font-size:15px;line-height:1.6}
+  .verdikt strong{color:var(--brand)}
+  .verdikt .rad2{font-size:13.5px;color:var(--muted);margin-top:7px}
+  .omber{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+  .omber summary{font-size:12.5px;color:var(--muted);font-weight:600}
+  .omber .note{margin-top:9px}
   .barleg{display:flex;gap:16px;font-size:11.5px;color:var(--muted);margin:10px 0 2px;flex-wrap:wrap}
   .barleg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
   .prod-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
@@ -257,24 +264,22 @@ toleransgränser samtidigt.</p>
       style="width:100%;padding:8px;background:#fff;border:1px solid var(--brand);color:var(--brand);
       border-radius:5px;font:inherit;font-size:13px;font-weight:600;cursor:pointer">Fyll i schablonvärden</button></div>
   </div>
-  <div class="msg m-warn" style="margin-top:16px">
-    <strong>Provet måste representera hela partiet.</strong> Enligt SLU 308 är provtagningen
-    den största felkällan i hela kedjan — större än laboratoriets mätosäkerhet. Ett prov ur en
-    enda bal säger bara vad den balen innehöll.
-    <br><br>
-    <strong>Hö:</strong> öppna 10–12 balar och ta prov ur var och en. Dra inte ut tussar ur
-    oöppnade balar — bladen faller av och analysen visar då lägre proteinhalt än fodret verkligen
-    har. Klipp ned, blanda, skicka ½–1 kg.
-    <br>
+  <div id="validering"></div>
+  <details class="omber" style="margin-top:14px">
+    <summary>Provet måste representera hela partiet — så tar du ut det</summary>
+    <p class="note">Enligt SLU 308 är provtagningen den största felkällan i hela kedjan, större
+    än laboratoriets mätosäkerhet. Ett prov ur en enda bal säger bara vad den balen innehöll.</p>
+    <p class="note"><strong>Hö:</strong> öppna 10–12 balar och ta prov ur var och en. Dra inte ut
+    tussar ur oöppnade balar — bladen faller av och analysen visar då lägre proteinhalt än fodret
+    verkligen har. Klipp ned, blanda, skicka ½–1 kg.<br>
     <strong>Inplastat:</strong> ta borrkärnor ur 3–4 balar med ensilageborr och tejpa igen hålen
     direkt med ensilagetejp, inte silvertejp. Saknas borr: ta prov ur de 3–4 första balar du
-    öppnar och frys tills alla är provtagna.
-    <br><br>
-    <span style="font-size:12px">Källa: HästSveriges foderskola del 5, exempelruta 1.</span>
-  </div>
-  <div id="validering"></div>
-  <p class="note">Selen sätts till 0 som schablon. Svenska jordar är selenfattiga och SLU anger att
-  tillskott behövs i de allra flesta fall — antagandet ska framtvinga en selenbrist, inte dölja den.</p>
+    öppnar och frys tills alla är provtagna.</p>
+    <p class="note">Källa: HästSveriges foderskola del 5, exempelruta 1.<br><br>
+    <strong>Om selen:</strong> schablonvärdet är 0. Svenska jordar är selenfattiga och SLU anger
+    att tillskott behövs i de allra flesta fall — antagandet ska framtvinga en selenbrist, inte
+    dölja den.</p>
+  </details>
 </div>
 
 <div class="card">
@@ -4060,6 +4065,9 @@ function rakna(){
   if(vald) (vald.kombo ? vald.delar : [vald]).forEach(d => laggVit(d.p, d.dos, d.p.namn, vForslag));
 
   // ================= UTDATA =================
+  // Grovfodergränserna behövs både i sammanfattningen och i tabellen, och måste
+  // därför deklareras före båda.
+  const grovMin = 1.0*enh, grovRek = [1.5*enh, 2.0*enh], grovMax = 3.0*enh;
   let h = "";
 
   /* --- täckningstabell --- */
@@ -4068,6 +4076,45 @@ function rakna(){
                + (vald.kombo ? vald.delar.map(d=>d.p.namn).join(" + ") : vald.p.namn)+'</span>'
              : ' från grovfodret')
      + '</h2>';
+  // ---- sammanfattning: svaret i klartext, före tabellen ----
+  // Tabellen har fjorton rader och staplar. Den som öppnar sidan ska få veta
+  // vad problemet är och vad som löser det innan hon behöver läsa den.
+  {
+    const kort = m => (AMNESNAMN[m]||m).replace(/\s*\([^)]*\)/, "").toLowerCase();
+    const lista = a => a.length === 1 ? a[0]
+      : a.slice(0,-1).join(", ") + " och " + a[a.length-1];
+    const energiPct = behEnergi > 0 ? tillEnergi/behEnergi*100 : 0;
+    let rad1, rad2 = "";
+
+    if(tsGrovTot < grovMin){
+      rad1 = "<strong>Börja med grovfodret.</strong> Givan ligger under minimigivan "
+           + "1 kg ts per 100 kg häst. Den frågan går före mineralbalansen.";
+    } else if(!bristLista.length){
+      rad1 = "<strong>Foderstaten täcker behoven.</strong> Inget tillskott behövs för de "
+           + "ämnen som ingår i beräkningen.";
+    } else {
+      const b = bristLista.map(kort);
+      rad1 = "<strong>Foderstaten saknar " + lista(b) + ".</strong> ";
+      rad1 += energiPct < 95
+        ? "Energin räcker inte heller — " + f0(energiPct) + " % av behovet."
+        : energiPct > 115
+          ? "Energin räcker med marginal, " + f0(energiPct) + " % av behovet."
+          : "Energi och protein är i balans.";
+      const b1 = komboLista.length ? komboLista[0] : (sisteForslag.length ? sisteForslag[0] : null);
+      if(b1){
+        const namn = b1.kombo
+          ? b1.delar.map(d => f0(d.dosG)+" g "+d.p.namn).join(" och ")
+          : f0(b1.dosG)+" g "+b1.p.namn;
+        const kvar = (b1.kombo ? b1.kvar : b1.delvis.concat(b1.saknas)).map(kort);
+        rad2 = "Billigaste lösningen: <strong>" + namn + "</strong> per dygn"
+             + (b1.kostnad != null ? ", ca " + f1(b1.kostnad) + " kr/dygn" : "")
+             + (kvar.length ? ". Kvar därefter: " + lista(kvar) + "." : ".");
+      }
+    }
+    h += '<div class="verdikt">' + rad1
+       + (rad2 ? '<div class="rad2">'+rad2+'</div>' : '') + '</div>';
+  }
+
   if(vald)
     h += '<div class="msg m-ok" style="margin-top:0">Räknar in <strong>'
        + (vald.kombo ? vald.delar.map(d => f0(d.dosG)+' g '+d.p.namn).join(" och ")
@@ -4083,16 +4130,12 @@ function rakna(){
      + '<span><i style="background:#4a4640;width:3px"></i>Behovet (mittlinjen)</span>'
      + '<span><i style="background:rgba(47,107,69,.30)"></i>Behovets intervall</span>'
      + '<span><i style="background:var(--bad);width:3px"></i>Toleransgräns</span></div>'
-     + '<p class="note" style="margin:0 0 10px">Staplarna har samma skala på alla rader: '
-     + '<strong>0 till 200 % av behovet</strong>, med behovet i mitten. Når stapeln fram till '
-     + 'mittlinjen är behovet täckt. Ett ›-tecken betyder att värdet går utanför skalan — '
-     + 'det exakta talet står i kolumnen till höger.</p>';
+     + '';
   h += '<table><thead><tr>'
      + '<th>Post</th><th class="n" style="text-align:center">0 &nbsp;·&nbsp; behov &nbsp;·&nbsp; 200 %</th>'
      + '<th class="n">Behov</th><th class="n">Tillfört</th>'
      + '<th class="n">Av nedre&nbsp;gräns</th><th>Status</th></tr></thead><tbody>';
 
-  const grovMin = 1.0*enh, grovRek = [1.5*enh, 2.0*enh], grovMax = 3.0*enh;
   h += rad("Grovfoder (kg ts)", rng([grovRek[0],grovRek[1]]), f1(tsGrovTot),
         tsGrovTot/grovRek[0]*100,
         tsGrovTot<grovMin?"low":(tsGrovTot>grovMax?"high":(tsGrovTot<grovRek[0]?"high":"ok")),
@@ -4174,24 +4217,30 @@ function rakna(){
        + 'största felkällan efter provtagningen — större än laboratoriets mätosäkerhet.</div></details>';
   }
 
-  h += '<p class="note"><strong>Om vitaminraderna.</strong> Grovfodrets vitamininnehåll '
-     + 'analyseras normalt inte och är därför okänt här — vitaminerna räknas enbart från '
-     + 'tillskott. SLU 289 anger att ett välbärgat vallfoder plus daglig utevistelse i regel '
-     + 'täcker behovet hos hästar på underhållsfoderstat och i lätt till medelhårt arbete. '
-     + 'Ett tomt fält betyder alltså att uppgift saknas, inte att hästen får för lite. '
-     + 'Toleransgränserna prövas däremot på riktigt, eftersom överskott bara kan komma från '
-     + 'tillskott.'
-     + (vKallor.length ? ' Räknade källor: '+vKallor.join(", ")+'.' : '')+'</p>';
-
-  h += '<p class="note">Behoven visas som intervall där SLU 289 anger intervall. Procenttalet avser '
-     + '<strong>nedre</strong> gränsen — mot övre gränsen blir täckningen lägre. HästSveriges '
-     + 'foderstatsprogram räknar enbart mot övre gränsen och visar därför större underskott.<br><br>'
-     + '<strong>Om överskott.</strong> SLU 289 anger att behoven kan överskridas utan negativ '
-     + 'påverkan, men villkorar det för mikromineraler till överskott som kommer ur vallfodret, '
-     + 'och tillägger att flera mineralämnen stör varandras upptag och att överutfodring bör '
-     + 'undvikas. Statusmärket visar därför hur nära toleransgränsen värdet ligger, inte bara '
-     + 'att behovet är passerat. Marginalen från nedre behov till tak är 25× för selen, 29× för '
-     + 'jod, 38× för zink och 75× eller mer för övriga.</p>';
+  // Läs-en-gång-innehåll. Viks undan så att tabellen och sammanfattningen får
+  // utrymmet. Villkorade varningar och allt om toleransgränser står kvar ovan.
+  h += '<details class="omber"><summary>Om beräkningen — skala, intervall, '
+     + 'överskott och vitaminer</summary>'
+     + '<p class="note"><strong>Staplarna</strong> har samma skala på alla rader: 0 till 200 % '
+     + 'av behovet, med behovet som mittlinje. Når stapeln fram till linjen är behovet täckt. '
+     + 'Ett ›-tecken betyder att värdet går utanför skalan — det exakta talet står i kolumnen '
+     + 'till höger.</p>'
+     + '<p class="note"><strong>Behoven</strong> visas som intervall där SLU 289 anger intervall. '
+     + 'Procenttalet avser nedre gränsen — mot övre gränsen blir täckningen lägre. HästSveriges '
+     + 'foderstatsprogram räknar enbart mot övre gränsen och visar därför större underskott.</p>'
+     + '<p class="note"><strong>Överskott.</strong> SLU 289 anger att behoven kan överskridas '
+     + 'utan negativ påverkan, men villkorar det för mikromineraler till överskott som kommer ur '
+     + 'vallfodret, och tillägger att flera mineralämnen stör varandras upptag och att '
+     + 'överutfodring bör undvikas. Statusmärket visar därför hur nära toleransgränsen värdet '
+     + 'ligger. Marginalen från nedre behov till tak är 25× för selen, 29× för jod, 38× för zink '
+     + 'och 75× eller mer för övriga.</p>'
+     + '<p class="note"><strong>Vitaminerna</strong> räknas enbart från tillskott — grovfodrets '
+     + 'innehåll analyseras normalt inte. SLU 289 anger att välbärgat vallfoder plus daglig '
+     + 'utevistelse i regel täcker behovet vid underhåll och lätt till medelhårt arbete. Ett tomt '
+     + 'fält betyder att uppgift saknas, inte att hästen får för lite. Toleransgränserna prövas '
+     + 'däremot på riktigt, eftersom överskott bara kan komma från tillskott.'
+     + (vKallor.length ? ' Räknade källor: '+vKallor.join(", ")+'.' : '')+'</p>'
+     + '</details>';
 
   /* --- anmärkningar --- */
   // ---- stärkelse, spannmål och olja: SLU 289 riktlinjer för kraftfodergivan ----

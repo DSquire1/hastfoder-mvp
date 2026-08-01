@@ -4,197 +4,582 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Foderstat → produktförslag (MVP)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#faf8f5; --ink:#1d1d1b; --muted:#6b665f; --line:#ddd7cd;
-    --brand:#863a20; --brand-soft:#f3e9e4;
-    --ok:#2f6b45; --ok-bg:#e8f2ec;
-    --warn:#8a6100; --warn-bg:#fbf1dc;
-    --bad:#9d2b20; --bad-bg:#fbe9e7;
+    --bg:#faf6ee; --paper2:#f5efe3; --ink:#221f1a; --ink70:#57524a; --muted:#8a8072;
+    --ink30:#a89c86; --line:#e6ddcd; --line2:#d8cdb9; --track:#f0eade;
+    --brand:#6b3f1d; --brand-soft:#f3ece0; --grov:#7a4a24; --dim:#a8916d;
+    --ok:#4a6b3d; --ok-bg:#eef2ea;
+    --warn:#b58a3c; --warn-bg:#faf3e6;
+    --bad:#8f3a24; --bad-bg:#fdf3f0; --chip-bad:#f7e7e2;
     --card:#fff;
+    --serif:'Source Serif 4',Georgia,serif;
+    /* Mono bara för mikroetiketter. Versaler i 11 px i en proportionell font
+       flyter ihop; monospace ger dem den spärrning de behöver för att läsas
+       som etikett i stället för som text.                                    */
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
-    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:1080px;margin:0 auto;padding:20px 18px 80px}
-  h1{font-size:25px;margin:0 0 4px}
-  h2{font-size:17px;margin:0 0 14px;padding-bottom:7px;border-bottom:2px solid var(--brand)}
-  .h2row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
-    margin:0 0 14px;padding-bottom:7px;border-bottom:2px solid var(--brand);flex-wrap:wrap}
+    font:16px/1.55 'Source Sans 3',-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--brand)} a:hover{color:#4a2c14}
+
+  /* ---- ram ---- */
+  .hk-top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+    gap:12px;padding:12px 24px;background:var(--bg);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .hk-logo{font-family:var(--serif);font-weight:600;font-size:24px;letter-spacing:-.01em}
+  .hk-top .hk-meta{font-size:15px;color:var(--muted)}
+  .wrap{max-width:1440px;margin:0 auto;padding:20px 24px 90px}
+  .hk-cols{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start}
+  /* ---- vänsterkolumnen som en sammanhängande panel ----------------------
+     Designen har inga kort här. Sex vita lådor på rad läser sig som sex
+     separata blanketter; en enda beige panel med hårfina avdelare läser sig
+     som ett formulär. Fälten är då det enda som har ram — och det är också
+     det enda man ska röra.                                                  */
+  .hk-left{position:sticky;top:66px;max-height:calc(100vh - 86px);overflow:auto;
+    display:flex;flex-direction:column;gap:0;background:var(--paper2);
+    border:1px solid var(--line);border-radius:6px;padding:22px}
+  .hk-right{display:flex;flex-direction:column;gap:14px;min-width:0}
+  .hk-left::-webkit-scrollbar{width:8px}
+  .hk-left::-webkit-scrollbar-thumb{background:#e0d6c4;border-radius:4px}
+
+  h1{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-.015em;margin:0 0 4px}
+  /* Rubriken behöver ingen linje under sig när kortet redan har en ram. */
+  h2{font-family:var(--serif);font-weight:600;font-size:22px;margin:0 0 14px;padding:0}
+  .h2row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    margin:0 0 14px;flex-wrap:wrap}
   .h2row h2{border:0;margin:0;padding:0}
-  .slumpa{border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer;
-    padding:6px 13px;border-radius:6px;font:inherit;font-size:13px;font-weight:600;white-space:nowrap}
-  .slumpa:hover{background:var(--brand);color:#fff}
-  .slumpinfo{font-size:12.5px;color:var(--muted);margin:10px 0 0;font-style:italic}
-  .foderrad{border:1px solid var(--line);border-radius:7px;padding:12px;margin-bottom:10px;
-    background:#fdfcfa}
-  h3{font-size:14px;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-  .sub{color:var(--muted);margin:0 0 18px}
-  .banner{background:var(--warn-bg);border:1px solid #e3c98a;border-left:5px solid var(--warn);
-    padding:12px 14px;border-radius:6px;margin-bottom:20px;font-size:13.5px}
-  .banner strong{color:var(--warn)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:18px;margin-bottom:18px}
+  h3{font-family:var(--mono);font-size:11px;margin:18px 0 8px;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--ink30);font-weight:500}
+  .sub{color:var(--ink70);margin:0 0 18px;font-size:17px}
+
+  .slumpa{border:1px solid var(--line2);background:var(--card);color:var(--brand);cursor:pointer;
+    padding:10px 16px;border-radius:4px;font:inherit;font-size:15px;font-weight:600;white-space:nowrap}
+  .slumpa:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+  .slumpinfo{font-size:14px;color:var(--muted);margin:10px 0 0}
+  .foderrad{border:1px solid var(--line);border-radius:4px;padding:12px;margin-bottom:10px;background:var(--paper2)}
+
+  .banner{background:var(--paper2);border:1px solid var(--line);border-left:4px solid var(--warn);
+    padding:12px 16px;border-radius:4px;margin:0 0 16px;font-size:15px;color:var(--ink70)}
+  .banner strong{color:var(--ink)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:20px;margin:0}
+  .hk-right .card{padding:22px}
   .grid{display:grid;gap:12px}
   .g2{grid-template-columns:repeat(2,1fr)}
   .g3{grid-template-columns:repeat(3,1fr)}
   .g4{grid-template-columns:repeat(4,1fr)}
-  @media(max-width:820px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+  .hk-left .g4{grid-template-columns:repeat(2,1fr)}
   @media(max-width:520px){.g2,.g3,.g4{grid-template-columns:1fr}}
-  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px}
-  input,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:5px;
-    background:#fff;font:inherit;font-size:14px;color:var(--ink)}
-  input:focus,select:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
-  .toggle{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
-  .toggle button{border:0;background:#fff;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer;color:var(--muted)}
-  .toggle button.on{background:var(--brand);color:#fff;font-weight:600}
-  table{width:100%;border-collapse:collapse;font-size:13.5px}
-  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-    color:var(--muted);border-bottom:2px solid var(--line);padding:7px 8px;font-weight:600}
-  td{padding:7px 8px;border-bottom:1px solid #eee}
+
+  label{display:block;font-size:13px;font-weight:600;color:var(--ink70);margin-bottom:4px}
+  .grid>div,.fld,#vaxtFalt{position:relative}
+  /* "Smältbart råprotein" tar två rader, "Kalcium" en. Utan detta hamnar
+     fälten på olika höjd i samma rad. Etiketten får växa, fältet ligger
+     kvar i botten — rutnätets rader är ändå lika höga.                      */
+  .hk-left .grid>div{display:flex;flex-direction:column}
+  .hk-left .grid>div>label{flex:1 0 auto}
+  input,select{width:100%;padding:11px 12px;border:1px solid var(--line2);border-radius:3px;
+    background:var(--card);font:inherit;font-size:16px;color:var(--ink)}
+  input[type=number]{padding-right:78px}
+  .hk-left input[type=number]{padding-right:46px}
+  .hk-left .u{right:11px;font-size:12px}
+  .u{position:absolute;right:12px;bottom:12px;font-size:13px;color:var(--ink30);
+    pointer-events:none;white-space:nowrap}
+  input:focus,select:focus{outline:0;border-color:var(--brand);border-bottom-width:2px;padding-bottom:10px}
+  .toggle{display:inline-flex;gap:4px;border-radius:4px;padding:3px;background:#eae2d3}
+  .toggle button{border:0;background:transparent;padding:9px 15px;font:inherit;font-size:15px;
+    cursor:pointer;color:var(--muted);border-radius:3px;font-weight:600}
+  .toggle button.on{background:var(--card);color:var(--ink);font-weight:700}
+
+  table{width:100%;border-collapse:collapse;font-size:16px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;
+    color:#9a9184;border-bottom:1px solid var(--line);padding:9px 8px;font-weight:600}
+  td{padding:12px 8px;border-bottom:1px solid #efe8da}
   td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   tr.deficit td{background:var(--bad-bg)}
-  tr.over td{background:var(--warn-bg)}
-  .pill{display:inline-block;padding:1px 8px;border-radius:11px;font-size:11px;font-weight:700}
-  .p-ok{background:var(--ok-bg);color:var(--ok)}
-  .p-low{background:var(--bad-bg);color:var(--bad)}
-  .p-high{background:var(--warn-bg);color:var(--warn)}
-  .note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
-  .msg{padding:10px 12px;border-radius:6px;margin:9px 0;font-size:13px}
-  .m-bad{background:var(--bad-bg);border-left:4px solid var(--bad)}
-  .m-warn{background:var(--warn-bg);border-left:4px solid var(--warn)}
-  .m-ok{background:var(--ok-bg);border-left:4px solid var(--ok)}
-  .prod{border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:11px;background:#fff;
-    cursor:pointer;transition:border-color .12s,box-shadow .12s}
+  tr.over td{opacity:.55}
+  .pill{display:inline-block;padding:0;border-radius:0;font-size:14px;font-weight:700;background:none!important}
+  .p-ok{color:var(--ok)}
+  .p-low{color:var(--bad)}
+  .p-high{color:var(--muted);font-weight:600}
+  .note{font-size:15px;color:var(--ink70);margin:8px 0 0;line-height:1.5}
+  .msg{padding:13px 16px;border-radius:4px;margin:10px 0;font-size:16px;background:var(--card);
+    border:1px solid #ddd5c6;line-height:1.45;color:var(--ink70)}
+  .msg strong{color:var(--ink)}
+  .m-bad{border-left:4px solid var(--bad)}
+  .m-warn{border-left:4px solid var(--warn)}
+  .m-ok{border-left:4px solid var(--ok)}
+
+  /* ---- förslag ----------------------------------------------------------
+     Två förslag i full storlek, resten som rader bakom en lucka. Åtta likadana
+     kort tvingar läsaren att jämföra allt mot allt; två kort och en lista säger
+     vilka två som är värda att jämföra.                                       */
+  .fk-hero{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;
+    border:1px solid var(--line);border-radius:4px;padding:16px;margin-bottom:10px;
+    background:var(--card);cursor:pointer}
+  .fk-hero:hover{border-color:var(--brand)}
+  .fk-hero.vald{border-color:var(--brand);background:#f7f2e6}
+  .fk-ogon{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink30)}
+  .fk-hero.vald .fk-ogon{color:var(--ok)}
+  .fk-namn{font-size:19px;font-weight:700;color:var(--ink);margin:3px 0}
+  .fk-meta{font-size:15px;color:var(--ink70)}
+  .fk-pris{text-align:right;white-space:nowrap}
+  .fk-pris b{display:block;font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.1;
+    font-variant-numeric:tabular-nums}
+  .fk-pris span{font-size:14px;color:var(--muted)}
+  .fk-lucka{border:1px solid #d8cdb9;border-radius:4px;background:var(--paper2);margin-top:12px}
+  .fk-lucka>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:12px 16px;cursor:pointer;font-size:16px;font-weight:600;color:var(--brand);
+    list-style:none;flex-wrap:wrap}
+  .fk-lucka>summary::-webkit-details-marker{display:none}
+  .fk-lucka>summary em{font-style:normal;font-size:14px;font-weight:400;color:var(--muted)}
+  .fk-lista{padding:0 10px 10px;display:flex;flex-direction:column;gap:8px}
+  .fk-rad{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px 14px;
+    align-items:center;padding:11px 14px;border:1px solid #efe8da;border-radius:4px;
+    background:var(--card);cursor:pointer}
+  .fk-rad:hover{border-color:var(--brand)}
+  /* Samma markering som på de stora korten. Enbart en brun ram räckte inte
+     för att hitta tillbaka till sitt val i en lista på åtta rader.          */
+  .fk-rad.vald{border-color:var(--brand);border-width:2px;padding:10px 13px;
+    background:#f7f2e6}
+  .fk-vald{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ok);display:block}
+  .fk-rad b{font-size:16px;font-weight:600;display:block}
+  .fk-rad i{font-style:normal;font-size:14px;color:var(--muted);display:block}
+  .fk-rad .a{font-size:14px;color:var(--muted);white-space:nowrap}
+  .fk-rad .k{font-size:17px;font-weight:700;min-width:82px;text-align:right;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .fk-mer{grid-column:1/-1;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+  .fk-mer>summary{font-size:14px;color:var(--brand);cursor:pointer;font-weight:600}
+  @media(max-width:560px){
+    .fk-hero{grid-template-columns:minmax(0,1fr) auto}
+    .fk-hero>.bildslot,.fk-hero>.bildpar{display:none}
+    .fk-rad{grid-template-columns:minmax(0,1fr) auto}
+    .fk-rad .a{display:none}
+  }
+  .prod{border:1px solid var(--line);border-radius:4px;padding:16px;margin-bottom:11px;background:var(--card);
+    cursor:pointer;transition:border-color .12s}
   .prod:hover{border-color:var(--brand)}
-  /* Endast valt tillstånd markeras med ram. Rangordningen framgår av siffran —
-     en extra ram på förstaplatsen läses som ett urval och krockar med den. */
-  .prod.vald{border-color:var(--ok);border-width:2px;box-shadow:0 0 0 3px var(--ok-bg)}
-  .valdmark{font-size:11.5px;font-weight:700;color:var(--ok);background:var(--ok-bg);
-    padding:2px 9px;border-radius:11px;margin-left:8px}
-  .valjknapp{font-size:12px;color:var(--brand);margin-top:9px;font-weight:600}
-  .rt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:7px}
-  .rt td{padding:4px 6px;border-bottom:1px solid #f0eeea}
+  .prod.vald{border-color:var(--brand);border-width:2px;padding:15px;background:#fdfaf4}
+  .valdmark{font-size:11px;font-weight:700;color:var(--ok);letter-spacing:.1em;text-transform:uppercase;
+    margin-left:8px}
+  .valjknapp{font-size:15px;color:var(--brand);margin-top:10px;font-weight:600}
+  .rt-rubrik{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink30);margin-top:12px}
+  .rt{width:100%;border-collapse:collapse;font-size:15px;margin-top:6px}
+  .rt td{padding:7px 6px;border-bottom:1px solid #f2ece0}
   .rt td.n{text-align:right;font-variant-numeric:tabular-nums}
   .rt tr.bast td{background:var(--ok-bg);font-weight:600}
-  .spread{font-size:12.5px;color:var(--muted);margin-top:7px}
-  .delta{color:var(--ok);font-weight:600}
+  .spread{font-size:15px;color:var(--muted);margin-top:8px}
+  .delta{color:var(--ok);font-weight:700}
 
-  .bildslot{position:relative;width:58px;height:58px;flex:0 0 58px}
-  .bild{position:absolute;inset:0;width:58px;height:58px;border-radius:7px;
-    object-fit:contain;background:#fff;border:1px solid var(--line)}
+  .bildslot{position:relative;width:62px;height:62px;flex:0 0 62px}
+  .bild{position:absolute;inset:0;width:62px;height:62px;border-radius:3px;
+    object-fit:contain;background:var(--card);border:1px solid var(--line2)}
   .bild-img{z-index:1;padding:2px}
   .bild-fb{display:flex;align-items:center;justify-content:center;font-weight:700;
-    font-size:15px;color:var(--brand);background:var(--brand-soft);letter-spacing:.02em}
+    font-size:15px;color:var(--brand);background:var(--brand-soft)}
 
-  .barcell{width:38%;min-width:180px;padding-right:16px}
-  .barwrap{position:relative;height:17px;background:#efece6;border-radius:3px}
-  .barband{position:absolute;top:0;bottom:0;background:rgba(47,107,69,.13)}
-  .barbehov{position:absolute;top:-3px;bottom:-3px;width:2px;background:#4a4640}
-  /* Fyra segment, i den ordning fodret hamnar i hästen:
-     grovfoder → övriga fodermedel → tillskott som redan ges → föreslaget.
-     Bruna toner för foder, gröna för tillskott — mörkgrönt för det som redan
-     ges, ljusgrönt för förslaget, så att skillnaden mellan nuläge och förslag
-     syns utan att bli fyra obesläktade färger. */
+  .barcell{width:36%;min-width:170px;padding-right:16px}
+  .barwrap{position:relative;height:16px;background:var(--track);border-radius:2px;overflow:hidden}
+  .barband{position:absolute;top:0;bottom:0;background:rgba(74,107,61,.12)}
+  .barbehov{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);z-index:2}
+  .tk-rad.tackt .barbehov{background:#6d6559}
   .seg{position:absolute;top:0;bottom:0}
-  .seg-grov{background:var(--brand);border-radius:3px 0 0 3px}
-  .seg-ovrigt{background:#c08b62}
-  .seg-bef{background:#1f4d33}
+  .seg-grov{background:var(--grov);border-radius:2px 0 0 2px}
+  .seg-ovrigt{background:var(--dim)}
+  .seg-bef{background:#2f4a2a}
   .seg-forslag{background:var(--ok)}
-  .bartak{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--bad)}
+  .bartak{position:absolute;top:-2px;bottom:-2px;width:3px;background:var(--bad)}
   .barspill{position:absolute;right:2px;top:0;bottom:0;display:flex;align-items:center;
-    color:#fff;font-weight:700;font-size:14px;line-height:1}
-  .baraxel{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);
-    margin-top:3px;letter-spacing:.02em}
-  .verdikt{background:var(--brand-soft);border-left:5px solid var(--brand);border-radius:0 7px 7px 0;
-    padding:14px 16px;margin:0 0 16px;font-size:15px;line-height:1.6}
-  .verdikt strong{color:var(--brand)}
-  .verdikt .rad2{font-size:13.5px;color:var(--muted);margin-top:7px}
-  .omber{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
-  .omber summary{font-size:12.5px;color:var(--muted);font-weight:600}
+    color:#fff;font-weight:700;font-size:13px;line-height:1}
+  .baraxel{display:flex;justify-content:space-between;font-size:11px;color:var(--ink30);margin-top:3px}
+  .verdikt{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--bad);
+    border-radius:4px;padding:18px 20px;margin:0 0 16px;font-size:16px;line-height:1.5}
+  .verdikt>strong{display:block;font-family:var(--serif);font-weight:600;font-size:26px;
+    line-height:1.15;color:var(--ink);margin-bottom:2px}
+  .verdikt .rad2 strong{color:var(--ink)}
+  .verdikt .rad2{font-size:15px;color:var(--ink70);margin-top:8px}
+
+  /* ---- Täckningstabell enligt designförslaget ------------------------------
+     Rutnät, inte tabell. Täckta rader tonas ned i stället för att underskott
+     markeras — uppmärksamheten styrs genom att det oviktiga viker undan.     */
+  .tk-huvud, .tk-rad{display:grid;grid-template-columns:150px 1fr 72px 76px 126px;
+    gap:0 14px;align-items:center}
+  .tk-huvud{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;
+    text-transform:uppercase;color:#9a9184;padding:8px 0;border-bottom:1px solid var(--line)}
+  .tk-rad{padding:12px 0;border-bottom:1px solid #efe8da}
+  .tk-rad:last-child{border-bottom:0}
+  .tk-rad.tackt{opacity:.5}
+  .tk-rad.okand{opacity:.72}
+  /* Täckta rader tonas ned — men bara det grovfodret bidrar med. Regeln dämpade
+     tidigare .seg rakt av, alltså även tillskottets gröna segment, och det
+     försvann därmed exakt när det blev intressant: i det ögonblick produkten
+     lyfte raden över behovet. Grönt betyder täckt, och det ska synas.        */
+  .tk-rad.tackt .seg{background:#a8916d}
+  .tk-rad.tackt .seg-forslag{background:var(--ok)}
+  .tk-rad.tackt .seg-bef{background:#2f4a2a}
+  .tk-rad.tackt .barband,.tk-rad.tackt .bartak,.tk-rad.tackt .barspill{display:none}
+  .tk-rad.larm .tk-stapel .seg{background:var(--bad)}
+  .tk-namn{font-size:15.5px;color:var(--ink)}
+  .tk-tal{text-align:right;font-size:15.5px;font-variant-numeric:tabular-nums}
+  /* nowrap håller kolumnen rak, men texten måste då också rymmas i den.
+     "tillskott · grovfodret okänt" var 28 tecken i en ruta för 16.          */
+  .tk-status{text-align:right;font-size:13.5px;font-weight:700;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .tk-under{color:var(--bad)}
+  .tk-tackt{color:var(--ok)}
+  .tk-neutral{color:var(--muted);font-weight:600}
+  .tk-stapel{position:relative;height:16px;background:#f0eade;border-radius:2px;overflow:hidden}
+  .tk-stapel.okand{background:repeating-linear-gradient(135deg,#f0eade 0 6px,#e8e0d0 6px 12px)}
+  .tk-mid{position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--ink)}
+  .tk-spill{position:absolute;right:3px;top:0;bottom:0;display:flex;align-items:center;
+    color:#fff;font-weight:700;font-size:13px}
+  /* Behov och tillfört som två kolumner kräver bredd som mobilen inte har.
+     Enligt designbeslutet blir raden i stället ett staplat block där de två
+     talen står ihop som en mening: "5,4 av 7,5". Att bara dölja kolumnerna
+     skulle ta bort själva jämförelsen.                                       */
+  .tk-mob{display:none;font-size:14px;color:var(--ink70);font-variant-numeric:tabular-nums}
+  .stapelnyckel{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:13px;
+    color:var(--muted)}
+  .stapelnyckel i{display:inline-block;width:11px;height:11px;border-radius:2px;
+    margin-right:6px;vertical-align:-1px}
+  @media(max-width:640px){
+    .tk-huvud{display:none}
+    .tk-rad{grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:12px 0}
+    .tk-namn{order:1;font-weight:600}
+    .tk-status{order:2}
+    .tk-mob{display:block;order:3}
+    .tk-stapel{grid-column:1/-1;order:4;margin-top:6px}
+    .tk-tal{display:none}
+  }
+  .radraknare{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    font-size:13px;color:var(--muted);margin:12px 0 6px;flex-wrap:wrap}
+  .lankknapp{background:none;border:0;padding:0;font:inherit;font-size:13px;
+    color:var(--brand);font-weight:600;cursor:pointer;text-decoration:underline}
+  .omber{margin-top:16px;background:#f0ebe0;border:1px solid #ddd5c6;border-radius:4px;
+    padding:12px 15px}
+  .omber summary{font-size:15px;color:var(--brand);font-weight:600;cursor:pointer}
+  .omber .note{color:var(--ink70)}
   .omber .note{margin-top:9px}
-  .barleg{display:flex;gap:16px;font-size:11.5px;color:var(--muted);margin:10px 0 2px;flex-wrap:wrap}
+  .barleg{display:flex;gap:16px;font-size:13px;color:var(--muted);margin:10px 0 4px;flex-wrap:wrap}
   .barleg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
   .prod-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
-  .prod-n{font-weight:700;font-size:15.5px}
-  .prod-m{font-size:12px;color:var(--muted)}
-  .dose{background:var(--brand-soft);color:var(--brand);padding:4px 11px;border-radius:6px;
-    font-weight:700;font-size:14px;white-space:nowrap}
-  .rank{display:inline-block;width:21px;height:21px;line-height:21px;text-align:center;
-    background:var(--brand);color:#fff;border-radius:50%;font-size:11.5px;font-weight:700;margin-right:7px}
-  .chips{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}
-  .chip{font-size:11.5px;padding:2px 8px;border-radius:4px}
-  .c-fix{background:var(--ok-bg);color:var(--ok)}
-  .c-part{background:var(--warn-bg);color:var(--warn)}
-  .c-cap{background:var(--bad-bg);color:var(--bad)}
-  .c-miss{background:#f0eeea;color:var(--muted)}
-  details{margin-top:9px;font-size:13px}
-  summary{cursor:pointer;color:var(--brand);font-weight:600;font-size:12.5px}
-  .src{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:22px}
-  code{background:#f0eeea;padding:1px 5px;border-radius:3px;font-size:12px}
+  .prod-n{font-weight:700;font-size:18px}
+  .prod-m{font-size:14px;color:var(--muted)}
+  .dose{background:var(--paper2);color:var(--ink);padding:6px 13px;border-radius:4px;
+    font-weight:700;font-size:15px;white-space:nowrap}
+  .rank{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;
+    background:var(--brand);color:#fff;border-radius:50%;font-size:12px;font-weight:700;margin-right:8px}
+  .chips{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:15px;font-weight:600;padding:5px 11px;border-radius:20px;line-height:1.35}
+  .c-fix{background:var(--ok-bg);color:var(--ok);font-weight:600}
+  .c-part{background:var(--warn-bg);color:#8a6a2a;font-weight:600}
+  .c-cap{background:var(--chip-bad);color:var(--bad);font-weight:600}
+  .c-miss{background:var(--paper2);color:var(--muted)}
+  details{margin-top:10px;font-size:16px}
+  summary{cursor:pointer;color:var(--brand);font-weight:600;font-size:15px}
+  .src{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;margin-top:26px;
+    line-height:1.6}
+  code{background:var(--paper2);padding:1px 5px;border-radius:3px;font-size:13px}
 
-  /* Tangentbord: samma tydliga fokusmarkering överallt */
+  /* ---- mobilflikar och fot ---- */
+  .hk-tabs{display:none;gap:0;border-bottom:1px solid var(--line);background:var(--bg);
+    position:sticky;top:57px;z-index:25}
+  .hk-tabs button{flex:1;border:0;background:transparent;font:inherit;font-size:16px;font-weight:600;
+    color:var(--muted);padding:14px 0;cursor:pointer;border-bottom:3px solid transparent}
+  .hk-tabs button.on{color:var(--ink);font-weight:700;border-bottom-color:var(--brand)}
+  .hk-foot{display:none;position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:var(--paper2);border-top:1px solid var(--line);padding:10px 16px;
+    align-items:center;justify-content:space-between;gap:12px}
+  .hk-foot #hkSum{font-size:15px;color:var(--ink70);line-height:1.35}
+  body.tab-ut #hkVisa{display:none}
+
   .prod:focus-visible, button:focus-visible, summary:focus-visible,
-  input:focus-visible, select:focus-visible{
-    outline:3px solid var(--brand); outline-offset:2px}
+  input:focus-visible, select:focus-visible{outline:3px solid var(--brand); outline-offset:2px}
 
-  /* Mobil. Stapelkolumnen är det första som får vika — siffrorna bär
-     informationen, stapeln är en genväg. */
+  @media(max-width:1000px){
+    .hk-cols{grid-template-columns:1fr}
+    .hk-left{position:static;max-height:none;overflow:visible}
+    .hk-left .g3,.hk-left .g4{grid-template-columns:repeat(3,1fr)}
+    .hk-tabs{display:flex}
+    .hk-foot{display:flex}
+    body.tab-in .hk-right{display:none}
+    body.tab-ut .hk-left{display:none}
+    .wrap{padding-bottom:120px}
+  }
   @media(max-width:640px){
-    .wrap{padding:14px 12px 60px}
-    h1{font-size:21px} h2{font-size:16px}
-    table{font-size:12.5px} th,td{padding:6px 4px}
+    .wrap{padding:14px 14px 130px}
+    .hk-top{padding:10px 14px}
+    h1{font-size:24px} h2{font-size:20px}
+    .hk-left .g3,.hk-left .g4{grid-template-columns:repeat(2,1fr)}
+    table{font-size:15px} th,td{padding:10px 4px}
     .barcell{display:none}
     th:nth-child(2){display:none}
     .prod-h{flex-direction:column;align-items:flex-start}
     .dose{align-self:flex-start}
-    .rt td{padding:4px 3px;font-size:11.5px}
+    .rt td{padding:6px 3px;font-size:14px}
     .rt td:nth-child(2){display:none}
   }
   @media(max-width:400px){
     .rt td:nth-child(6){display:none}
-    .chip{font-size:11px}
   }
 
-  /* Utskrift: en ren foderstat att sätta upp i stallet. */
+  /* ---- topbar-åtgärder ---- */
+  .hk-topright{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .hk-tbtn{border:1px solid var(--line2);background:var(--card);color:var(--brand);font:inherit;
+    font-size:15px;font-weight:600;padding:8px 16px;border-radius:4px;cursor:pointer;
+    white-space:nowrap;line-height:1.2}
+  .hk-tbtn:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+
+  /* ---- vänsterflikar ---- */
+  .hk-lnav{display:flex;gap:4px;background:#eae2d3;border-radius:5px;padding:4px}
+  .hk-lnav button{flex:1;border:0;background:transparent;font:inherit;font-size:15px;font-weight:600;
+    color:var(--muted);padding:10px 0;border-radius:3px;cursor:pointer}
+  .hk-lnav button.on{background:var(--card);color:var(--ink);font-weight:700}
+  .hk-left .card{background:none;border:0;border-radius:0;padding:22px 0 0;margin:22px 0 0;
+    border-top:1px solid #e2d8c4}
+  .hk-left .hk-lnav + .card{border-top:0;margin-top:18px;padding-top:0}
+  .hk-left .card.hk-dold{display:none}
+  .hk-left h2{font-size:21px;margin:0 0 12px}
+  .hk-left h3{margin:16px 0 7px}
+  .hk-left>.card>.grid>div>label,.hk-left .fld>label{font-size:13px;font-weight:600;color:var(--ink70)}
+  .hk-left label{font-size:13px;font-weight:600;color:var(--ink70)}
+  .hk-left label .fk{font-weight:600;color:#a1937b;letter-spacing:0}
+  /* Fälten är vita mot den beiga panelen. Det är den enda kontrasten som säger
+     vad man kan skriva i. :not([type=range]) är nödvändigt — reglaget är också
+     ett input och ska behålla sitt spår.                                      */
+  .hk-left input:not([type=range]),.hk-left select{background:#fff;border-color:#d8cdb9}
+  .hk-left .u{color:#a1937b}
+  .hk-left .slumpa{border:0;background:none;padding:0;font-size:14px}
+  .hk-left .slumpa:hover{background:none;color:#4a2c14}
+  /* Vikten är en skjutreglage-fråga, inte en sifferfråga — man vet ungefär vad
+     hästen väger, inte exakt. Talet står stort bredvid i stället för i en ruta. */
+  .viktrad{display:flex;align-items:center;gap:14px}
+  .viktrad input[type=range]{flex:1;margin:0}
+  .viktrad b{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .flerfalt{margin-top:12px}
+  .flerfalt>summary{font-size:14px;color:var(--muted);cursor:pointer;list-style:none}
+  .flerfalt>summary::-webkit-details-marker{display:none}
+  .flerfalt>summary::before{content:"▾ ";}
+  .flerfalt[open]>summary::before{content:"▴ ";}
+  .flerfalt>.grid{margin-top:10px}
+
+  /* ---- segmenterade val ---- */
+  .hk-seg-holder select{display:none}
+  .hk-seg{display:flex;gap:6px}
+  .hk-seg.hk-seg-wrap{flex-wrap:wrap}
+  .hk-seg button{flex:1 1 0;min-width:0;border:1px solid var(--line2);background:var(--card);
+    color:var(--ink70);font:inherit;font-size:15px;font-weight:600;padding:11px 6px;border-radius:4px;
+    cursor:pointer;white-space:nowrap}
+  .hk-seg button.on{background:var(--brand);border-color:var(--brand);color:#faf6ee;font-weight:700}
+  .segforkl{font-size:13.5px;color:var(--muted);line-height:1.4;margin-top:6px}
+
+  /* ---- hero ---- */
+  .hk-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;
+    max-width:1440px;margin:0 auto;padding:56px 24px 48px}
+  .hk-h1{font-family:var(--serif);font-weight:600;letter-spacing:-.02em;font-size:60px;line-height:1.0;
+    margin:0 0 18px;text-wrap:balance}
+  .hk-h1 em{font-style:italic;font-weight:400}
+  .hk-hero-txt p{margin:0 0 20px;font-size:19px;line-height:1.5;color:var(--ink70);max-width:470px;
+    text-wrap:pretty}
+  .hk-cta-rad{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hk-cta{display:inline-block;background:var(--brand);color:#faf6ee;font-size:17px;font-weight:600;
+    padding:14px 26px;border-radius:4px;text-decoration:none}
+  .hk-cta:hover{background:#4a2c14;color:#faf6ee}
+  .hk-cta-rad span{font-size:15px;color:var(--muted)}
+  .hk-stats{display:flex;gap:26px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line);
+    flex-wrap:wrap}
+  .hk-stats b{display:block;font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.1}
+  .hk-stats span{font-size:14px;color:var(--muted)}
+  .hk-hero-bild{position:relative;aspect-ratio:4/5;border:1px solid var(--line2);border-radius:4px;
+    overflow:hidden;background:var(--paper2)}
+  .hk-hero-bild img{width:100%;height:100%;object-fit:cover;display:block}
+  .hk-cred{position:absolute;left:10px;bottom:10px;background:rgba(250,246,238,.9);color:var(--muted);
+    font-size:12px;padding:4px 8px;border-radius:3px}
+
+  /* ---- nyckeltal ---- */
+  .hk-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .hk-kpi .k{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line2);
+    border-radius:4px;padding:15px 18px}
+  /* Designen färgar inte korten. Tre färgade kanter gör alla tre lika viktiga
+     och ingen av dem läsbar — siffran får bära meningen själv. */
+  .hk-kpi .k{border-left-color:#e0d7c6}
+  .hk-kpi span{display:block;font-family:var(--mono);font-size:11px;font-weight:500;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink30);margin-bottom:7px}
+  .hk-kpi b{font-family:var(--serif);font-weight:600;font-size:32px;line-height:1;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hk-kpi i{display:block;font-style:normal;font-size:14px;color:var(--muted);margin-top:5px}
+
+  /* ---- filter ---- */
+  .hk-filter{display:flex;gap:6px}
+  .hk-filter button{border:1px solid var(--line2);background:var(--card);color:var(--ink70);
+    font:inherit;font-size:14px;font-weight:600;padding:8px 15px;border-radius:3px;cursor:pointer;
+    white-space:nowrap;line-height:1.2}
+  .hk-filter button.on{background:var(--ink);border-color:var(--ink);color:#faf6ee}
+  /* "Bara underskott" ska visa det som saknas. En rad utan analys är inte ett
+     underskott — den är en okänd. Vitaminer analyseras nästan aldrig i
+     grovfoder, så tolv av arton rader kunde annars ligga kvar under filtret
+     och se ut som brister sidan hittat.                                     */
+  body.hk-brist #ut .tk-rad.tackt,
+  body.hk-brist #ut .tk-rad.okand{display:none}
+
+  /* ---- uppladdning och enhetsvarning ---- */
+  .hk-drop{border:1px dashed #b7a68a;background:var(--paper2);border-radius:4px;padding:14px;
+    margin-bottom:14px;text-align:center;display:flex;flex-direction:column;gap:3px}
+  .hk-drop b{font-size:15px;color:var(--brand)}
+  .hk-drop span{font-size:14px;color:var(--muted)}
+  .hk-drop em{font-style:normal;color:var(--ink30)}
+  .hk-enhetsvarning{font-size:14px;color:var(--muted);line-height:1.45;margin:0 0 14px}
+  .hk-range{-webkit-appearance:none;appearance:none;width:100%;height:5px;padding:0;margin-top:10px;
+    background:#e2d8c4;border:0;border-radius:3px}
+  .hk-range::-webkit-slider-thumb{-webkit-appearance:none;width:21px;height:21px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--brand);cursor:pointer}
+  .hk-range::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:var(--bg);
+    border:2px solid var(--brand);cursor:pointer}
+
+  @media(max-width:1000px){
+    .hk-hero{grid-template-columns:1fr;gap:28px;padding:36px 20px 32px}
+    .hk-h1{font-size:44px}
+    .hk-hero-bild{aspect-ratio:16/9;max-height:320px}
+    .hk-kpi{grid-template-columns:1fr 1fr}
+    .hk-kpi .k-spar{grid-column:span 2}
+  }
+  @media(max-width:640px){
+    .hk-h1{font-size:36px}
+    .hk-kpi b{font-size:30px}
+  }
+
+  #utskriftshuvud{display:none}
+  /* ---- utskrift ----------------------------------------------------------
+     Löftet under knappen är "täckningen och den valda produkten, inte
+     formulären". Reglerna nedan var skrivna för den gamla kortstrukturen och
+     dolde .prod — som numera bara finns inne i en hopfälld utfällning. Den
+     valda produkten kom alltså aldrig med på papperet.                       */
   @media print{
-    body{background:#fff}
+    @page{margin:15mm}
+    body{background:#fff;color:#000}
     .wrap{max-width:none;padding:0}
-    .card:has(input), .card:has(select), .banner, .slumpa, .valjknapp,
-    #slumpinfo, .toggle, details{display:none !important}
-    .card{border:0;padding:0 0 12px;page-break-inside:avoid}
-    .prod{page-break-inside:avoid;border:1px solid #999;cursor:default}
-    .prod:not(.vald){display:none}
-    h2{border-bottom:1px solid #000}
+    .hk-cols{display:block}
+
+    /* bort: allt man matar in i, allt man klickar på, allt man bläddrar i */
+    .hk-hero,.hk-tabs,.hk-foot,.hk-left,.hk-filter,.hk-drop,.hk-topright,
+    #sparakort,.banner,.slumpa,.valjknapp,#slumpinfo,.toggle,.fk-lucka,
+    .omber,.hk-lnav,.segforkl{display:none !important}
+
+    .hk-top{display:none !important}
+    #utskriftshuvud{display:block;border-bottom:2px solid #000;padding:0 0 8px;margin:0 0 14px}
+    #utskriftshuvud b{font-family:var(--serif);font-weight:600;font-size:20px;display:block}
+    #utskriftshuvud span{font-size:12px;color:#333}
+    .card{border:0;padding:0 0 14px;margin:0;page-break-inside:avoid}
+    h2{font-size:17px;margin:0 0 8px}
+    .verdikt{border:0;border-left:3px solid #000;padding:0 0 0 12px;margin-bottom:12px}
+    .verdikt>strong{font-size:19px}
+    .chip{border:1px solid #999;background:#fff !important;color:#000;font-size:12px;padding:2px 8px}
+    .msg{border:1px solid #999;background:#fff !important;padding:8px 10px;font-size:12px}
     a{color:#000;text-decoration:underline}
-    .msg{border:1px solid #999;background:#fff !important}
-    table{font-size:11px}
+
+    /* nyckeltalen ryms på en rad och bär hela slutsatsen */
+    .hk-kpi{gap:8px}
+    .hk-kpi .k{border:1px solid #999;border-left-width:1px;padding:8px 10px}
+    .hk-kpi b{font-size:22px}
+    .hk-kpi i{display:none}
+
+    /* täckningen: alla rader, även de som filtret döljer på skärmen */
+    body.hk-brist #ut .tk-rad.tackt,
+    body.hk-brist #ut .tk-rad.okand{display:grid !important}
+    .tk-huvud,.tk-rad{grid-template-columns:132px 1fr 66px 66px 96px;gap:0 10px;font-size:12px}
+    .tk-rad{padding:6px 0;break-inside:avoid}
+    .tk-rad.tackt{opacity:.75}
+    .tk-namn,.tk-tal{font-size:12px}
+    .tk-status{font-size:11px}
+    .tk-mob{display:none !important}
+
+    /* förslagen: den valda om det finns en, annars de två rekommenderade */
+    .fk-hero{break-inside:avoid;border:1px solid #999;padding:10px}
+    .fk-hero.vald{background:#fff !important;border-width:2px}
+    #forslagskort:has(.fk-hero.vald) .fk-hero:not(.vald){display:none !important}
+    .fk-hero .bildslot{display:none}
+    .fk-pris b{font-size:22px}
+    /* utfällningen på det valda kortet öppnas av forberedUtskrift() */
+    .fk-mer>summary{display:none}
+    .fk-mer .prod{border:0;padding:0;margin:0;cursor:default}
+    .fk-mer .rt{font-size:11px}
+
+    .src{font-size:11px;border-top:1px solid #999;margin-top:14px}
   }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="hk-top">
+  <div class="hk-logo">Hökoll</div>
+  <div class="hk-topright">
+    <span class="hk-meta" id="hkMeta">Foderanalys → produktförslag</span>
+    <button class="hk-tbtn" id="hkDela">Dela</button>
+  </div>
+</div>
+<section class="hk-hero">
+  <div class="hk-hero-txt">
+    <h1 class="hk-h1">Du har analysen.<br><em>Vad fattas i den?</em></h1>
+    <p>Skriv in värdena från grovfoderanalysen. Vi räknar mot SLU:s normer och visar vilka tillskott
+    som täcker luckorna — och vad de kostar per dygn.</p>
+    <div class="hk-cta-rad">
+      <a class="hk-cta" href="#verktyget">Börja med hästen</a>
+      <span>Tar 2 minuter · inget konto</span>
+    </div>
+    <div class="hk-stats">
+      <div><b>34</b><span>produkter i databasen</span></div>
+      <div><b>1 000 kr</b><span>typisk årsskillnad</span></div>
+      <div><b>SLU 289</b><span>normerna vi räknar mot</span></div>
+    </div>
+  </div>
+  <div class="hk-hero-bild">
+    <img src="https://images.pexels.com/photos/19921165/pexels-photo-19921165.jpeg?auto=compress&cs=tinysrgb&w=1000&h=1250&fit=crop" alt="Hästar som äter hö">
+    <span class="hk-cred">Foto: wolna zx på Pexels</span>
+  </div>
+</section>
+<div class="hk-tabs">
+  <button class="on" data-t="in">Foderstat</button>
+  <button data-t="ut">Resultat</button>
+</div>
+<div class="wrap" id="verktyget">
 
-<h1>Från foderanalys till produktförslag</h1>
-<p class="sub">MVP. Räknar hästens behov enligt SLU:s utfodringsrekommendationer, jämför mot din
-grovfoderanalys och föreslår tillskott som täcker underskotten — med takkontroll mot samtliga
-toleransgränser samtidigt.</p>
+<!-- Syns bara på papper. Ett utskrivet underlag utan häst, analys och datum är
+     svårt att lita på i efterhand — och raden gör det direkt synligt om
+     utskriftsformatet över huvud taget slår igenom. -->
+<div id="utskriftshuvud"></div>
 
-<div class="banner" id="datakalla">Läser produktdata…</div>
+
+<div class="hk-cols">
+<div class="hk-left">
+<div class="hk-lnav">
+  <button class="on" data-l="0">Hästen</button>
+  <button data-l="1">Grovfoder</button>
+  <button data-l="2">Övrigt</button>
+</div>
 
 <!-- ============ HÄSTEN ============ -->
 <div class="card">
-  <h2>1. Hästen</h2>
+  <h2>Hästen</h2>
   <div class="grid g4">
-    <div><label>Vikt vid normalhull (kg)</label><input type="number" id="vikt" value="500" min="50" max="1200" step="5"></div>
-    <div><label>Typ</label><select id="typ">
+    <div style="grid-column:span 2"><label>Vikt vid normalhull</label>
+      <div class="viktrad">
+        <input type="range" id="viktRange" class="hk-range" min="150" max="900" step="10" value="500">
+        <span class="fld" style="width:96px;flex:0 0 96px"><input type="number" id="vikt" value="500"
+          min="50" max="1200" step="5" style="padding-right:34px"><span class="u">kg</span></span>
+      </div></div>
+    <div class="hk-seg-holder" style="grid-column:span 2"><label>Typ</label>
+      <div class="hk-seg" data-for="typ"></div><select id="typ">
       <option value="1.00" selected>Lättfödd</option>
       <option value="1.05">Normalfödd</option>
       <option value="1.10">Svårfödd</option>
     </select></div>
-    <div><label>Hingst (+10 % energi)</label><select id="hingst">
-      <option value="1.00" selected>Nej</option><option value="1.10">Ja</option>
-    </select></div>
-    <div><label>Arbete</label><select id="arbete">
+    <div class="hk-seg-holder" style="grid-column:span 2"><label>Arbete</label><div class="hk-seg hk-seg-wrap" data-for="arbete"></div><select id="arbete">
       <option value="0" selected>Inget (underhåll)</option>
       <option value="1">Lätt — fritidsridning, +25 %</option>
       <option value="2">Medel — ridskoleverksamhet, +50 %</option>
@@ -204,24 +589,32 @@ toleransgränser samtidigt.</p>
   </div>
   <div class="grid g3" style="margin-top:12px">
     <div style="grid-column:span 2"><label>Kategori</label><select id="kategori"></select></div>
-    <div id="vaxtFalt" style="display:none"><label>Daglig tillväxt (g/dygn)</label>
-      <input type="number" id="tillvaxt" step="10" placeholder="lämna tomt om okänd"></div>
+    <div><label>Hingst</label><select id="hingst">
+      <option value="1.00" selected>Nej</option><option value="1.10">Ja, +10 % energi</option>
+    </select></div>
+    <div id="vaxtFalt" style="display:none;grid-column:span 3"><label>Daglig tillväxt</label>
+      <input type="number" id="tillvaxt" step="10" placeholder="lämna tomt om okänd"><span class="u">g/dygn</span></div>
   </div>
   <div id="katInfo"></div>
-  <p class="note">Ange vikten <strong>vid normalhull</strong>, inte aktuell vikt. Är hästen i över- eller
-  underhull ska foderstaten räknas på den vikt den skulle haft i hull 4–6. Samma regel som i
-  HästSveriges foderstatsprogram.</p>
+  <p class="note">Vikten hästen <strong>skulle ha i hull 4–6</strong>, inte dagens vikt.
+  <details style="display:inline"><summary style="display:inline">Varför?</summary>
+  <span class="note">Är hästen i över- eller underhull ska foderstaten räknas på normalhullsvikten.
+  Samma regel som i HästSveriges foderstatsprogram.</span></details></p>
 </div>
 
 <!-- ============ GROVFODER ============ -->
 <div class="card">
   <div class="h2row">
-    <h2>2. Grovfoderanalys</h2>
+    <h2>Grovfoderanalys</h2>
     <button class="slumpa" onclick="slumpaAnalys()">Slumpa en analys</button>
   </div>
   <div id="slumpinfo"></div>
 
-  <div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin-bottom:14px">
+  <div class="hk-drop">
+    <b>Ladda upp analysrapporten</b>
+    <span>PDF eller foto — fälten fylls i åt dig <em>(kommer)</em></span>
+  </div>
+  <div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin-bottom:6px">
     <div>
       <label>Analysvärdena är angivna</label>
       <div class="toggle">
@@ -229,128 +622,135 @@ toleransgränser samtidigt.</p>
         <button id="bFoder" onclick="setEnhet('foder')">per kg foder</button>
       </div>
     </div>
-    <div style="min-width:150px"><label>Torrsubstans (%)</label><input type="number" id="ts" value="89" step="0.1"></div>
-    <div style="min-width:150px"><label>Giva (kg ts/dygn)</label><input type="number" id="giva" value="9" step="0.1"></div>
+    <div class="fld" style="min-width:170px"><label>Torrsubstans</label><input type="number" id="ts" value="89" step="0.1"><span class="u">%</span></div>
+    <div class="fld" style="min-width:170px"><label>Giva per dygn</label><input type="number" id="giva" value="9" step="0.1"><span class="u">kg ts</span></div>
     <div style="font-size:12.5px;color:var(--muted);padding-bottom:8px" id="givaInfo"></div>
   </div>
 
+  <p class="hk-enhetsvarning">Analysrapporten anger nästan alltid per kg&nbsp;ts. Väljer du fel blir
+  alla värden ca 11 % fel för ett hö med 89 % ts.</p>
+
   <h3>Energi och protein <span id="e1">(per kg ts)</span></h3>
+  <div class="grid g3 g3fast">
+    <div><label>Omsättbar energi</label><input type="number" id="energi" value="8.2" step="0.1"><span class="u" data-u="MJ"></span></div>
+    <div><label>Smältbart råprotein</label><input type="number" id="smbrp" value="47" step="1"><span class="u" data-u="g"></span></div>
+    <div><label>Socker / WSC <span style="color:var(--ink30)">valfritt</span></label><input type="number" id="wsc" value="112" step="1"><span class="u" data-u="g"></span></div>
+  </div>
+
+  <h3>Mineraler <span id="e2">(per kg ts)</span></h3>
   <div class="grid g3">
-    <div><label>Omsättbar energi (MJ)</label><input type="number" id="energi" value="8.2" step="0.1"></div>
-    <div><label>Smältbart råprotein (g)</label><input type="number" id="smbrp" value="47" step="1"></div>
-    <div><label>Socker / WSC (g) — valfritt</label><input type="number" id="wsc" value="112" step="1"></div>
+    <div><label>Kalcium <span class="fk">Ca</span></label><input type="number" id="Ca" value="2.8" step="0.1"><span class="u" data-u="g"></span></div>
+    <div><label>Fosfor <span class="fk">P</span></label><input type="number" id="P" value="2.4" step="0.1"><span class="u" data-u="g"></span></div>
+    <div><label>Magnesium <span class="fk">Mg</span></label><input type="number" id="Mg" value="0.6" step="0.1"><span class="u" data-u="g"></span></div>
+    <div><label>Zink <span class="fk">Zn</span></label><input type="number" id="Zn" value="21" step="0.1"><span class="u" data-u="mg"></span></div>
+    <div><label>Koppar <span class="fk">Cu</span></label><input type="number" id="Cu" value="5" step="0.1"><span class="u" data-u="mg"></span></div>
+    <div><label>Selen <span class="fk">Se</span></label><input type="number" id="Se" placeholder="—" step="0.01"><span class="u" data-u="mg"></span></div>
   </div>
-
-  <h3>Makromineraler, g <span id="e2">(per kg ts)</span></h3>
-  <div class="grid g4">
-    <div><label>Kalcium (Ca)</label><input type="number" id="Ca" value="2.8" step="0.1"></div>
-    <div><label>Fosfor (P)</label><input type="number" id="P" value="2.4" step="0.1"></div>
-    <div><label>Magnesium (Mg)</label><input type="number" id="Mg" value="0.6" step="0.1"></div>
-    <div><label>Natrium (Na)</label><input type="number" id="Na" value="0.05" step="0.01"></div>
-  </div>
-
-  <h3>Mikromineraler, mg <span id="e3">(per kg ts)</span> — lämna tomt om ej analyserat</h3>
-  <div class="grid g4">
-    <div><label>Zink (Zn)</label><input type="number" id="Zn" value="21" step="0.1"></div>
-    <div><label>Koppar (Cu)</label><input type="number" id="Cu" value="5" step="0.1"></div>
-    <div><label>Mangan (Mn)</label><input type="number" id="Mn" value="20" step="0.1"></div>
-    <div><label>Järn (Fe)</label><input type="number" id="Fe" value="96" step="1"></div>
-  </div>
-  <div class="grid g4" style="margin-top:12px">
-    <div><label>Selen (Se)</label><input type="number" id="Se" placeholder="ej analyserat" step="0.01"></div>
-    <div><label>Jod (I)</label><input type="number" id="I" placeholder="ej analyserat" step="0.01"></div>
-    <div><label>Kobolt (Co)</label><input type="number" id="Co" placeholder="ej analyserat" step="0.01"></div>
-    <div style="display:flex;align-items:end"><button onclick="tabellvarden()"
-      style="width:100%;padding:8px;background:#fff;border:1px solid var(--brand);color:var(--brand);
-      border-radius:5px;font:inherit;font-size:13px;font-weight:600;cursor:pointer">Fyll i schablonvärden</button></div>
-  </div>
+  <!-- Natrium, mangan, järn, jod och kobolt står sällan på rapporten och ändrar
+       sällan slutsatsen. De ligger kvar, men tar inte plats förrän de behövs. -->
+  <details class="flerfalt"><summary>Fler fält: natrium, mangan, järn, jod, kobolt
+    <span id="e3" style="display:none"></span></summary>
+  <div class="grid g3">
+    <div><label>Natrium <span class="fk">Na</span></label><input type="number" id="Na" value="0.05" step="0.01"><span class="u" data-u="g"></span></div>
+    <div><label>Mangan <span class="fk">Mn</span></label><input type="number" id="Mn" value="20" step="0.1"><span class="u" data-u="mg"></span></div>
+    <div><label>Järn <span class="fk">Fe</span></label><input type="number" id="Fe" value="96" step="1"><span class="u" data-u="mg"></span></div>
+    <div><label>Jod <span class="fk">I</span></label><input type="number" id="I" placeholder="—" step="0.01"><span class="u" data-u="mg"></span></div>
+    <div><label>Kobolt <span class="fk">Co</span></label><input type="number" id="Co" placeholder="—" step="0.01"><span class="u" data-u="mg"></span></div>
+    <div style="display:flex;flex-direction:row;align-items:flex-end"><button onclick="tabellvarden()"
+      style="width:100%;padding:10px;background:#fff;border:1px solid #d8cdb9;color:var(--brand);
+      border-radius:3px;font:inherit;font-size:13px;font-weight:600;cursor:pointer">Schablonvärden</button></div>
+  </div></details>
   <div id="validering"></div>
   <details class="omber" style="margin-top:14px">
-    <summary>Provet måste representera hela partiet — så tar du ut det</summary>
-    <p class="note">Enligt SLU 308 är provtagningen den största felkällan i hela kedjan, större
-    än laboratoriets mätosäkerhet. Ett prov ur en enda bal säger bara vad den balen innehöll.</p>
-    <p class="note"><strong>Hö:</strong> öppna 10–12 balar och ta prov ur var och en. Dra inte ut
-    tussar ur oöppnade balar — bladen faller av och analysen visar då lägre proteinhalt än fodret
-    verkligen har. Klipp ned, blanda, skicka ½–1 kg.<br>
-    <strong>Inplastat:</strong> ta borrkärnor ur 3–4 balar med ensilageborr och tejpa igen hålen
-    direkt med ensilagetejp, inte silvertejp. Saknas borr: ta prov ur de 3–4 första balar du
-    öppnar och frys tills alla är provtagna.</p>
-    <p class="note">Källa: HästSveriges foderskola del 5, exempelruta 1.<br><br>
-    <strong>Om selen:</strong> schablonvärdet är 0. Svenska jordar är selenfattiga och SLU anger
-    att tillskott behövs i de allra flesta fall — antagandet ska framtvinga en selenbrist, inte
-    dölja den.</p>
+    <summary>Ett prov ur en bal säger bara vad den balen innehöll — så tar du ut provet</summary>
+    <p class="note"><strong>Hö:</strong> öppna 10–12 balar, ta prov ur var och en. Klipp ned, blanda,
+    skicka ½–1 kg.</p>
+    <p class="note"><strong>Inplastat:</strong> borrkärnor ur 3–4 balar, täta hålen direkt med
+    ensilagetejp — inte silvertejp.</p>
+    <p class="note">Dra aldrig tussar ur oöppnade balar: bladen faller av och proteinet ser lägre ut
+    än det är.</p>
+    <p class="note">Provtagningen är en större felkälla än labbets mätosäkerhet (SLU 308).
+    Schablonvärdet för selen är 0 — svenska jordar är selenfattiga och antagandet ska framtvinga
+    en selenbrist, inte dölja den.</p>
   </details>
 </div>
 
 <div class="card">
-  <div class="h2row">
-    <h2>2b. Övriga fodermedel</h2>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <select id="tabellval" style="width:auto;font-size:13px"></select>
-      <button class="slumpa" onclick="laggTillEget()">Eget foder</button>
-    </div>
+  <h2>Övriga fodermedel</h2>
+  <p class="note" style="margin-top:0">Kraftfoder, halm eller ett andra grovfoder.
+  <details style="display:inline"><summary style="display:inline">Varför saknas mineraler?</summary>
+  <span class="note">Tabellfodren har näringsvärden ur SLU:s fodertabell men saknar mikromineraler.
+  De redovisas som odeklarerade, inte som noll.</span></details></p>
+  <div style="display:flex;gap:8px;align-items:center;margin:12px 0 10px">
+    <select id="tabellval" style="flex:1;min-width:0"></select>
+    <button class="slumpa" style="flex:0 0 auto" onclick="laggTillEget()">Eget foder</button>
   </div>
-  <p class="note" style="margin-top:0">Kraftfoder, halm eller ett andra grovfoder. Bidragen
-  räknas in i foderstaten. Tabellfodren har näringsvärden ur SLU:s fodertabell men
-  <strong>saknar mikromineraler</strong> — de redovisas som odeklarerade, inte som noll.</p>
   <div id="foderlista"></div>
 </div>
 
 <div class="card">
-  <h2>2c. Tillskott du redan ger</h2>
-  <p class="note" style="margin-top:0">Ger hästen redan ett mineralfoder eller tillskott räknas
-  det in här. Utan det blir varje nytt förslag en <strong>stapling</strong> ovanpå något som
-  redan finns — och selen, som har den smalaste marginalen av alla mikromineraler, är just det
-  ämne där stapling blir farlig.</p>
-  <div class="grid g3">
-    <div style="grid-column:span 2"><label>Produkt</label>
-      <select id="befProdukt"></select></div>
-    <div><label>Giva (g/dygn)</label>
-      <input type="number" id="befDos" step="1" placeholder="t.ex. 50"></div>
+  <h2>Tillskott du redan ger</h2>
+  <p class="note" style="margin-top:0">Det hästen redan får räknas in innan underskotten beräknas.
+  <details style="display:inline"><summary style="display:inline">Varför spelar det roll?</summary>
+  <span class="note">Utan det blir varje nytt förslag en stapling ovanpå något som redan finns — och
+  selen, med den smalaste marginalen av alla mikromineraler, är just där stapling blir farlig.</span></details></p>
+  <!-- Produktnamnen är långa och doskolumnen behöver plats för "g/dygn". På
+       400 px ryms de inte bredvid varandra; en rad var är den enda utvägen
+       som inte kapar texten. -->
+  <div class="grid">
+    <div><label>Produkt</label><select id="befProdukt"></select></div>
+    <div style="max-width:180px"><label>Giva</label>
+      <input type="number" id="befDos" step="1" placeholder="t.ex. 50"><span class="u">g/dygn</span></div>
   </div>
   <div id="befInfo"></div>
 </div>
 
+</div><!-- /hk-left -->
+
+<div class="hk-right">
+<div class="hk-kpi">
+  <div class="k k-brist"><span>Underskott</span><b id="kpiBrist">—</b><i>poster under behov</i></div>
+  <div class="k k-pris"><span>Billigaste lösning</span><b id="kpiPris">—</b><i>kr per dygn</i></div>
+  <div class="k k-spar"><span>Mot dyraste likvärdiga</span><b id="kpiSpar">—</b><i>kr per år, samma täckning</i></div>
+</div>
+<div class="hk-filter">
+  <button id="fBrist" class="on">Bara underskott</button>
+  <button id="fAlla">Alla rader</button>
+</div>
 <div id="ut"></div>
 
-<div class="card">
-  <h2>5. Spara foderstaten</h2>
-  <p class="note" style="margin-top:0">Hela foderstaten ligger i adressfältet. Det finns inget
-  konto och ingenting sparas på någon server — <strong>länken är sparningen</strong>. Bokmärk
-  den eller spara den någonstans, så kan du komma tillbaka och ändra senare, eller skicka den
-  till någon annan.</p>
+<div class="card" id="sparakort">
+  <h2>Spara foderstaten</h2>
+  <p class="note" style="margin-top:0"><strong>Länken är sparningen.</strong> Inget konto.
+  <details style="display:inline"><summary style="display:inline">Varför?</summary>
+  <span class="note">Hela foderstaten ligger i adressfältet och ingenting sparas på någon server.
+  Bokmärk länken, så kan du komma tillbaka och ändra senare — eller skicka den vidare.</span></details></p>
   <div style="display:flex;gap:9px;flex-wrap:wrap">
     <button class="slumpa" id="kopieraKnapp" onclick="kopieraLank()">Kopiera länk till foderstaten</button>
-    <button class="slumpa" onclick="window.print()">Skriv ut</button>
   </div>
-  <p class="note">Utskriften visar hästens uppgifter, täckningen och den produkt du valt —
-  inte formulären. Välj ett produktförslag först om det ska följa med.</p>
 </div>
 
-<div class="msg m-bad" style="margin:26px 0 0;font-size:13.5px">
-  <strong>Detta är inte rådgivning.</strong> Sidan är en teknisk prototyp som räknar en
-  foderstat mot SLU:s publicerade normer. Den ersätter inte veterinär, husdjursagronom
-  eller foderrådgivare, och den känner inte din häst. Beräkningen bygger på uppgifter du
-  själv matar in och på tillverkarnas egna produktdeklarationer, som inte har granskats av
-  tredje part. Rådgör alltid med veterinär innan foderstaten ändras för en häst med
-  insulinresistens, PPID, PSSM, fång eller annan sjukdom. Ingen garanti lämnas för att
-  uppgifterna är korrekta eller aktuella, och inget ansvar tas för beslut som fattas
-  utifrån dem.
-</div>
+</div><!-- /hk-right -->
+</div><!-- /hk-cols -->
 
 <div class="src">
+  <span id="datakalla"></span>
   <strong>Normer:</strong> SLU Rapport 289, <em>Utfodringsrekommendationer för häst</em> (Jansson red., 2013),
   tabell 3, 15, 17, 31 och 32. Underhållsenergi enligt 0,5 × V<sup>0,75</sup>.
   Behov redovisas som intervall där SLU anger intervall.<br>
   <strong>Sockergräns:</strong> Borgia m.fl. (2011) — NSC under 170 g/kg ts vid PSSM. Detta är det enda
   kvantitativa sockervärdet i det svenska underlaget; något allmänt gränsvärde finns inte.<br>
   <strong>Toleransgränser:</strong> SLU 289 tabell 17, maximal toleransgräns.<br>
-  <strong>Produktdata:</strong> tillverkarnas egna deklarationer, insamlade 2026-07-31.
-  Priser är indikativa och hämtade ur återförsäljarnas webbutiker vid insamlingstillfället.
+  <strong>Produktdata:</strong> tillverkarnas egna deklarationer. Priser är indikativa och hämtade
+  ur återförsäljarnas webbutiker vid insamlingstillfället.
   Produktbilder används inte — varje produkt visas med varumärkets initialer.
   Fullständig källförteckning per produkt i
   <a href="https://github.com/Dsquire1/hastfoder-mvp/blob/main/data/produkter.json"
      style="color:var(--brand)">data/produkter.json</a>.<br>
+  <strong>Detta är inte rådgivning.</strong> Prototypen ersätter inte veterinär, husdjursagronom
+  eller foderrådgivare — se
+  <a href="https://github.com/Dsquire1/hastfoder-mvp/blob/main/ANSVARSFRISKRIVNING.md"
+     style="color:var(--brand)">ansvarsfriskrivningen</a>.<br>
   <strong>Öppen källkod.</strong> Koden är fri att granska och återanvända — se
   <a href="https://github.com/Dsquire1/hastfoder-mvp" style="color:var(--brand)">repot</a>.
   Databasen är inte en officiell källa och har inget samband med SLU, SVA eller HästSverige.
@@ -3512,11 +3912,63 @@ function kortTangent(ev, el){
   }
 }
 
+/* Växlar mellan att visa bara rader under behov och alla rader. Kroppsklassen
+   hk-brist finns redan i skalet och styr synligheten via CSS. */
+function vaxlaRader(){
+  const kropp = document.body;
+  if(!kropp) return;
+  const bara = kropp.classList.contains("hk-brist");
+  kropp.classList.toggle("hk-brist", !bara);
+  const fb = document.getElementById("fBrist"), fa = document.getElementById("fAlla");
+  if(fb) fb.className = !bara ? "on" : "";
+  if(fa) fa.className = !bara ? "" : "on";
+  const info = document.getElementById("radInfo");
+  if(info) info.textContent = !bara ? "Visar rader under behov" : "Visar alla rader";
+  const knapp = info && info.parentElement ? info.parentElement.querySelector("button") : null;
+  if(knapp) knapp.textContent = !bara ? knapp.textContent.replace("Dölj","Visa alla")
+                                      : "Dölj rader som är täckta";
+}
+
 function valj(nyckel){
-  valdId = (valdId === nyckel) ? null : nyckel;
+  const avmarkerar = (valdId === nyckel);
+  const kortId = "kort-" + nyckel.replace(/[^\w-]/g, "_");
+
+  /* Vid avmarkering mäts kortets läge före och efter omritningen och
+     skillnaden kompenseras bort. Innehållet ovanför krymper — "Räknar in …"
+     försvinner, sammanfattningen skrivs om, färgnyckeln tas bort — och utan
+     kompensation glider listan några tiotal pixlar under fingret.
+
+     Vid val skrollas det däremot avsiktligt upp till täckningen. Där ÄR
+     flytten poängen: man vill se tabellen ändra sig.                        */
+  const fore = avmarkerar && document.getElementById(kortId)
+    ? document.getElementById(kortId).getBoundingClientRect().top : null;
+
+  valdId = avmarkerar ? null : nyckel;
   rakna();
-  const el = document.getElementById("cov-anchor");
-  if(el && valdId) el.scrollIntoView({behavior:"smooth", block:"start"});
+
+  if(avmarkerar){
+    if(fore !== null){
+      const nu = document.getElementById(kortId);
+      const flytt = nu ? nu.getBoundingClientRect().top - fore : 0;
+      try{ if(flytt) window.scrollBy(0, flytt); }catch(e){}
+    }
+  } else {
+    const el = document.getElementById("cov-anchor");
+    try{ if(el && el.scrollIntoView) el.scrollIntoView({behavior:"smooth", block:"start"}); }
+    catch(e){}
+  }
+}
+
+/* "g/kg ts" i varje fält upprepar basen som redan står i sektionsrubriken, och
+   åt 78 px av en ruta som bara är 112 px bred — talet fick 20 px och blev
+   oläsligt. Fältet bär enheten, rubriken bär basen.                          */
+function uppdEnheter(e){
+  const bas = e==="foder" ? "foder" : "ts";
+  document.querySelectorAll('.u[data-u]').forEach(function(el){
+    const smal = el.closest(".hk-left") !== null;
+    el.textContent = smal ? el.getAttribute('data-u')
+                          : el.getAttribute('data-u')+"/kg "+bas;
+  });
 }
 
 function setEnhet(e){
@@ -3525,6 +3977,7 @@ function setEnhet(e){
   bFoder.className = e==="foder" ? "on" : "";
   const t = e==="ts" ? "(per kg ts)" : "(per kg foder)";
   e1.textContent = t; e2.textContent = t; e3.textContent = t;
+  uppdEnheter(e);
   rakna();
 }
 
@@ -3887,9 +4340,65 @@ function tabellvarden(){
 const num = el => { const v = parseFloat(el.value); return isNaN(v) ? null : v; };
 const f1 = n => n.toLocaleString("sv-SE",{maximumFractionDigits:1});
 const f0 = n => n.toLocaleString("sv-SE",{maximumFractionDigits:0});
-const rng = ([a,b]) => a===b ? f1(a) : f1(a)+"–"+f1(b);
+/* Mikromineraler mäts i tiondelar. f1 rundar 0,25 till 0,3, och då ser en rad
+   där 0,25 av 0,5 är täckt ut som 0,3 av 0,5 = 60 %, medan statusen räknar på
+   det exakta värdet och säger 50 %. Talen under ett behöver två decimaler.  */
+const fv = n => (n !== 0 && Math.abs(n) < 1)
+  ? n.toLocaleString("sv-SE",{maximumFractionDigits:2}) : f1(n);
+const rng = ([a,b]) => a===b ? fv(a) : fv(a)+"–"+fv(b);
+
+/* Är behovet täckt? Frågan ställdes på tre ställen med tre olika jämförelser:
+   lösaren med marginalen 1e-9, tabellen helt utan, och underskottslistan med
+   tröskeln 0,001. Resultatet blev att lösaren rapporterade "täcker alla sex"
+   samtidigt som tabellraden sade "99 % · under" om samma foderstat — dosen
+   träffade behovet på fjärde decimalen.
+
+   Marginalen är relativ, eftersom värdena spänner från 0,25 mg selen till
+   600 g protein. En absolut marginal som är rimlig för det ena är antingen
+   meningslös eller alldeles för grov för det andra.                         */
+const TACKT_MARGINAL = 1e-6;
+function tacker(tillfort, behov){
+  return tillfort >= behov - Math.max(Math.abs(behov)*TACKT_MARGINAL, 1e-9);
+}
+
+/* Två tal som skiljer sig får inte visas som samma tal. 25,46 mot behovet 25,5
+   rundas båda till "25,5" och raden läser "25,5 av 25,5 · 99 % under". Talet
+   får så många decimaler som krävs för att skillnaden ska synas.            */
+function fvMot(t, ref){
+  let txt = fv(t);
+  for(let d = 2; d <= 3 && txt === fv(ref) && Math.abs(t - ref) > 1e-9; d++)
+    txt = t.toLocaleString("sv-SE",{maximumFractionDigits:d});
+  return txt;
+}
+
+/* Ett avrundat procenttal får aldrig motsäga statusordet bredvid sig. 99,8 %
+   som rundas till 100 och samtidigt kallas "under" läser som ett räknefel,
+   inte som avrundning. Talet viker för ordet — ordet bygger på exakta värden. */
+function pctText(t, nedre, brist){
+  const p = nedre > 0 ? t/nedre*100 : 0;
+  let v = Math.round(p);
+  if(brist && v >= 100) v = 99;
+  if(!brist && p >= 100 && v < 100) v = 100;
+  return f0(v);
+}
 
 function rakna(){
+  // Tillstånd 1 ur DESIGNBESLUT: tomt formulär ska säga vad som krävs, inte
+  // räkna fram sex underskott ur nollor och presentera dem som ett fynd.
+  // Energi och torrsubstans är minimikravet — utan dem är allt annat gissningar.
+  if(num(document.getElementById("energi")) === null && num(ts) === null){
+    ut.innerHTML = '<div class="card"><h2>Fyll i analysen</h2>'
+      + '<p class="note" style="margin-top:0">Två värden räcker för att komma igång: '
+      + '<strong>omsättbar energi</strong> och <strong>torrsubstans</strong>. '
+      + 'De står överst på analysrapporten.</p>'
+      + '<p class="note">Har du ingen analys — tryck <em>Slumpa en analys</em> för att se '
+      + 'hur verktyget fungerar på ett typiskt svenskt hö.</p></div>';
+    const kb = document.getElementById("kpiBrist"), kp = document.getElementById("kpiPris"),
+          ks = document.getElementById("kpiSpar");
+    if(kb) kb.textContent = "—"; if(kp) kp.textContent = "—"; if(ks) ks.textContent = "—";
+    sparaTillstand();
+    return;
+  }
   const vikt = num(vikt_) || 500;
   const enh  = vikt/100;                    // enheter om 100 kg kroppsvikt
   const tsH  = (num(ts)||89)/100;
@@ -4071,48 +4580,93 @@ function rakna(){
   let h = "";
 
   /* --- täckningstabell --- */
-  h += '<div class="card" id="cov-anchor"><h2>3. Täckning'
+  h += '<div class="card" id="cov-anchor"><h2>Täckning'
      + (vald ? ' — grovfoder plus <span style="color:var(--ok)">'
                + (vald.kombo ? vald.delar.map(d=>d.p.namn).join(" + ") : vald.p.namn)+'</span>'
              : ' från grovfodret')
      + '</h2>';
-  // ---- sammanfattning: svaret i klartext, före tabellen ----
-  // Tabellen har fjorton rader och staplar. Den som öppnar sidan ska få veta
-  // vad problemet är och vad som löser det innan hon behöver läsa den.
+  // ---- vad som fattas efter att ett eventuellt val räknats in --------------
+  //   Två frågor som såg ut som en: vad fattas, och vad kan ett tillskott laga.
+  //   bristLista utelämnar energi och protein, och ska göra det — lösaren
+  //   föreslår mineral- och vitaminfoder, och ett proteinunderskott löses inte
+  //   med en påse mineraler. Men rubriken och nyckeltalet talar för hela
+  //   tabellen, och måste därför räkna på hela den.
+  const kvarLista = bristLista.filter(m => !tacker(tot(m), beh[m][0]));
+  const utanfor = [];
+  if(tillEnergi < behEnergi*0.95) utanfor.push("Energi");
+  if(!tacker(tillProt, behProt))  utanfor.push("Smb råprotein");
+  const antalKvar = kvarLista.length + utanfor.length;
+
+  // ---- sammanfattning ----
+  // Designen (3a) öppnar med "Sex ämnen fattas" och ämnena som chips, inte med
+  // en mening. Rubriken bär svaret; korten under bär lösningen.
   {
-    const kort = m => (AMNESNAMN[m]||m).replace(/\s*\([^)]*\)/, "").toLowerCase();
-    const lista = a => a.length === 1 ? a[0]
-      : a.slice(0,-1).join(", ") + " och " + a[a.length-1];
-    const energiPct = behEnergi > 0 ? tillEnergi/behEnergi*100 : 0;
-    let rad1, rad2 = "";
+    const kort = m => (AMNESNAMN[m]||m).replace(/\s*\([^)]*\)/, "");
+    const RAKNEORD = ["Inga","Ett","Två","Tre","Fyra","Fem","Sex","Sju","Åtta","Nio","Tio"];
+    const b1 = komboLista.length ? komboLista[0] : (sisteForslag.length ? sisteForslag[0] : null);
 
     if(tsGrovTot < grovMin){
-      rad1 = "<strong>Börja med grovfodret.</strong> Givan ligger under minimigivan "
-           + "1 kg ts per 100 kg häst. Den frågan går före mineralbalansen.";
-    } else if(!bristLista.length){
-      rad1 = "<strong>Foderstaten täcker behoven.</strong> Inget tillskott behövs för de "
-           + "ämnen som ingår i beräkningen.";
+      h += '<div class="verdikt"><strong>Börja med grovfodret.</strong>'
+         + '<div class="rad2">Givan understiger 1 kg ts per 100 kg häst. '
+         + 'Den frågan går före mineralbalansen.</div></div>';
     } else {
-      const b = bristLista.map(kort);
-      rad1 = "<strong>Foderstaten saknar " + lista(b) + ".</strong> ";
-      rad1 += energiPct < 95
-        ? "Energin räcker inte heller — " + f0(energiPct) + " % av behovet."
-        : energiPct > 115
-          ? "Energin räcker med marginal, " + f0(energiPct) + " % av behovet."
-          : "Energi och protein är i balans.";
-      const b1 = komboLista.length ? komboLista[0] : (sisteForslag.length ? sisteForslag[0] : null);
-      if(b1){
-        const namn = b1.kombo
-          ? b1.delar.map(d => f0(d.dosG)+" g "+d.p.namn).join(" och ")
-          : f0(b1.dosG)+" g "+b1.p.namn;
-        const kvar = (b1.kombo ? b1.kvar : b1.delvis.concat(b1.saknas)).map(kort);
-        rad2 = "Billigaste lösningen: <strong>" + namn + "</strong> per dygn"
-             + (b1.kostnad != null ? ", ca " + f1(b1.kostnad) + " kr/dygn" : "")
-             + (kvar.length ? ". Kvar därefter: " + lista(kvar) + "." : ".");
+      // Rubriken avser vad som fattas *nu*. Räknas ett tillskott in är
+      // ursprungslistan inte längre svaret på frågan — den stod kvar och sade
+      // "sex ämnen fattas" bredvid ett nyckeltal som sade två.
+      const n = antalKvar;
+      const grovraden = 'Det löses inte med ett mineralfoder — utan med en större giva, '
+        + 'ett energirikare grovfoder eller ett kraftfoder under <strong>Övrigt</strong>.';
+
+      if(!n){
+        h += '<div class="verdikt" style="border-left-color:var(--ok)"><strong>'
+           + (vald ? "Inget fattas längre" : "Foderstaten täcker behoven") + '</strong>'
+           + '<div class="rad2">'
+           + (vald
+              ? 'Med <strong>'+forslagsNamn(vald)+'</strong> är samtliga nedre behovsgränser '
+                + 'täckta'+(vald.kostnad!=null ? ' för '+kr(vald.kostnad)+' kr/dygn' : '')+'.'
+              : 'Inget tillskott behövs för de ämnen som ingår.')
+           + '</div></div>';
+      } else if(!kvarLista.length){
+        // Allt lösaren kan åtgärda är åtgärdat. Kvar står grovfoderfrågan.
+        h += '<div class="verdikt" style="border-left-color:var(--warn)"><strong>'
+           + (utanfor.length === 1 ? utanfor[0]+' räcker inte' : 'Energi och protein räcker inte')
+           + '</strong><div class="chips" style="margin-top:10px">'
+           + utanfor.map(t => '<span class="chip c-part">'+t+'</span>').join("")
+           + '</div><div class="rad2">Mineralerna är täckta'
+           + (vald ? ' av <strong>'+forslagsNamn(vald)+'</strong>' : ' av grovfodret')
+           + '. '+grovraden+'</div></div>';
+      } else {
+        h += '<div class="verdikt"><strong>'
+           + (RAKNEORD[n] || n) + (n===1 ? " ämne fattas" : " ämnen fattas")
+           + (vald ? " fortfarande" : "") + '</strong>'
+           + '<div class="chips" style="margin-top:10px">'
+           + kvarLista.map(m => '<span class="chip c-cap">'+kort(m)+'</span>').join("")
+           + utanfor.map(t => '<span class="chip c-part">'+t+'</span>').join("")
+           + '</div>';
+        if(b1 && !vald){
+          const kvar = (b1.kombo ? b1.kvar : b1.delvis.concat(b1.saknas));
+          h += '<div class="rad2"><strong>Billigast som täcker mest:</strong> '
+             + forslagsNamn(b1)
+             + (b1.kostnad != null
+                ? ' · <strong>'+kr(b1.kostnad)+' kr/dygn</strong> · '+f0(b1.kostnad*30)+' kr/mån'
+                : ' · pris saknas')
+             + (kvar.length ? '<br>Kvar därefter: '+kvar.map(kort).join(", ") : '')
+             + '</div>';
+        } else if(vald){
+          h += '<div class="rad2"><strong>'+forslagsNamn(vald)+'</strong> täcker '
+             + (bristLista.length - kvarLista.length)+' av '+bristLista.length+' mineralämnen'
+             + (vald.kostnad!=null ? ' för '+kr(vald.kostnad)+' kr/dygn' : '')
+             + '. Se förslagen nedan för alternativ som täcker resten.</div>';
+        }
+        // Energi och protein har ingen produkt i databasen. Att lista dem som
+        // chips utan att säga vad man gör åt dem vore att peka på ett problem
+        // och gå därifrån.
+        if(utanfor.length)
+          h += '<div class="rad2">'+utanfor.join(" och ")+' ligger också under behovet. '
+             + grovraden+'</div>';
+        h += '</div>';
       }
     }
-    h += '<div class="verdikt">' + rad1
-       + (rad2 ? '<div class="rad2">'+rad2+'</div>' : '') + '</div>';
   }
 
   if(vald)
@@ -4120,21 +4674,11 @@ function rakna(){
        + (vald.kombo ? vald.delar.map(d => f0(d.dosG)+' g '+d.p.namn).join(" och ")
                      : f0(vald.dosG)+' g '+vald.p.namn)
        + '</strong> per dygn. Klicka igen för att ta bort.</div>';
-  h += '<div class="barleg">'
-     + '<span><i style="background:var(--brand)"></i>Grovfoder</span>'
-     + (ex.tsGrov+ex.tsKraft > 0
-        ? '<span><i style="background:#c08b62"></i>Övriga fodermedel</span>' : '')
-     + (bef && bef.dosG > 0
-        ? '<span><i style="background:#1f4d33"></i>Tillskott du redan ger</span>' : '')
-     + '<span><i style="background:var(--ok)"></i>Föreslaget tillskott</span>'
-     + '<span><i style="background:#4a4640;width:3px"></i>Behovet (mittlinjen)</span>'
-     + '<span><i style="background:rgba(47,107,69,.30)"></i>Behovets intervall</span>'
-     + '<span><i style="background:var(--bad);width:3px"></i>Toleransgräns</span></div>'
-     + '';
-  h += '<table><thead><tr>'
-     + '<th>Post</th><th class="n" style="text-align:center">0 &nbsp;·&nbsp; behov &nbsp;·&nbsp; 200 %</th>'
-     + '<th class="n">Behov</th><th class="n">Tillfört</th>'
-     + '<th class="n">Av nedre&nbsp;gräns</th><th>Status</th></tr></thead><tbody>';
+  // Filtret ligger i sidhuvudet (hk-filter). Ingen radräknare här — designen
+  // låter tabellen börja direkt.
+  h += '<div class="tk-huvud"><div>Post</div><div></div>'
+     + '<div style="text-align:right">Behov</div><div style="text-align:right">Tillfört</div>'
+     + '<div style="text-align:right">Status</div></div>';
 
   h += rad("Grovfoder (kg ts)", rng([grovRek[0],grovRek[1]]), f1(tsGrovTot),
         tsGrovTot/grovRek[0]*100,
@@ -4143,9 +4687,10 @@ function rakna(){
                [{v:givaTS,     klass:"seg-grov",   namn:"grovfoderanalysen"},
                 {v:ex.tsGrov,  klass:"seg-ovrigt", namn:"övriga grovfoder"}], grovMax));
   if(ex.tsKraft > 0)
-    h += '<tr><td>Kraftfoder (kg ts)</td><td class="barcell"></td><td class="n">—</td>'
-       + '<td class="n">'+f1(ex.tsKraft)+'</td><td class="n">—</td>'
-       + '<td><span class="pill p-ok">räknas ej mot grovfodergivan</span></td></tr>';
+    h += '<div class="tk-rad tackt"><div class="tk-namn">Kraftfoder (kg ts)</div>'
+       + '<div class="tk-stapel"></div><div class="tk-tal">—</div>'
+       + '<div class="tk-tal">'+f1(ex.tsKraft)+'</div>'
+       + '<div class="tk-status tk-neutral">utanför grovgivan</div></div>';
   h += rad("Energi (MJ)", f0(behEnergi), f0(tillEnergi), tillEnergi/behEnergi*100,
         tillEnergi<behEnergi*0.95?"low":(tillEnergi>behEnergi*1.15?"high":"ok"),
         stapel(behEnergi, behEnergi,
@@ -4158,15 +4703,30 @@ function rakna(){
                 {v:ex.smbrp,            klass:"seg-ovrigt", namn:"övriga fodermedel"}], null));
 
   ["Ca","P","Mg","NaCl"].forEach(m =>
-    h += radM(AMNESNAMN[m]+", g", beh[m], tot(m), null, extra[m], delarFor(m, extra[m])));
+    h += radM(kortNamn(m)+" (g)", beh[m], tot(m), null, extra[m], delarFor(m, extra[m])));
   MIKROLISTA.forEach(m => {
-    if(oanalyserat.indexOf(m) >= 0 && tot(m) <= 0){
-      h += '<tr><td>'+AMNESNAMN[m]+', mg</td><td class="barcell"></td>'
-         + '<td class="n">'+rng(beh[m])+'</td><td class="n">—</td><td class="n">—</td>'
-         + '<td><span class="pill p-high">ej analyserat</span></td></tr>';
+    if(oanalyserat.indexOf(m) >= 0){
+      // Grovfodret är oanalyserat för ämnet. Ett tillskott kan bidra, men
+      // totalen förblir okänd — och 0,25 mg jod av behovet 1,8 redovisades
+      // tidigare som "14 % · under", vilket läser den uteblivna analysen som
+      // en nolla. Det är samma fel som takkontrollen redan skyddar emot.
+      const frTillskott = tot(m);
+      h += '<div class="tk-rad okand"><div class="tk-namn">'+kortNamn(m)+' (mg)</div>'
+         + '<div class="tk-stapel okand">'
+         + (frTillskott > 0
+            ? '<div class="seg seg-forslag" style="left:0;width:'
+              + Math.min(100, frTillskott/beh[m][0]*50).toFixed(1)+'%"></div>' : '')
+         + '<div class="tk-mid"></div></div>'
+         + '<div class="tk-tal">'+rng(beh[m])+'</div>'
+         + '<div class="tk-tal">'+(frTillskott > 0 ? fv(frTillskott) : "—")+'</div>'
+         + '<div class="tk-status tk-neutral">'
+         + (frTillskott > 0 ? "grovfodret okänt" : "ej analyserat")+'</div>'
+         + '<div class="tk-mob">'
+         + (frTillskott > 0 ? fv(frTillskott)+" från tillskottet, grovfodret oanalyserat"
+                            : "behov "+rng(beh[m])+" mg")+'</div></div>';
       return;
     }
-    h += radM(AMNESNAMN[m]+", mg", beh[m], tot(m), tak[m], extra[m], delarFor(m, extra[m]));
+    h += radM(kortNamn(m)+" (mg)", beh[m], tot(m), tak[m], extra[m], delarFor(m, extra[m]));
   });
 
   const kvot = tot("P")>0 ? tot("Ca")/tot("P") : 0;
@@ -4174,31 +4734,54 @@ function rakna(){
   VITLISTA.forEach(m => {
     const t = vTill[m], b = vBeh[m], tk = vTak[m];
     const overTak = tk && t > tk;
-    const pill = overTak ? '<span class="pill p-high">ÖVER TAK</span>'
-      : t <= 0 ? '<span class="pill p-high">okänt</span>'
-      : t >= b[0] ? '<span class="pill p-ok">täckt av tillskott'
-                    + (tk ? ' · '+f0(t/tk*100)+' % av tak' : '')+'</span>'
-      : '<span class="pill p-high">'+f0(t/b[0]*100)+' % från tillskott</span>';
-    h += '<tr class="'+(overTak?"over":"")+'"><td>'+VIT_NAMN[m]+'</td>'
-       + '<td class="barcell">'+(t>0 ? stapel(b[0], b[1],
+    let cls, txt;
+    if(overTak)        cls = "larm",  txt = "över tak";
+    else if(t <= 0)    cls = "okand", txt = "ej analyserat";
+    else if(tacker(t, b[0])) cls = "tackt", txt = f0(t/b[0]*100)+" % · täckt";
+    else               cls = "tackt", txt = f0(t/b[0]*100)+" % · från tillskott";
+    h += '<div class="tk-rad '+cls+'"><div class="tk-namn">'+VIT_NAMN[m]+'</div>'
+       + (t>0 ? stapel(b[0], b[1],
              [{v:vBef[m],     klass:"seg-bef",     namn:"tillskottet du redan ger"},
               {v:vForslag[m], klass:"seg-forslag", namn:"det föreslagna tillskottet"}],
-             tk||null) : '')+'</td>'
-       + '<td class="n">'+rng(b)+'</td>'
-       + '<td class="n">'+(t>0 ? f1(t) : '—')+'</td>'
-       + '<td class="n">'+(t>0 ? f0(t/b[0]*100)+' %' : '—')+'</td>'
-       + '<td>'+pill+'</td></tr>';
+             tk||null)
+             : '<div class="tk-stapel okand"><div class="tk-mid"></div></div>')
+       + '<div class="tk-tal">'+rng(b)+'</div>'
+       + '<div class="tk-tal">'+(t>0 ? f1(t) : '—')+'</div>'
+       + '<div class="tk-status '+(overTak?"tk-under":t>=b[0]?"tk-tackt":"tk-neutral")+'">'
+       + txt+'</div>'
+       + mobRad(VIT_NAMN[m], t>0 ? f1(t) : "—", rng(b))+'</div>';
   });
 
-  h += '<tr class="'+(kvot<1.1?"deficit":"")+'"><td>Ca/P-kvot</td>'
-     + '<td class="barcell">'+stapel(1.2, 1.8,
-           [{v:kvot, klass:"seg-grov", namn:"foderstaten"}], null)+'</td><td class="n">1,2–1,8</td>'
-     + '<td class="n">'+f1(kvot)+'</td><td class="n">—</td><td>'
-     + (kvot<1.1?'<span class="pill p-low">under golv</span>'
-        : kvot<1.2?'<span class="pill p-high">vid golvet</span>'
-        : kvot<=1.8?'<span class="pill p-ok">i intervall</span>'
-        : '<span class="pill p-high">hög</span>')+'</td></tr>';
-  h += "</tbody></table>";
+  {
+    const brist = kvot < 1.1;
+    const txt = brist ? f1(kvot)+" · under golv"
+              : kvot < 1.2 ? f1(kvot)+" · vid golvet"
+              : kvot <= 1.8 ? f1(kvot)+" · ok"
+              : f1(kvot)+" · hög";
+    h += '<div class="tk-rad '+(brist?"deficit":"tackt")+'"><div class="tk-namn">Ca/P-kvot</div>'
+       + stapel(1.2, 1.8, [{v:kvot, klass:"seg-grov", namn:"foderstaten"}], null)
+       + '<div class="tk-tal">1,2–1,8</div><div class="tk-tal">'+f1(kvot)+'</div>'
+       + '<div class="tk-status '+(brist?"tk-under":"tk-neutral")+'">'+txt+'</div>'
+       + '<div class="tk-mob">'+f1(kvot)+' mot intervallet 1,2–1,8</div></div>';
+  }
+  h += "";
+
+  // Nyckeln ritas bara när staplarna faktiskt har mer än en färg — annars vore
+  // den utfyllnad. Övriga fodermedel har ett eget segment och räknades tidigare
+  // inte in i villkoret, så deras färg fanns i diagrammet men inte i nyckeln.
+  {
+    const harOvrigt = (ex.tsGrov + ex.tsKraft) > 0;
+    const harBef = bef && bef.dosG > 0;
+    if(vald || harBef || harOvrigt)
+      h += '<div class="stapelnyckel">'
+         + '<span><i style="background:var(--grov)"></i>Från grovfoderanalysen</span>'
+         + (harOvrigt
+            ? '<span><i style="background:var(--dim)"></i>Övriga fodermedel</span>' : '')
+         + (harBef
+            ? '<span><i style="background:#2f4a2a"></i>Tillskott du redan ger</span>' : '')
+         + (vald ? '<span><i style="background:var(--ok)"></i>Valt tillskott</span>' : '')
+         + '<span><i style="background:var(--ink);width:2px"></i>Behovet</span></div>';
+  }
 
   // ---- känslighet för givan ----
   // Foderintaget är enligt Kunskapsbank/05 den näst största felkällan, efter
@@ -4219,27 +4802,16 @@ function rakna(){
 
   // Läs-en-gång-innehåll. Viks undan så att tabellen och sammanfattningen får
   // utrymmet. Villkorade varningar och allt om toleransgränser står kvar ovan.
-  h += '<details class="omber"><summary>Om beräkningen — skala, intervall, '
-     + 'överskott och vitaminer</summary>'
-     + '<p class="note"><strong>Staplarna</strong> har samma skala på alla rader: 0 till 200 % '
-     + 'av behovet, med behovet som mittlinje. Når stapeln fram till linjen är behovet täckt. '
-     + 'Ett ›-tecken betyder att värdet går utanför skalan — det exakta talet står i kolumnen '
-     + 'till höger.</p>'
-     + '<p class="note"><strong>Behoven</strong> visas som intervall där SLU 289 anger intervall. '
-     + 'Procenttalet avser nedre gränsen — mot övre gränsen blir täckningen lägre. HästSveriges '
-     + 'foderstatsprogram räknar enbart mot övre gränsen och visar därför större underskott.</p>'
-     + '<p class="note"><strong>Överskott.</strong> SLU 289 anger att behoven kan överskridas '
-     + 'utan negativ påverkan, men villkorar det för mikromineraler till överskott som kommer ur '
-     + 'vallfodret, och tillägger att flera mineralämnen stör varandras upptag och att '
-     + 'överutfodring bör undvikas. Statusmärket visar därför hur nära toleransgränsen värdet '
-     + 'ligger. Marginalen från nedre behov till tak är 25× för selen, 29× för jod, 38× för zink '
-     + 'och 75× eller mer för övriga.</p>'
-     + '<p class="note"><strong>Vitaminerna</strong> räknas enbart från tillskott — grovfodrets '
-     + 'innehåll analyseras normalt inte. SLU 289 anger att välbärgat vallfoder plus daglig '
-     + 'utevistelse i regel täcker behovet vid underhåll och lätt till medelhårt arbete. Ett tomt '
-     + 'fält betyder att uppgift saknas, inte att hästen får för lite. Toleransgränserna prövas '
-     + 'däremot på riktigt, eftersom överskott bara kan komma från tillskott.'
-     + (vKallor.length ? ' Räknade källor: '+vKallor.join(", ")+'.' : '')+'</p>'
+  h += '<details class="omber"><summary>Om beräkningen</summary>'
+     + '<p class="note"><strong>Staplarna:</strong> 0–200 % av behovet, med behovet som '
+     + 'mittlinje. Når stapeln linjen är behovet täckt. ›&nbsp;betyder utanför skalan.</p>'
+     + '<p class="note"><strong>Behoven</strong> visas som intervall där SLU 289 gör det. '
+     + 'Procenttalet avser nedre gränsen.</p>'
+     + '<p class="note"><strong>Överskott</strong> är sällan ett problem — statusmärket visar '
+     + 'därför hur nära toleransgränsen värdet ligger, inte bara att behovet passerats. '
+     + 'Marginalen är 25× för selen, 29× för jod, 38× för zink, 75× eller mer för övriga.</p>'
+     + '<p class="note"><strong>Vitaminer</strong> räknas bara från tillskott. Grovfodrets '
+     + 'innehåll analyseras normalt inte — tomt fält betyder okänt, inte brist.</p>'
      + '</details>';
 
   /* --- anmärkningar --- */
@@ -4265,16 +4837,13 @@ function rakna(){
     h += msg("warn","Oljegivan "+f0(ex.oljaKg*1000)+" g överstiger SLU:s tak 75 g per 100 kg "
       +"kroppsvikt och dygn ("+f0(75*enh)+" g).");
   if(oanalyserat.length)
-    h += msg("warn","Grovfoderanalysen saknar värden för "
+    h += msg("warn","Analysen saknar "
       +oanalyserat.map(m => AMNESNAMN[m] || m).join(", ")
-      +". Dessa räknas varken som noll eller som täckta — inget underskott beräknas och "
-      +"toleransgränsen kan inte prövas. Vill du att de ska ingå, fyll i analysvärdena eller "
-      +"tryck på <em>Fyll i schablonvärden</em>. SLU 308 rekommenderar analys av järn, mangan, "
-      +"zink och koppar när foderstaten till 100 % består av vallfoder.");
+      +". De räknas varken som noll eller som täckta — inget underskott beräknas och "
+      +"toleransgränsen kan inte prövas.");
   if(ex.mikroOkand)
-    h += msg("warn","Fodermedel ur tabellen saknar mikromineralvärden. Zink, koppar, mangan, "
-      +"järn, selen, jod och kobolt räknas därför enbart från grovfoderanalysen — "
-      +"det verkliga innehållet är högre, men okänt.");
+    h += msg("warn","Fodermedel ur tabellen saknar mikromineralvärden — zink, koppar, "
+      +"mangan, järn, selen, jod och kobolt räknas enbart från grovfoderanalysen.");
 
   if(tsGrovTot < grovMin)
     h += msg("bad","Grovfodergivan understiger minimigivan 1 kg ts per 100 kg häst ("+f1(grovMin)+" kg ts). "
@@ -4289,8 +4858,8 @@ function rakna(){
     h += msg("bad","Ca/P-kvoten "+f1(kvot)+" ligger under SLU:s golv 1,1. Kvoten avser hela foderstaten, "
       +"så ett kalciumrikt mineralfoder kan lyfta den — se förslagen nedan.");
   if(tillEnergi > behEnergi*1.15)
-    h += msg("warn","Foderstaten ger "+f0(tillEnergi/behEnergi*100)+" % av energibehovet. Håller hästen önskat hull "
-      +"är det acceptabelt. Ökar hullet: minska givan eller ersätt en del med halm.");
+    h += msg("warn","Foderstaten ger "+f0(tillEnergi/behEnergi*100)
+      +" % av energibehovet. Håller hästen önskat hull är det acceptabelt.");
   // Överskott: SLU 289 accepterar att behoven överskrids, men villkorar det för
   // mikromineraler till överskott som kommer ur vallfodret — och slår fast att
   // överutfodring bör undvikas. Det skiljer sig från ett överskott man själv
@@ -4298,66 +4867,133 @@ function rakna(){
   const naraTak = MIKROLISTA.filter(m => tak[m] && tot(m)/tak[m] >= 0.4);
   if(naraTak.length)
     h += msg(naraTak.some(m => tot(m)/tak[m] >= 0.7) ? "bad" : "warn",
-      "Följande ligger över 40 % av toleransgränsen: "
+      "Över 40 % av toleransgränsen: "
       + naraTak.map(m => (AMNESNAMN[m]||m)+" "+f0(tot(m)/tak[m]*100)+" %").join(", ")
-      + ". Selen och jod har de smalaste marginalerna av alla mikromineraler — "
-      + "25 respektive 29 gånger från nedre behov till tak — och är därför de "
-      + "som först blir kritiska när flera produkter staplas.");
+      + ". Selen och jod har de smalaste marginalerna och blir kritiska först vid stapling.");
 
   if(A.wsc!==null){
     const nsc = A.wsc;
     h += nsc>=170
-      ? msg("bad","Socker/WSC "+f0(nsc)+" g/kg ts ligger över 170 g/kg ts. Borgia m.fl. (2011) fann att hö med "
-        +"170 g NSC/kg ts kunde utlösa korsförlamning hos PSSM-hästar. För en frisk häst finns inget belagt gränsvärde.")
-      : msg("ok","Socker/WSC "+f0(nsc)+" g/kg ts ligger under PSSM-gränsen 170 g/kg ts (Borgia m.fl., 2011). "
-        +"Något allmänt gränsvärde för friska hästar finns inte i det svenska underlaget — spridda tumregler "
-        +"om 10 eller 12 procent saknar stöd där.");
+      ? msg("bad","Socker "+f0(nsc)+" g/kg ts överstiger 170 g/kg ts. Borgia m.fl. (2011) fann "
+        +"att den nivån kunde utlösa korsförlamning hos PSSM-hästar.")
+      : msg("ok","Socker "+f0(nsc)+" g/kg ts, under PSSM-gränsen 170 g/kg ts. Något allmänt "
+        +"gränsvärde för friska hästar finns inte i det svenska underlaget.");
   }
   h += "</div>";
 
   /* --- produktförslag --- */
-  h += '<div class="card"><h2>4. Produktförslag</h2>';
+  h += '<div class="card" id="forslagskort"><div class="h2row"><h2>Förslag</h2>'
+     + '<span class="note" style="margin:0">Klicka för att räkna in i tabellen</span></div>';
 
   if(bristLista.length===0){
     h += msg("ok", bef && bef.dosG>0
       ? "Foderstaten täcker samtliga nedre behovsgränser med "+f0(bef.dosG)+" g "+bef.p.namn
-        +" som du redan ger. Inget ytterligare tillskott behövs — att lägga på mer skulle vara "
-        +"stapling utan nytta."
-      : "Grovfodret täcker samtliga nedre behovsgränser. Inget tillskott behövs för de ämnen "
-        +"som ingår i beräkningen. Kontrollera ändå selen och salt separat om de inte är analyserade.");
+        +" som du redan ger. Att lägga på mer vore stapling utan nytta."
+      : "Grovfodret täcker samtliga nedre behovsgränser. Kontrollera ändå selen och salt "
+        +"separat om de inte är analyserade.");
   } else if(sisteForslag.length===0){
     h += msg("warn","Ingen produkt i databasen kan täcka något underskott utan att spränga en toleransgräns.");
   } else {
-    h += '<p class="note" style="margin-bottom:14px">Underskott mot nedre behovsgräns: <strong>'
-       + bristLista.map(m => AMNESNAMN[m] || m).join(", ")+'</strong>. Varje produkt doseras så att så många underskott '
-       + 'som möjligt täcks utan att någon toleransgräns överskrids. '
-       + '<strong>Klicka för att räkna in i tabellen ovan.</strong></p>';
+    // Kombinationer och enskilda produkter i en enda rangordning. Uppdelningen
+    // är en egenskap hos lösningen, inte en fråga läsaren ställer — den framgår
+    // av namnet i stället för av en rubrik.
+    const N = bristLista.length;
+    const battre = (a,b) => {
+      const ta = forslagsTackta(a,N), tb = forslagsTackta(b,N);
+      if(ta !== tb) return tb - ta;
+      const ka = a.kostnad==null ? 1e9 : a.kostnad, kb = b.kostnad==null ? 1e9 : b.kostnad;
+      return ka - kb;
+    };
+    const alla = komboLista.concat(sisteForslag).sort(battre);
+    const heroA = alla[0];
+    // Andra kortet är avsiktligt av motsatt slag. Är det bästa en kombination
+    // vill läsaren veta vad en enda påse kostar, och tvärtom.
+    const heroB = alla.find(r => r !== heroA && !r.kombo !== !heroA.kombo);
+    // Ett förslag som varken täcker något underskott eller har ett pris är
+    // ingen kandidat — det är en rad i produktdatabasen. Listan kapas dessutom
+    // vid åtta: bortom det jämför ingen längre, och antalet som faller bort
+    // redovisas i stället för att tyst döljas.
+    const rest = alla.filter(r => r !== heroA && r !== heroB
+                             && forslagsTackta(r,N) > 0 && r.kostnad != null);
+    const visas = rest.slice(0,8), dolda = rest.length - visas.length;
 
-    // Sektionen ritas alltid ut. Att den saknas när inga kombinationer hittas
-    // gör frånvaron omöjlig att skilja från ett fel.
-    h += '<h3 style="margin-top:0">Kombinationer av två produkter</h3>';
-    if(komboLista.length){
-      h += '<p class="note" style="margin:-4px 0 11px">'+komboLista.length
-         + (komboLista.length===1 ? ' kombination slår' : ' kombinationer slår')
-         + ' den bästa enskilda produkten — de täcker fler ämnen, eller lika många billigare.</p>';
-      komboLista.slice(0,3).forEach((r,i) => h += kortKombo(r,i));
-    } else {
-      h += '<p class="note" style="margin:-4px 0 14px">Ingen kombination av två produkter '
-         + 'täcker mer än <strong>'+basta.p.namn+'</strong> gör ensam'
-         + (basta.kostnad!=null ? ', eller gör det billigare än '+f1(basta.kostnad)+' kr/dygn' : '')
-         + '. Det inträffar när en produkt redan löser samtliga underskott till lägsta kostnad — '
-         + 'kombinationer lönar sig framför allt när natrium ingår bland bristerna, eftersom '
-         + 'mineralfoder sällan når saltbehovet inom sin egen dosering.</p>';
+    h += heroKort(heroA,
+      forslagsTackta(heroA,N) >= N ? "Billigast som täcker allt" : "Bäst täckning", N, 0);
+    if(heroB)
+      h += heroKort(heroB, heroB.kombo ? "Billigast som kombination" : "Enklast · en påse", N, 1);
+
+    if(visas.length){
+      const pris = visas.map(r=>r.kostnad);
+      h += '<details class="fk-lucka" data-nyckel="lucka"><summary>Visa '+visas.length+' förslag till'
+         + '<em>'+kr(Math.min.apply(null,pris))+'–'+kr(Math.max.apply(null,pris))
+         + ' kr/dygn</em></summary><div class="fk-lista">'
+         + visas.map((r,k) => radKort(r, N, k+2)).join("")
+         + (dolda > 0 ? '<p class="note" style="margin:2px 6px 0">Ytterligare '+dolda
+             + ' produkter täcker färre ämnen eller kostar mer.</p>' : '')
+         + '</div></details>';
     }
-    h += '<h3>Enskilda produkter</h3>';
-    sisteForslag.slice(0,8).forEach((r,i) => h += kort(r,i));
-    h += '<p class="note" style="margin-top:14px">Rangordningen väger antal täckta underskott först, '
-       + 'kostnad därefter. Priser är indikativa och hämtade ur återförsäljarnas webbutiker vid '
-       + 'insamlingstillfället.</p>';
+
+    if(!komboLista.length)
+      h += '<p class="note">Ingen kombination av två produkter slår <strong>'+basta.p.namn
+         + '</strong> ensam. Kombinationer lönar sig framför allt när natrium ingår bland '
+         + 'bristerna — mineralfoder når sällan saltbehovet inom sin egen dosering.</p>';
+
+    h += '<details class="omber"><summary>Så rangordnas förslagen</summary>'
+       + '<p class="note">Antal täckta underskott först, kostnad därefter. Vikterna bakom '
+       + 'rangordningen är en bedömning, inte hämtade ur någon källa. Priser är indikativa '
+       + 'och hämtade ur återförsäljarnas webbutiker vid insamlingstillfället.</p></details>';
   }
   h += "</div>";
 
+  // KPI-raden i skalet fylls från beräkningen
+  {
+    const kb = document.getElementById("kpiBrist"),
+          kp = document.getElementById("kpiPris"),
+          ks = document.getElementById("kpiSpar");
+    // Talet ska avse samma sak som tabellen visar. bristLista utelämnar energi
+    // och protein, eftersom lösaren inte kan åtgärda dem — men de är ändå
+    // poster under behov.
+    if(kb) kb.textContent = String(antalKvar);   // exakt de chips som står ovan
+
+    // "Billigaste lösning" räknade tidigare på samtliga förslag, även de som
+    // täcker ett av sex ämnen. Den billigaste posten i databasen är en påse
+    // zink för 10 öre — sant, men ingen lösning, och siffran motsade
+    // sammanfattningens 1,57 kr på samma skärm.
+    //
+    // Jämförelsen sker nu bara mellan likvärdiga alternativ: de som täcker
+    // flest ämnen. Då blir också årsbesparingen skillnaden mellan två vägar
+    // till samma resultat, inte mellan en lösning och en halvmesyr.
+    const alt = sisteForslag.concat(komboLista).filter(r => r.kostnad != null);
+    const basta = alt.length
+      ? (() => {
+          const bastTackning = Math.max.apply(null,
+            alt.map(r => forslagsTackta(r, bristLista.length)));
+          return alt.filter(r => forslagsTackta(r, bristLista.length) === bastTackning);
+        })()
+      : [];
+    const priser = basta.map(r => r.kostnad);
+    const bast  = priser.length ? Math.min.apply(null, priser) : null;
+    const varst = priser.length ? Math.max.apply(null, priser) : null;
+    if(kp) kp.textContent = bast != null ? kr(bast) : "—";
+    if(ks) ks.textContent = (bast != null && varst > bast)
+      ? f0((varst - bast) * 365) : "—";
+  }
+
+  {
+    const uh = document.getElementById("utskriftshuvud");
+    if(uh){
+      const typTxt = {"1.00":"lättfödd","1.05":"normalfödd","1.10":"svårfödd"}[typ.value] || "";
+      uh.innerHTML = '<b>Foderstat — Hökoll</b><span>'
+        + f0(vikt)+' kg '+typTxt+' · '+f1(givaTS)+' kg ts grovfoder per dygn'
+        + (vald ? ' · med '+forslagsNamn(vald) : '')
+        + ' · utskriven '+new Date().toLocaleDateString("sv-SE")
+        + ' · beräkningsunderlag enligt SLU 289, inte rådgivning</span>';
+    }
+  }
+  const oppnade = sparaOppnade();
   ut.innerHTML = h;
+  aterstallOppnade(oppnade);
+  sattFilter(h);
   sparaTillstand();
 }
 
@@ -4482,7 +5118,7 @@ function utvardera(p, brist, till, beh, tak, enh, vikt){
     const inneh = m==="NaCl" ? g("Na")*2.542 : g(m);
     if(inneh<=0) return;
     const tillskott = inneh*dos;
-    if(tillskott >= brist[m]-1e-9) tackta.push(m); else delvis.push(m);
+    if(tacker(tillskott, brist[m])) tackta.push(m); else delvis.push(m);
   });
   // Ämnen som närmar sig taket efter tillskott
   Object.keys(tak).forEach(m=>{
@@ -4547,8 +5183,11 @@ function saljareBlock(p, dos, rubrik){
        + 'över '+salj.length+' alternativ — '+f0(diff)+' % skillnad mellan billigast och dyrast. '
        + 'Samma dos kostar '+f1(dos*lag)+'–'+f1(dos*hog)+' kr/dygn beroende på var du köper.</div>';
   }
-  h += '<details onclick="event.stopPropagation()"><summary>'
-     + (rubrik||"Återförsäljare")+' ('+salj.length+')</summary><table class="rt">';
+  // Listan låg tidigare i en egen utfällning inuti kortets utfällning. Två
+   // klick för att se var man köper, och det andra klicket avslöjade det enda
+   // korten finns till för. Rubriken räcker.
+  h += '<div class="rt-rubrik">'+(rubrik||"Återförsäljare")+' ('+salj.length+')</div>'
+     + '<table class="rt">';
   let gamla = 0;
   salj.forEach((s,j) => {
     const dagar = prisAlder(s.kontrollerad);
@@ -4571,14 +5210,102 @@ function saljareBlock(p, dos, rubrik){
     h += '<div class="note" style="margin-top:6px">'+gamla+' av '+salj.length
        + ' prisuppgifter är äldre än 90 dagar. Priser åldras snabbast av allt i databasen — '
        + 'kontrollera hos säljaren innan du köper.</div>';
-  return h + '</details>';
+  return h;
 }
 
 /* ---------- kort för en kombination av två produkter ---------- */
-function kortKombo(r,i){
-  const ar = valdId===r.nyckel;
-  let h = '<div class="prod'+(ar?" vald":"")
-    + '" role="button" tabindex="0" onkeydown="kortTangent(event,this)" onclick="valj(\''+r.nyckel+'\')">'
+/* ---------- förslagslistan -------------------------------------------------
+   Ett förslag har två lägen. Sammanfattningen svarar på "vad kostar det och
+   täcker det mina brister"; detaljerna svarar på "varför just den, och var
+   köper jag den". Åtta kort som alltid visar båda tvingar läsaren att sålla
+   själv — här ligger andra läget bakom en lucka.                            */
+function bildFor(p, stor){
+  const initialer = (p.tillverkare||p.namn).replace(/[^A-Za-zÅÄÖåäö ]/g,"")
+    .split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join("");
+  const d = stor ? 54 : 34, hh = stor ? 66 : 42;
+  let b = '<div class="bildslot" style="width:'+d+'px;height:'+hh+'px;flex:0 0 '+d+'px">'
+    + '<div class="bild bild-fb" style="width:'+d+'px;height:'+hh+'px;font-size:'
+    + (stor?15:12)+'px">'+initialer+'</div>';
+  if(p.bild) b += '<img class="bild bild-img" style="width:'+d+'px;height:'+hh+'px" src="'+p.bild
+    + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">';
+  return b + '</div>';
+}
+/* Priset per dygn ligger ofta mellan 1 och 5 kronor. Med en decimal blir 1,57
+   och 1,63 samma tal, och skillnaden mellan förslagen försvinner just där den
+   är som mest avgörande.                                                     */
+function kr(v){ return v.toFixed(2).replace(".", ","); }
+
+/* Tillverkaren och varugruppen står redan i metaraden. Att upprepa dem i
+   namnet gör rubriken dubbelt så lång utan att tillföra något. Fullständigt
+   namn står kvar i detaljerna och i återförsäljarlistan.                     */
+function visningsNamn(p){
+  let n = p.namn.replace(/^(Mineralfoder|Vitaminfoder|Vitamin- och mineralfoder|Tillskott)\s+/i, "");
+  const t = (p.tillverkare||"").trim();
+  if(t && n.toLowerCase().indexOf(t.toLowerCase()) === 0) n = n.slice(t.length).trim();
+  return n || p.namn;
+}
+/* En dos på 0,4 g blev "0 g" med heltalsavrundning — vilket läser som att
+   produkten inte ska ges alls.                                              */
+function dosText(g){ return (g < 1 ? "<1" : f0(g)) + " g"; }
+function forslagsNamn(r){
+  return r.kombo ? r.delar.map(d => visningsNamn(d.p)+" "+dosText(d.dosG)).join(" + ")
+                 : visningsNamn(r.p)+" "+dosText(r.dosG);
+}
+function forslagsDelar(r){ return r.kombo ? r.delar.map(d => d.p) : [r.p]; }
+function forslagsId(r){ return r.kombo ? r.nyckel : r.p.id; }
+function forslagsTackta(r, totalt){
+  return r.kombo ? totalt - r.kvar.length : r.tackta.length;
+}
+function heroKort(r, ogon, totalt, i){
+  const id = forslagsId(r), ar = valdId===id, delar = forslagsDelar(r);
+  const n = forslagsTackta(r, totalt);
+  const salj = delar.reduce((s,p) => s + (p.saljare||[]).filter(x=>x.krPerKg!=null).length, 0);
+  const meta = [...new Set(delar.map(p=>p.tillverkare))].join(", ")
+    + " · " + (n>=totalt ? "täcker alla "+totalt : n+" av "+totalt+" ämnen")
+    + (salj ? " · finns hos "+salj+" återförsäljare" : "");
+  return '<div class="fk-hero'+(ar?" vald":"")+'" id="kort-'+id.replace(/[^\w-]/g,"_")
+    + '" role="button" tabindex="0"'
+    + ' onkeydown="kortTangent(event,this)" onclick="valj(\''+id+'\')">'
+    + '<div style="display:flex;gap:8px">'+delar.map(p=>bildFor(p,true)).join("")+'</div>'
+    + '<div><div class="fk-ogon">'+(ar ? "Vald · " : "")+ogon+'</div>'
+    + '<div class="fk-namn">'+forslagsNamn(r)+'</div>'
+    + '<div class="fk-meta">'+meta+'</div></div>'
+    + '<div class="fk-pris">'+(r.kostnad!=null
+        ? '<b>'+kr(r.kostnad)+' kr</b><span>per dygn</span>'
+        : '<span>pris saknas</span>')+'</div>'
+    + '<details class="fk-mer" data-nyckel="mer:'+id+'" onclick="event.stopPropagation()">'
+    + '<summary>Dos, förbehåll och återförsäljare</summary>'
+    + (r.kombo ? kortKombo(r,i,true) : kort(r,i,true))
+    + '</details></div>';
+}
+function radKort(r, totalt, i){
+  const id = forslagsId(r), ar = valdId===id, delar = forslagsDelar(r);
+  const n = forslagsTackta(r, totalt);
+  const brist = r.kombo ? r.kvar : r.delvis.concat(r.saknas);
+  return '<div class="fk-rad'+(ar?" vald":"")+'" id="kort-'+id.replace(/[^\w-]/g,"_")
+    + '" role="button" tabindex="0"'
+    + ' onkeydown="kortTangent(event,this)" onclick="valj(\''+id+'\')">'
+    + '<div><b>'+forslagsNamn(r)+'</b><i>'
+    + [...new Set(delar.map(p=>p.tillverkare))].join(", ")
+    + (brist.length ? " · "+brist.slice(0,2).map(m=>kortNamn(m)).join(", ")+" kvarstår" : "")
+    + '</i></div>'
+    + '<span class="a">'+(ar ? '<span class="fk-vald">Vald</span>' : '')
+    + n+' av '+totalt+' ämnen</span>'
+    + '<span class="k">'+(r.kostnad!=null ? kr(r.kostnad)+" kr" : "—")+'</span>'
+    // Samma utfällning som på de två stora korten. Utan den fanns dos,
+    // förbehåll och återförsäljare bara för de två översta förslagen — och
+    // för de åtta andra gick informationen inte att nå alls.
+    + '<details class="fk-mer" data-nyckel="mer:'+id+'" onclick="event.stopPropagation()">'
+    + '<summary>Dos, förbehåll och återförsäljare</summary>'
+    + (r.kombo ? kortKombo(r,i,true) : kort(r,i,true))
+    + '</details></div>';
+}
+
+function kortKombo(r,i,bar){
+  const ar = !bar && valdId===r.nyckel;
+  let h = '<div class="prod'+(ar?" vald":"")+'"'
+    + (bar ? '' : ' role="button" tabindex="0" onkeydown="kortTangent(event,this)"'
+             + ' onclick="valj(\''+r.nyckel+'\')"')+'>'
     + '<div class="prod-h"><div><span class="rank">'+(i+1)+'</span>'
     + '<span class="prod-n">'+r.delar.map(d=>d.p.namn).join(" + ")+'</span>'
     + (ar?'<span class="valdmark">räknas in ovan</span>':'')
@@ -4613,16 +5340,17 @@ function kortKombo(r,i){
         : 'Pris saknas för minst en av produkterna')+'</div>';
 
   if(r.oprovade.length)
-    h += msg("warn","Tillverkarna deklarerar inte "+r.oprovade.join(", ")
-      +". Takkontrollen har inte kunnat prövas för dessa.");
+    h += '<div class="chips" style="margin-top:7px"><span class="chip c-miss" '
+       + 'title="Tillverkarna deklarerar inte dessa — takkontrollen kan inte prövas">'
+       + 'tak oprövat: '+r.oprovade.join(", ")+'</span></div>';
 
-  h += '<div class="valjknapp">'+(ar ? "✓ Räknas in i tabellen ovan — klicka för att ta bort"
-                                     : "Klicka för att räkna in båda i foderstaten")+'</div>';
+  if(!bar) h += '<div class="valjknapp">'+(ar ? "✓ Räknas in ovan — klicka för att ta bort"
+                                              : "Klicka för att räkna in båda")+'</div>';
   return h+'</div>';
 }
 
-function kort(r,i){
-  const p=r.p, ar = valdId===p.id;
+function kort(r,i,bar){
+  const p=r.p, ar = !bar && valdId===p.id;
   const konf = p.konfidens==="hog" ? "" :
     ' <span class="chip c-cap" style="font-size:10.5px">konfidens '+p.konfidens+'</span>';
   const meta = p.tillverkare+' · '+p.kategori+(p.forp ? ' · '+p.forp+' kg' : '');
@@ -4637,8 +5365,9 @@ function kort(r,i){
     + ' onerror="this.remove()">';
   bild += '</div>';
 
-  let h = '<div class="prod'+(ar?" vald":"")
-    + '" role="button" tabindex="0" onkeydown="kortTangent(event,this)" onclick="valj(\''+p.id+'\')">'
+  let h = '<div class="prod'+(ar?" vald":"")+'"'
+    + (bar ? '' : ' role="button" tabindex="0" onkeydown="kortTangent(event,this)"'
+             + ' onclick="valj(\''+p.id+'\')"')+'>'
     + '<div class="prod-h"><div style="display:flex;gap:12px;align-items:flex-start">'
     + bild
     + '<div><span class="rank">'+(i+1)+'</span>'
@@ -4674,18 +5403,22 @@ function kort(r,i){
 
   h += saljareBlock(p, r.dos, "Återförsäljare");
 
-  if(r.oprovade && r.oprovade.length)
-    h += msg("warn","Tillverkaren deklarerar inte "+r.oprovade.join(", ")
-      +". Takkontrollen har därför inte kunnat prövas för "
-      +(r.oprovade.length>1?"dessa ämnen":"detta ämne")
-      +" — frånvaro av varning betyder här att uppgift saknas, inte att halten är noll.");
-  if(r.dosKalla === "referensvikt")
-    h += msg("warn","Tillverkaren doserar per häst utan att ange hästvikt. Dosen är skalad "
-      +"från en referensvikt på "+PRODUKTKALLA.referensvikt_per_hast_kg
-      +" kg — kontrollera mot förpackningen om din häst avviker mycket från den.");
-  if(r.underMin)
-    h += msg("warn","Beräknad dos ligger under tillverkarens rekommenderade minimidos. "
-      +"Kontrollera att produkten är avsedd att doseras så lågt.");
+  // Per-produkt-förbehåll som chips i stället för varningsrutor. Samma text
+  // upprepad på åtta kort är brus; informationen hör hemma som metadata.
+  {
+    let c = "";
+    if(r.oprovade && r.oprovade.length)
+      c += '<span class="chip c-miss" title="Tillverkaren deklarerar inte dessa — '
+         + 'takkontrollen kan inte prövas för dem">tak oprövat: '+r.oprovade.join(", ")+'</span>';
+    if(r.dosKalla === "referensvikt")
+      c += '<span class="chip c-miss" title="Tillverkaren doserar per häst utan att ange '
+         + 'hästvikt. Dosen är skalad från '+PRODUKTKALLA.referensvikt_per_hast_kg
+         + ' kg">dos skalad från '+PRODUKTKALLA.referensvikt_per_hast_kg+' kg</span>';
+    if(r.underMin)
+      c += '<span class="chip c-cap" title="Under tillverkarens rekommenderade minimidos">'
+         + 'under tillverkarens minimidos</span>';
+    if(c) h += '<div class="chips" style="margin-top:7px">'+c+'</div>';
+  }
   if(r.takBrytare.length)
     h += msg("bad","Dosen är begränsad av toleransgränsen för "+r.takBrytare.join(", ")
       +". Underskotten kan inte täckas fullt ut med denna produkt utan att riskera överdosering.");
@@ -4697,22 +5430,37 @@ function kort(r,i){
        + naraHoga.map(x=>x.m+": "+f0(x.andel)+" % av toleransgränsen").join(" · ")
        + '</div></details>';
 
-  h += '<div class="valjknapp">'+(ar ? "✓ Räknas in i tabellen ovan — klicka för att ta bort"
-                                     : "Klicka för att räkna in i foderstaten")+'</div>';
+  if(!bar) h += '<div class="valjknapp">'+(ar ? "✓ Räknas in ovan — klicka för att ta bort"
+                                              : "Klicka för att räkna in i foderstaten")+'</div>';
   h += '</div>';
   return h;
 }
 
 /* ---------- små hjälpare ---------- */
-function rad(namn, behov, tillf, pct, status, bar){
-  const cls = status==="low" ? "deficit" : status==="high" ? "over" : "";
-  const pill = status==="low" ? '<span class="pill p-low">under</span>'
-             : status==="high" ? '<span class="pill p-high">över</span>'
-             : '<span class="pill p-ok">ok</span>';
-  return '<tr class="'+cls+'"><td>'+namn+'</td><td class="barcell">'+(bar||"")+'</td>'
-       + '<td class="n">'+behov+'</td><td class="n">'+tillf
-       + '</td><td class="n">'+f0(pct)+' %</td><td>'+pill+'</td></tr>';
+/* Statusen är färgad text, inte en märkning med bakgrund, och raden tonas ned
+   när posten är täckt. Uppmärksamheten styrs alltså genom att det oviktiga
+   viker undan — inte genom att underskotten skriker. Det är skillnaden mellan
+   en tabell man kan läsa och en man måste sortera i huvudet.               */
+/* Enheten står i radetiketten som "Magnesium (g)". På mobilen behöver talen
+   den intill sig i stället, eftersom kolumnrubrikerna är borta.             */
+function enhetUr(namn){ const m = /\(([^)]+)\)\s*$/.exec(namn); return m ? " "+m[1] : ""; }
+function mobRad(namn, tillf, behov){
+  return '<div class="tk-mob">'+tillf+' av '+behov+enhetUr(namn)+'</div>';
 }
+function rad(namn, behov, tillf, pct, status, bar){
+  const brist = status === "low";
+  const ord = brist ? "under" : status === "high" ? "över" : "ok";
+  return '<div class="tk-rad '+(brist?"deficit":"tackt")+'">'
+       + '<div class="tk-namn">'+namn+'</div>'+(bar||'<div class="tk-stapel"></div>')
+       + '<div class="tk-tal">'+behov+'</div><div class="tk-tal">'+tillf+'</div>'
+       + '<div class="tk-status '+(brist?"tk-under":"tk-neutral")+'">'
+       + (brist && Math.round(pct) >= 100 ? "99" : f0(pct))+' % · '+ord+'</div>'
+       + mobRad(namn, tillf, behov)+'</div>';
+}
+/* "Magnesium (Mg), g" var namnet plus förkortningen plus enheten i tre olika
+   skiljetecken. Designen skriver "Magnesium (g)" — förkortningen bär ingen
+   information för den som läser raden.                                      */
+function kortNamn(m){ return (AMNESNAMN[m]||m).replace(/\s*\([^)]*\)\s*$/, ""); }
 /* ---------- liggande stapel ----------------------------------------------
    Fast skala: 0 till 200 % av det nedre behovet, lika för alla rader. Det gör
    staplarna jämförbara mellan ämnen och ger axeln en innebörd — tidigare var
@@ -4749,10 +5497,9 @@ function stapel(nedre, ovre, delar, tak, extraArg){
         + (tak ? ". Toleransgräns "+f0(tak) : "");
   const attr = beskrivning.replace(/"/g,"&quot;");
 
-  let h = '<div class="barwrap" role="img" aria-label="'+attr+'" title="'+attr+'">';
+  let h = '<div class="tk-stapel barwrap" role="img" aria-label="'+attr+'" title="'+attr+'">';
   if(bandB > 0)
     h += '<div class="barband" style="left:'+bandL+'%;width:'+bandB+'%"></div>';
-  h += '<div class="barbehov" style="left:'+bandL+'%"></div>';
 
   let ackumulerat = 0;
   delar.forEach(d => {
@@ -4762,6 +5509,11 @@ function stapel(nedre, ovre, delar, tak, extraArg){
     if(bredd > 0.05)
       h += '<div class="seg '+d.klass+'" style="left:'+start+'%;width:'+bredd+'%"></div>';
   });
+
+  // Behovslinjen ritas efter segmenten. Låg den före målades den över så fort
+  // stapeln nådde förbi behovet — alltså på exakt de rader där man ska kunna
+  // se att den passerats.
+  h += '<div class="barbehov" style="left:'+bandL+'%"></div>';
 
   if(tak && tak/nedre*100 <= AXEL_MAX)
     h += '<div class="bartak" style="left:'+pc(tak)+'%" title="Toleransgräns '+f0(tak)+'"></div>';
@@ -4774,34 +5526,108 @@ function radM(namn, b, t, tak, extra, delar){
   const pct = b[0]>0 ? t/b[0]*100 : 0;
   const takPct = tak ? t/tak*100 : null;
   let status = "ok";
-  if(t < b[0]) status = "low";
+  if(!tacker(t, b[0])) status = "low";
   else if(tak && t > tak) status = "high";
-  const cls = status==="low" ? "deficit" : status==="high" ? "over" : "";
+  const e = extra || 0;
 
   // Ett överskott säger inget i sig — det som betyder något är hur nära
-  // toleransgränsen man kommit. 110 % och 400 % av behovet såg tidigare
-  // likadana ut här.
-  let pill;
-  if(status==="low")        pill = '<span class="pill p-low">under</span>';
-  else if(status==="high")  pill = '<span class="pill p-high">ÖVER TAK</span>';
-  else if(takPct!=null && takPct>=70)
-                            pill = '<span class="pill p-high">'+f0(takPct)+' % av tak</span>';
-  else if(takPct!=null && takPct>=40)
-                            pill = '<span class="pill p-high">'+f0(takPct)+' % av tak</span>';
-  else if(t > b[1])         pill = '<span class="pill p-ok">över behov'
-                                 + (takPct!=null ? ' · '+f0(takPct)+' % av tak' : '')+'</span>';
-  else                      pill = '<span class="pill p-ok">ok</span>';
-  const e = extra || 0;
-  const bidrag = e > 0.0001 ? ' <span class="delta">+'+f1(e)+'</span>' : '';
-  return '<tr class="'+cls+'"><td>'+namn+'</td>'
-       + '<td class="barcell">'
+  // toleransgränsen man kommit. Därför nämns taket bara när det närmar sig;
+  // annars vore "412 % av behovet, 5 % av taket" två tal där ett räcker.
+  let cls, txt;
+  const pt = pctText(t, b[0], status === "low");
+  if(status === "low")       cls = "deficit", txt = pt+" % · under";
+  else if(status === "high") cls = "larm",    txt = "över tak";
+  else if(takPct != null && takPct >= 40)
+                             cls = "tackt",   txt = f0(takPct)+" % av tak";
+  else if(e > 0.0001)        cls = "tackt",   txt = pt+" % · täckt";
+  else if(t > b[1])          cls = "tackt",   txt = pt+" % · över";
+  else                       cls = "tackt",   txt = pt+" % · ok";
+  const farg = cls === "deficit" ? "tk-under"
+             : cls === "larm"    ? "tk-under"
+             : e > 0.0001        ? "tk-tackt" : "tk-neutral";
+  // Tidigare stod "0,3 +0,3" i tillfört-kolumnen: totalen följd av hur mycket
+  // av den som kom från tillskottet. Det lästes som en addition — 0,3 plus 0,3
+  // — och gjorde procenttalet obegripligt. Uppdelningen syns i stapeln, där
+  // det gröna segmentet är tillskottets andel.
+  return '<div class="tk-rad '+cls+'"><div class="tk-namn">'+namn+'</div>'
        + stapel(b[0], b[1], delar || [{v:t-e, klass:"seg-grov", namn:"grovfodret"},
                                       {v:e,   klass:"seg-forslag", namn:"tillskottet"}], tak)
-       + '</td>'
-       + '<td class="n">'+rng(b)+'</td><td class="n">'+f1(t)+bidrag+'</td>'
-       + '<td class="n">'+f0(pct)+' %</td><td>'+pill+'</td></tr>';
+       + '<div class="tk-tal">'+rng(b)+'</div>'
+       + '<div class="tk-tal">'+fvMot(t, b[0])+'</div>'
+       + '<div class="tk-status '+farg+'">'+txt+'</div>'
+       + mobRad(namn, fvMot(t, b[0]), rng(b))+'</div>';
 }
 function msg(t,txt){ return '<div class="msg m-'+t+'">'+txt+'</div>'; }
+
+/* Utskriftsknappen är borttagen — formatet höll inte måttet och en knapp som
+   lovar något den inte levererar är värre än ingen knapp. Ctrl+P finns kvar
+   och får då åtminstone ett städat format, så reglerna och den här funktionen
+   står kvar.
+
+   CSS kan dölja en <details>, men inte öppna den — innehållet visas bara när
+   attributet open är satt. Utan detta skulle utskriften få kortets rubrik och
+   pris men inte dosen, förbehållen eller återförsäljarna.                    */
+function forberedUtskrift(){
+  const kort = document.querySelectorAll("#forslagskort .fk-hero");
+  kort.forEach(k => {
+    const d = k.querySelector(".fk-mer");
+    if(!d) return;
+    const skaOppnas = k.classList.contains("vald")
+                   || !document.querySelector("#forslagskort .fk-hero.vald");
+    if(skaOppnas){ d.dataset.varStangd = d.open ? "" : "1"; d.open = true; }
+  });
+}
+function aterstallEfterUtskrift(){
+  document.querySelectorAll("#forslagskort .fk-mer").forEach(d => {
+    if(d.dataset.varStangd === "1"){ d.open = false; delete d.dataset.varStangd; }
+  });
+}
+if(typeof window !== "undefined" && window.addEventListener){
+  window.addEventListener("beforeprint", forberedUtskrift);
+  window.addEventListener("afterprint", aterstallEfterUtskrift);
+}
+
+/* ---------- filtret följer resultatet tills användaren tar över ------------
+   "Bara underskott" ska visa något. Räknas ett förslag in som täcker allt
+   finns inga underskottsrader kvar, och filtret skulle ge en nästan tom
+   tabell — vilket läser som ett fel i stället för som beskedet att förslaget
+   fungerade. Samma sak när grovfodret redan räcker.
+
+   Villkoret måste avse vad som står i tabellen just nu, inte underskotten
+   före tillskott. Den listan ändras aldrig av ett produktval.
+
+   Klickar användaren på någon av knapparna slutar sidan välja åt hen. Annars
+   skulle varje omräkning slå tillbaka valet.                                */
+let filterValtAvAnvandare = false;
+/* #ut byggs om från grunden vid varje val, och all öppen/stängd-status i
+   utfällningarna gick förlorad. Klickade man på ett förslag i listan slog
+   listan igen under fingret — och eftersom innehållet ovanför samtidigt
+   ändrade höjd flyttade sidan sig dessutom.                                 */
+function sparaOppnade(){
+  const o = new Set();
+  if(!document.querySelectorAll) return o;
+  document.querySelectorAll("#ut details[data-nyckel]").forEach(d => {
+    if(d.open) o.add(d.getAttribute("data-nyckel"));
+  });
+  return o;
+}
+function aterstallOppnade(o){
+  if(!o || !o.size || !document.querySelectorAll) return;
+  document.querySelectorAll("#ut details[data-nyckel]").forEach(d => {
+    if(o.has(d.getAttribute("data-nyckel"))) d.open = true;
+  });
+}
+
+function sattFilter(html){
+  if(filterValtAvAnvandare || !document.body) return;
+  const kvar = (html.match(/class="tk-rad deficit"/g) || []).length;
+  document.body.classList.toggle("hk-brist", kvar > 0);
+  const fb = document.getElementById("fBrist"), fa = document.getElementById("fAlla");
+  if(fb && fa){
+    fb.className = kvar > 0 ? "on" : "";
+    fa.className = kvar > 0 ? "" : "on";
+  }
+}
 
 /* ---------- init ----------
    vikt_ måste vara definierad innan något anropar rakna(). Deklarationen låg
@@ -4810,14 +5636,11 @@ function msg(t,txt){ return '<div class="msg m-'+t+'">'+txt+'</div>'; }
    4 aldrig renderades. */
 const vikt_ = document.getElementById("vikt");
 
-datakalla.innerHTML = '<strong>Verklig produktdata.</strong> '+PRODUKTER.length
+datakalla.innerHTML = '<strong>Produktdata:</strong> '+PRODUKTER.length
   +' matchningsbara produkter av '+PRODUKTKALLA.antal_i_databas+' i databasen, byggd '
-  +PRODUKTKALLA.byggd+'. Uppgifterna kommer ur tillverkarnas egna deklarationer och är '
-  +'kommersiella källor som inte granskats av tredje part. Doser angivna per häst är '
-  +'omräknade från en referensvikt på '+PRODUKTKALLA.referensvikt_per_hast_kg
-  +' kg. Produkterna visas med varumärkets initialer i stället för produktbild — '
-  +'bilderna tillhör tillverkarna och används inte i denna öppna prototyp. '
-  +'Detta är ett beräkningsunderlag, inte rådgivning.';
+  +PRODUKTKALLA.byggd+'. Tillverkarnas egna deklarationer — kommersiella källor som inte '
+  +'granskats av tredje part. Doser angivna per häst är omräknade från en referensvikt '
+  +'på '+PRODUKTKALLA.referensvikt_per_hast_kg+' kg.<br>';
 
 function fyllKategori(){
   const s = document.getElementById("kategori");
@@ -4852,6 +5675,155 @@ document.querySelectorAll("input,select").forEach(el => {
   el.addEventListener("change", rakna);
 });
 rakna();
+</script>
+<div class="hk-foot">
+  <div id="hkSum">Fyll i energi och torrsubstans så räknar vi.</div>
+  <button class="slumpa" id="hkVisa">Se resultat</button>
+</div>
+<script>
+(function(){try{
+  var b=document.body; if(!b) return;
+  b.className=(b.className?b.className+' ':'')+'tab-in';
+  var tabs=[].slice.call(document.querySelectorAll('.hk-tabs button'));
+  function visa(t){
+    b.className=b.className.replace(/tab-(in|ut)/,'tab-'+t);
+    tabs.forEach(function(x){x.className = x.getAttribute('data-t')===t ? 'on':'';});
+    window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){visa(t.getAttribute('data-t'));});});
+  var k=document.getElementById('hkVisa'); if(k) k.addEventListener('click',function(){visa('ut');});
+  try{ uppdEnheter(typeof enhet!=="undefined"?enhet:'ts'); }catch(e){}
+
+  /* viktreglage speglar sifferfältet */
+  try{
+    var vf=document.getElementById('vikt'), vr=document.getElementById('viktRange');
+    if(vf&&vr){
+      vr.value=vf.value;
+      vr.addEventListener('input',function(){vf.value=vr.value;
+        vf.dispatchEvent(new Event('input',{bubbles:true}));});
+      vf.addEventListener('input',function(){vr.value=vf.value;});
+    }
+  }catch(e){}
+
+  /* vänsterflikar: Hästen / Grovfoder / Övrigt */
+  try{
+    var vk=[].slice.call(document.querySelectorAll('.hk-left .card'));
+    var gr=[[0],[1],[2,3]];
+    var ln=[].slice.call(document.querySelectorAll('.hk-lnav button'));
+    function visaL(i){
+      vk.forEach(function(c,n){c.classList.toggle('hk-dold', gr[i].indexOf(n)===-1);});
+      ln.forEach(function(x,n){x.className = n===i ? 'on':'';});
+    }
+    if(vk.length>=4&&ln.length===3){
+      ln.forEach(function(x,n){x.addEventListener('click',function(){visaL(n);});});
+      visaL(0);
+    }
+  }catch(e){}
+
+  /* segmenterade knappar speglar sina select-fält */
+  try{
+    [].slice.call(document.querySelectorAll('.hk-seg')).forEach(function(box){
+      var sel=document.getElementById(box.getAttribute('data-for'));
+      if(!sel) return;
+      // Procenttalet gjorde varje knapp dubbelt så bred som ordet krävde och
+      // tvingade raden att brytas 3+2. Det bor i knappens titel i stället.
+      var kort={'Inget (underhåll)':'Inget','Lätt — fritidsridning, +25 %':'Lätt',
+        'Medel — ridskoleverksamhet, +50 %':'Medel',
+        'Hårt — fälttävlan, viss trav/galopp, +75 %':'Hårt',
+        'Mycket hårt — trav/galopptävling, distans, +120 %':'Mkt hårt'};
+      // Kortandet gjorde knappen läsbar men tog bort det som gjorde nivån
+      // valbar: vad den motsvarar i praktiken. Det står under raden i stället,
+      // för det valda alternativet. Tillägget är SLU 289 tabell 9.
+      var forkl={
+        arbete:{'0':'Underhåll — ingen träning utöver hagen.',
+                '1':'Fritidsridning några gånger i veckan. +25 % energi.',
+                '2':'Ridskoleverksamhet eller daglig ridning. +50 % energi.',
+                '3':'Fälttävlan, viss trav och galopp. +75 % energi.',
+                '4':'Trav- och galopptävling eller distansritt. +120 % energi.'},
+        typ:{'1.00':'Håller hullet på lite foder — normen utan påslag.',
+             '1.05':'Varken lätt- eller svårfödd. +5 % energi.',
+             '1.10':'Behöver mer foder än normen för att hålla hullet. +10 % energi.'}};
+      var texter = forkl[box.getAttribute('data-for')];
+      var forklaring = null;
+      if(texter){
+        forklaring = document.createElement('div');
+        forklaring.className = 'segforkl';
+        box.parentNode.appendChild(forklaring);
+      }
+      [].slice.call(sel.options).forEach(function(o){
+        var kn=document.createElement('button');
+        kn.type='button';
+        kn.textContent=kort[o.text]||o.text;
+        kn.title=o.text;
+        kn.setAttribute('data-v',o.value);
+        kn.addEventListener('click',function(){
+          sel.value=o.value;
+          sel.dispatchEvent(new Event('change',{bubbles:true}));
+          sync();
+        });
+        box.appendChild(kn);
+      });
+      function sync(){
+        [].slice.call(box.children).forEach(function(kn){
+          kn.className = kn.getAttribute('data-v')===sel.value ? 'on':'';
+        });
+        if(forklaring) forklaring.textContent = texter[sel.value] || '';
+      }
+      sel.addEventListener('change',sync);
+      sync();
+    });
+  }catch(e){}
+
+  /* topbar: hästen i klartext + dela */
+  try{
+    var meta=document.getElementById('hkMeta'), vfx=document.getElementById('vikt'),
+        tsel=document.getElementById('typ');
+    var uppdMeta=function(){
+      if(!meta||!vfx) return;
+      var t = tsel && tsel.options[tsel.selectedIndex] ? tsel.options[tsel.selectedIndex].text.toLowerCase() : '';
+      meta.textContent = (vfx.value||'—')+' kg '+t;
+    };
+    if(vfx) vfx.addEventListener('input',uppdMeta);
+    if(tsel) tsel.addEventListener('change',uppdMeta);
+    uppdMeta();
+    var dela=document.getElementById('hkDela');
+    if(dela) dela.addEventListener('click',function(){
+      try{ kopieraLank(); dela.textContent='Länk kopierad';
+           setTimeout(function(){dela.textContent='Dela';},1800); }catch(e){}
+    });
+  }catch(e){}
+
+  /* filter: bara underskott */
+  try{
+    var fb=document.getElementById('fBrist'), fa=document.getElementById('fAlla');
+    if(fb&&fa){
+      fb.addEventListener('click',function(){filterValtAvAnvandare=true;
+        b.classList.add('hk-brist');fb.className='on';fa.className='';});
+      fa.addEventListener('click',function(){filterValtAvAnvandare=true;
+        b.classList.remove('hk-brist');fa.className='on';fb.className='';});
+      // Underskotten är hela frågan sidan svarar på. Att öppna med alla arton
+      // raderna ber läsaren leta upp dem själv.
+      b.classList.add('hk-brist'); fb.className='on'; fa.className='';
+    }
+  }catch(e){}
+  var ut=document.getElementById('ut'), sum=document.getElementById('hkSum');
+  if(ut&&sum&&window.MutationObserver){
+    var upd=function(){
+      var v=ut.querySelector('.verdikt');
+      if(v){ var t=v.textContent.replace(/\s+/g,' ').trim(); sum.textContent=t.length>90?t.slice(0,90)+'…':t; }
+      try{
+        var kb=document.getElementById('kpiBrist'),
+            kp=document.getElementById('kpiPris'),
+            ks=document.getElementById('kpiSpar');
+        if(kb) kb.textContent=ut.querySelectorAll('.tk-rad.deficit').length||'0';
+        /* kpiPris och kpiSpar sätts av rakna() ur beräkningen, inte genom att
+           läsa tillbaka sin egen utskrift. */
+      }catch(e){}
+    };
+    new MutationObserver(upd).observe(ut,{childList:true,subtree:true});
+    upd();
+  }
+}catch(e){}})();
 </script>
 </body>
 </html>

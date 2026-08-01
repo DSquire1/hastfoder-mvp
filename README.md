@@ -1,8 +1,8 @@
 # Hästfoder — från grovfoderanalys till produktförslag
 
 Prototyp som räknar en hästs näringsbehov enligt SLU:s utfodringsrekommendationer,
-jämför mot en grovfoderanalys och föreslår tillskott som täcker underskotten — med
-kontroll mot samtliga toleransgränser samtidigt.
+jämför mot en grovfoderanalys och föreslår namngivna tillskott som täcker
+underskotten — med kontroll mot samtliga toleransgränser samtidigt.
 
 **[Öppna verktyget](https://dsquire1.github.io/hastfoder-mvp/)**
 
@@ -30,8 +30,9 @@ stapling ovanpå något som redan finns.
 **Hanterar alla hästkategorier.** Vuxna i arbete, växande unghästar, dräktiga och
 digivande ston — med egna mineralnormer ur SLU 289 tabell 15.
 
-**Föreslår namngivna produkter med dos.** 33 mineralfoder och tillskott från tio
-svenska varumärken, doserade mot de faktiska underskotten.
+**Föreslår namngivna produkter med dos.** 34 mineralfoder och tillskott från tio
+svenska varumärken, doserade mot de faktiska underskotten. Varje förslag visar
+dos, förbehåll och återförsäljare med pris per dygn.
 
 **Kontrollerar alla toleransgränser samtidigt.** Ett mineralfoder som täcker
 magnesium tillför samtidigt zink, koppar, selen och jod. Selen har den smalaste
@@ -40,7 +41,7 @@ marginalen av alla mikromineraler — 25× från nedre behov till toleransgräns
 
 **Föreslår kombinationer.** Ett mineralfoder plus separat salt slår ofta ett stort
 mineralfoder som måste överdoseras för att ensamt nå natriumbehovet. I
-referensfallet 1,57 kr/dygn mot 4,40 för samma täckning.
+referensfallet 1,57 kr/dygn mot 4,04 för samma täckning.
 
 **Visar prisspridning.** Samma produkt kan skilja 70 % i pris per kilo mellan
 återförsäljare, ofta beroende på förpackningsstorlek.
@@ -49,8 +50,15 @@ referensfallet 1,57 kr/dygn mot 4,40 för samma täckning.
 gränserna, i stället för att bara räkna mot den övre och visa större underskott
 än som finns.
 
-**Tar emot analysvärden per kg torrsubstans.** Analysrapporter anger mineraler per
-kg ts medan foderstater räknas per kg foder. Omräkningen sker i verktyget.
+**Skiljer okänt från noll.** Ett ämne som analysen saknar redovisas som okänt —
+aldrig som ett underskott. Vitaminer analyseras nästan aldrig i grovfoder, och
+att läsa den uteblivna analysen som en nolla skulle fylla tabellen med brister
+som inte är belagda.
+
+**Säger vad den inte kan lösa.** Energi och protein ingår i bedömningen men inte
+i produktförslagen. Ett proteinunderskott löses med en större giva, ett
+energirikare grovfoder eller ett kraftfoder — och sidan säger det i stället för
+att peka på en påse mineraler.
 
 ---
 
@@ -82,19 +90,32 @@ Sätt `VISA_BILDER = True` i `verktyg/bygg-produkter.py` för att slå på dem �
 läs `DATAKALLOR.md` först. Riktningen är inte den man gissar: lokala kopior är
 upphovsrättsligt mer exponerade i ett publikt repo än inbäddning, inte mindre.
 
+Undantaget är **startsidans foto**, som hämtas från Pexels (wolna zx) och är den
+enda externa bildförfrågan sidan gör. Det byts mot en egen stallbild när sådan
+finns.
+
 ## Testa
 
 ```
 node verktyg/test.js
 ```
 
-41 kontroller. Riggen bygger en minimal DOM och kör hela skriptet som webbläsaren
+62 kontroller. Riggen bygger en minimal DOM och kör hela skriptet som webbläsaren
 gör — den kontrollerar alltså att sidan **startar** innan den mäter siffror.
 Utgångskod 1 om något fallerar.
 
 Kör den efter varje ändring i `index.html`. En syntaxkontroll räcker inte:
 prototypen har redan en gång levererats i ett skick där all matematik var korrekt
 men sidan aldrig kom igång.
+
+Fjorton grupper. De fyra sista prövar inre konsistens: att lösaren och tabellen
+svarar likadant på om ett behov är täckt, att radfiltret och sammanfattningen
+följer det valda förslaget, och att nyckeltalen räknar exakt de poster som listas
+bredvid dem. Samtliga fyra tillkom efter att fel av just den sorten hunnit
+levereras — sidan kunde säga *"täcker alla sex"* i ett kort och *"99 % · under"*
+på raden intill, om samma foderstat.
+
+Riggen ser inte färg, layout eller utskrift.
 
 ## Uppdatera produktdata
 
@@ -122,8 +143,8 @@ något. Odeklarerade ämnen visas i gränssnittet.
 ## Beräkningen
 
 Normer ur **SLU Rapport 289**, *Utfodringsrekommendationer för häst*
-(Jansson red., 2013) — tabell 3, 15, 17, 31 och 32. Underhållsenergi enligt
-0,5 × V^0,75.
+(Jansson red., 2013) — tabell 3, 9, 15, 17, 18, 31 och 32. Underhållsenergi
+enligt 0,5 × V^0,75.
 
 Beräkningen är avstämd mot HästSveriges foderstatsprogram med identiska indata:
 energi 74 MJ, protein 424 g, Ca 25, P 22, Mg 5, Cu 45, Zn 189, Mn 180 — samtliga
@@ -176,6 +197,10 @@ Detta är en prototyp. De viktigaste bristerna:
 - **Pris viktas inte**, det bryter bara lika poäng
 - **Tillväxtenergi kräver att daglig tillväxt anges** — utan den visas bara
   underhållsbehovet för växande hästar
+- **Uppladdning av analysrapport är inte byggd.** Ytan finns i gränssnittet men
+  fälten fylls i för hand; funktionen kräver OCR
+- **Utskriftsformatet är inte verifierat.** Knappen är borttagen; Ctrl+P ger ett
+  städat format men det är oprövat
 
 ---
 

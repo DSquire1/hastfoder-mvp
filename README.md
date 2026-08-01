@@ -20,6 +20,16 @@ förpackningen på varje kandidat och gissa en giva.
 
 Denna prototyp fortsätter därifrån:
 
+**Räknar hela foderstaten.** Grovfoderanalys plus kraftfoder, halm eller lusern ur
+SLU:s fodertabell — med stärkelse-, spannmåls- och oljetak enligt SLU 289.
+
+**Frågar vad hästen redan får.** Ett befintligt mineralfoder räknas in innan
+underskotten beräknas och ingår i takkontrollen, så att nya förslag inte blir
+stapling ovanpå något som redan finns.
+
+**Hanterar alla hästkategorier.** Vuxna i arbete, växande unghästar, dräktiga och
+digivande ston — med egna mineralnormer ur SLU 289 tabell 15.
+
 **Föreslår namngivna produkter med dos.** 33 mineralfoder och tillskott från tio
 svenska varumärken, doserade mot de faktiska underskotten.
 
@@ -71,6 +81,20 @@ funktionaliteten testas.
 Sätt `VISA_BILDER = True` i `verktyg/bygg-produkter.py` för att slå på dem —
 läs `DATAKALLOR.md` först. Riktningen är inte den man gissar: lokala kopior är
 upphovsrättsligt mer exponerade i ett publikt repo än inbäddning, inte mindre.
+
+## Testa
+
+```
+node verktyg/test.js
+```
+
+41 kontroller. Riggen bygger en minimal DOM och kör hela skriptet som webbläsaren
+gör — den kontrollerar alltså att sidan **startar** innan den mäter siffror.
+Utgångskod 1 om något fallerar.
+
+Kör den efter varje ändring i `index.html`. En syntaxkontroll räcker inte:
+prototypen har redan en gång levererats i ett skick där all matematik var korrekt
+men sidan aldrig kom igång.
 
 ## Uppdatera produktdata
 
@@ -139,16 +163,19 @@ användare skulle köpa. Synpunkter välkomnas.
 
 Detta är en prototyp. De viktigaste bristerna:
 
-- **Bara ett fodermedel kan anges.** Får hästen även kraftfoder eller lusern ändras
-  hela mineralbilden — en foderstat med lusern kan få rakt motsatt rekommendation
-- **Frågar inte vad hästen redan får.** Ett förslag ovanpå ett befintligt
-  mineralfoder blir stapling
-- **Vitaminer används inte**, trots att produktdatan innehåller A, D3, E och biotin
-- **Bete saknas helt** — gäller stallperioden
-- **Bara vuxna hästar** i underhåll eller arbete. Växande unghästar, dräktiga och
-  digivande ston är inte implementerade
-- **Ingenting sparas** vid omladdning
-- **Kombinationer är par**, inte tre eller fler, och byggs giriga
+- **Bete saknas helt** — verktyget gäller stallperioden. SLU 308 exkluderar
+  uttryckligen bete ur sin sammanställning
+- **Grovfodrets vitamininnehåll är okänt.** Vitaminer räknas bara från tillskott
+  och driver därför inga förslag — ett underskott ur uteblivna uppgifter vore en
+  artefakt, inte ett fynd
+- **Mikromineraler från tabellfoder saknas.** SLU:s fodertabell deklarerar dem
+  inte, och de räknas därför inte som noll utan som okända
+- **Poängvikterna i rangordningen har ingen källa** — se avsnittet ovan
+- **Kombinationer är par**, inte tre eller fler, och byggs giriga utifrån de sex
+  bästa enskilda förslagen
+- **Pris viktas inte**, det bryter bara lika poäng
+- **Tillväxtenergi kräver att daglig tillväxt anges** — utan den visas bara
+  underhållsbehovet för växande hästar
 
 ---
 

@@ -26,6 +26,8 @@
     padding:6px 13px;border-radius:6px;font:inherit;font-size:13px;font-weight:600;white-space:nowrap}
   .slumpa:hover{background:var(--brand);color:#fff}
   .slumpinfo{font-size:12.5px;color:var(--muted);margin:10px 0 0;font-style:italic}
+  .foderrad{border:1px solid var(--line);border-radius:7px;padding:12px;margin-bottom:10px;
+    background:#fdfcfa}
   h3{font-size:14px;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
   .sub{color:var(--muted);margin:0 0 18px}
   .banner{background:var(--warn-bg);border:1px solid #e3c98a;border-left:5px solid var(--warn);
@@ -82,8 +84,7 @@
     object-fit:contain;background:#fff;border:1px solid var(--line)}
   .bild-img{z-index:1;padding:2px}
   .bild-fb{display:flex;align-items:center;justify-content:center;font-weight:700;
-    font-size:17px;color:var(--brand);background:var(--brand-soft);letter-spacing:.03em;
-    border-color:#e0cfc7}
+    font-size:15px;color:var(--brand);background:var(--brand-soft);letter-spacing:.02em}
 
   .barcell{width:38%;min-width:180px;padding-right:16px}
   .barwrap{position:relative;height:17px;background:#efece6;border-radius:3px}
@@ -115,6 +116,44 @@
   summary{cursor:pointer;color:var(--brand);font-weight:600;font-size:12.5px}
   .src{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:22px}
   code{background:#f0eeea;padding:1px 5px;border-radius:3px;font-size:12px}
+
+  /* Tangentbord: samma tydliga fokusmarkering överallt */
+  .prod:focus-visible, button:focus-visible, summary:focus-visible,
+  input:focus-visible, select:focus-visible{
+    outline:3px solid var(--brand); outline-offset:2px}
+
+  /* Mobil. Stapelkolumnen är det första som får vika — siffrorna bär
+     informationen, stapeln är en genväg. */
+  @media(max-width:640px){
+    .wrap{padding:14px 12px 60px}
+    h1{font-size:21px} h2{font-size:16px}
+    table{font-size:12.5px} th,td{padding:6px 4px}
+    .barcell{display:none}
+    th:nth-child(2){display:none}
+    .prod-h{flex-direction:column;align-items:flex-start}
+    .dose{align-self:flex-start}
+    .rt td{padding:4px 3px;font-size:11.5px}
+    .rt td:nth-child(2){display:none}
+  }
+  @media(max-width:400px){
+    .rt td:nth-child(6){display:none}
+    .chip{font-size:11px}
+  }
+
+  /* Utskrift: en ren foderstat att sätta upp i stallet. */
+  @media print{
+    body{background:#fff}
+    .wrap{max-width:none;padding:0}
+    .card:has(input), .card:has(select), .banner, .slumpa, .valjknapp,
+    #slumpinfo, .toggle, details{display:none !important}
+    .card{border:0;padding:0 0 12px;page-break-inside:avoid}
+    .prod{page-break-inside:avoid;border:1px solid #999;cursor:default}
+    .prod:not(.vald){display:none}
+    h2{border-bottom:1px solid #000}
+    a{color:#000;text-decoration:underline}
+    .msg{border:1px solid #999;background:#fff !important}
+    table{font-size:11px}
+  }
 </style>
 </head>
 <body>
@@ -142,12 +181,18 @@ toleransgränser samtidigt.</p>
     </select></div>
     <div><label>Arbete</label><select id="arbete">
       <option value="0" selected>Inget (underhåll)</option>
-      <option value="1">Lätt — energitillägg &lt;30 %</option>
-      <option value="2">Medel — 30–50 %</option>
-      <option value="3">Hårt — 50–75 %</option>
-      <option value="4">Mycket hårt — 75–130 %</option>
+      <option value="1">Lätt — fritidsridning, +25 %</option>
+      <option value="2">Medel — ridskoleverksamhet, +50 %</option>
+      <option value="3">Hårt — fälttävlan, viss trav/galopp, +75 %</option>
+      <option value="4">Mycket hårt — trav/galopptävling, distans, +120 %</option>
     </select></div>
   </div>
+  <div class="grid g3" style="margin-top:12px">
+    <div style="grid-column:span 2"><label>Kategori</label><select id="kategori"></select></div>
+    <div id="vaxtFalt" style="display:none"><label>Daglig tillväxt (g/dygn)</label>
+      <input type="number" id="tillvaxt" step="10" placeholder="lämna tomt om okänd"></div>
+  </div>
+  <div id="katInfo"></div>
   <p class="note">Ange vikten <strong>vid normalhull</strong>, inte aktuell vikt. Är hästen i över- eller
   underhull ska foderstaten räknas på den vikt den skulle haft i hull 4–6. Samma regel som i
   HästSveriges foderstatsprogram.</p>
@@ -204,11 +249,70 @@ toleransgränser samtidigt.</p>
       style="width:100%;padding:8px;background:#fff;border:1px solid var(--brand);color:var(--brand);
       border-radius:5px;font:inherit;font-size:13px;font-weight:600;cursor:pointer">Fyll i schablonvärden</button></div>
   </div>
+  <div class="msg m-warn" style="margin-top:16px">
+    <strong>Provet måste representera hela partiet.</strong> Enligt SLU 308 är provtagningen
+    den största felkällan i hela kedjan — större än laboratoriets mätosäkerhet. Ett prov ur en
+    enda bal säger bara vad den balen innehöll.
+    <br><br>
+    <strong>Hö:</strong> öppna 10–12 balar och ta prov ur var och en. Dra inte ut tussar ur
+    oöppnade balar — bladen faller av och analysen visar då lägre proteinhalt än fodret verkligen
+    har. Klipp ned, blanda, skicka ½–1 kg.
+    <br>
+    <strong>Inplastat:</strong> ta borrkärnor ur 3–4 balar med ensilageborr och tejpa igen hålen
+    direkt med ensilagetejp, inte silvertejp. Saknas borr: ta prov ur de 3–4 första balar du
+    öppnar och frys tills alla är provtagna.
+    <br><br>
+    <span style="font-size:12px">Källa: HästSveriges foderskola del 5, exempelruta 1.</span>
+  </div>
+  <div id="validering"></div>
   <p class="note">Selen sätts till 0 som schablon. Svenska jordar är selenfattiga och SLU anger att
   tillskott behövs i de allra flesta fall — antagandet ska framtvinga en selenbrist, inte dölja den.</p>
 </div>
 
+<div class="card">
+  <div class="h2row">
+    <h2>2b. Övriga fodermedel</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="tabellval" style="width:auto;font-size:13px"></select>
+      <button class="slumpa" onclick="laggTillEget()">Eget foder</button>
+    </div>
+  </div>
+  <p class="note" style="margin-top:0">Kraftfoder, halm eller ett andra grovfoder. Bidragen
+  räknas in i foderstaten. Tabellfodren har näringsvärden ur SLU:s fodertabell men
+  <strong>saknar mikromineraler</strong> — de redovisas som odeklarerade, inte som noll.</p>
+  <div id="foderlista"></div>
+</div>
+
+<div class="card">
+  <h2>2c. Tillskott du redan ger</h2>
+  <p class="note" style="margin-top:0">Ger hästen redan ett mineralfoder eller tillskott räknas
+  det in här. Utan det blir varje nytt förslag en <strong>stapling</strong> ovanpå något som
+  redan finns — och selen, som har den smalaste marginalen av alla mikromineraler, är just det
+  ämne där stapling blir farlig.</p>
+  <div class="grid g3">
+    <div style="grid-column:span 2"><label>Produkt</label>
+      <select id="befProdukt"></select></div>
+    <div><label>Giva (g/dygn)</label>
+      <input type="number" id="befDos" step="1" placeholder="t.ex. 50"></div>
+  </div>
+  <div id="befInfo"></div>
+</div>
+
 <div id="ut"></div>
+
+<div class="card">
+  <h2>5. Spara foderstaten</h2>
+  <p class="note" style="margin-top:0">Hela foderstaten ligger i adressfältet. Det finns inget
+  konto och ingenting sparas på någon server — <strong>länken är sparningen</strong>. Bokmärk
+  den eller spara den någonstans, så kan du komma tillbaka och ändra senare, eller skicka den
+  till någon annan.</p>
+  <div style="display:flex;gap:9px;flex-wrap:wrap">
+    <button class="slumpa" id="kopieraKnapp" onclick="kopieraLank()">Kopiera länk till foderstaten</button>
+    <button class="slumpa" onclick="window.print()">Skriv ut</button>
+  </div>
+  <p class="note">Utskriften visar hästens uppgifter, täckningen och den produkt du valt —
+  inte formulären. Välj ett produktförslag först om det ska följa med.</p>
+</div>
 
 <div class="msg m-bad" style="margin:26px 0 0;font-size:13.5px">
   <strong>Detta är inte rådgivning.</strong> Sidan är en teknisk prototyp som räknar en
@@ -254,7 +358,7 @@ toleransgränser samtidigt.</p>
      dosMin, dosMax: g/dygn per 100 kg kroppsvikt (normaliserat vid bygget)
    ============================================================================ */
 /* PRODUKTDATA-START */
-const PRODUKTKALLA = {"byggd": "2026-07-31", "antal_i_databas": 36, "antal_matchningsbara": 33, "referensvikt_per_hast_kg": 500};
+const PRODUKTKALLA = {"byggd": "2026-07-31", "antal_i_databas": 36, "antal_matchningsbara": 34, "referensvikt_per_hast_kg": 500};
 
 const PRODUKTER = [
  {
@@ -312,12 +416,16 @@ const PRODUKTER = [
    "smbrp": 250,
    "socker": 70,
    "starkelse": 100,
-   "vitE": 1700
+   "vitA": 75800,
+   "vitD": 10000,
+   "vitE": 1700,
+   "biotin": 30
   },
   "odeklarerat": [
    "I",
    "Co"
   ],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [
    "Jod",
    "Kobolt"
@@ -376,6 +484,12 @@ const PRODUKTER = [
    "I",
    "Co",
    "Fe"
+  ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
   ],
   "ejTakkontroll": [
    "Koppar",
@@ -456,6 +570,12 @@ const PRODUKTER = [
    "Co",
    "Fe"
   ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
+  ],
   "ejTakkontroll": [
    "Koppar",
    "Zink",
@@ -535,6 +655,12 @@ const PRODUKTER = [
    "Co",
    "Fe"
   ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
+  ],
   "ejTakkontroll": [
    "Koppar",
    "Zink",
@@ -605,6 +731,11 @@ const PRODUKTER = [
    "Co",
    "Fe"
   ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "biotin"
+  ],
   "ejTakkontroll": [
    "Koppar",
    "Zink",
@@ -657,6 +788,12 @@ const PRODUKTER = [
    "I",
    "Co",
    "Fe"
+  ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
   ],
   "ejTakkontroll": [
    "Koppar",
@@ -745,6 +882,11 @@ const PRODUKTER = [
    "Co",
    "Fe"
   ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "biotin"
+  ],
   "ejTakkontroll": [
    "Koppar",
    "Zink",
@@ -831,6 +973,11 @@ const PRODUKTER = [
    "Co",
    "Fe"
   ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "biotin"
+  ],
   "ejTakkontroll": [
    "Koppar",
    "Järn",
@@ -906,6 +1053,12 @@ const PRODUKTER = [
    "I",
    "Co",
    "Fe"
+  ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
   ],
   "ejTakkontroll": [
    "Koppar",
@@ -1000,6 +1153,12 @@ const PRODUKTER = [
    "Co",
    "Fe"
   ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
+  ],
   "ejTakkontroll": [
    "Koppar",
    "Mangan",
@@ -1078,6 +1237,11 @@ const PRODUKTER = [
    "I",
    "Co",
    "Fe"
+  ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "biotin"
   ],
   "ejTakkontroll": [
    "Koppar",
@@ -1163,9 +1327,13 @@ const PRODUKTER = [
    "smbrp": 50,
    "socker": 20,
    "starkelse": 90,
-   "vitE": 5200
+   "vitA": 270000,
+   "vitD": 31000,
+   "vitE": 5200,
+   "biotin": 5.1
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [],
   "sockerStatus": "deklarerat",
   "forp": 10,
@@ -1232,9 +1400,13 @@ const PRODUKTER = [
    "I": 12,
    "Co": 8.0,
    "Fe": 750,
-   "vitE": 4200
+   "vitA": 160000,
+   "vitD": 15000,
+   "vitE": 4200,
+   "biotin": 2.0
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [],
   "sockerStatus": "okant",
   "forp": 5,
@@ -1317,9 +1489,13 @@ const PRODUKTER = [
    "I": 14,
    "Co": 12,
    "Fe": 960,
-   "vitE": 5000
+   "vitA": 240000,
+   "vitD": 28000,
+   "vitE": 5000,
+   "biotin": 4.0
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [],
   "sockerStatus": "okant",
   "forp": 5,
@@ -1402,9 +1578,13 @@ const PRODUKTER = [
    "I": 14,
    "Co": 12,
    "Fe": 880,
-   "vitE": 8000
+   "vitA": 224000,
+   "vitD": 24000,
+   "vitE": 8000,
+   "biotin": 24
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [],
   "sockerStatus": "okant",
   "forp": 5,
@@ -1488,10 +1668,15 @@ const PRODUKTER = [
    "I": 5,
    "Fe": 300,
    "smbrp": 60,
+   "vitA": 100000,
+   "vitD": 10000,
    "vitE": 5000
   },
   "odeklarerat": [
    "Co"
+  ],
+  "vitOdeklarerat": [
+   "biotin"
   ],
   "ejTakkontroll": [
    "Kobolt"
@@ -1586,10 +1771,15 @@ const PRODUKTER = [
    "I": 5,
    "Fe": 300,
    "smbrp": 40,
+   "vitA": 100000,
+   "vitD": 10000,
    "vitE": 5000
   },
   "odeklarerat": [
    "Co"
+  ],
+  "vitOdeklarerat": [
+   "biotin"
   ],
   "ejTakkontroll": [
    "Kobolt"
@@ -1700,11 +1890,15 @@ const PRODUKTER = [
    "I": 5,
    "Fe": 300,
    "smbrp": 50,
-   "vitE": 0
+   "vitA": 0,
+   "vitD": 0,
+   "vitE": 0,
+   "biotin": 0
   },
   "odeklarerat": [
    "Co"
   ],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [
    "Kobolt"
   ],
@@ -1790,11 +1984,15 @@ const PRODUKTER = [
    "I": 5,
    "Fe": 300,
    "smbrp": 40,
-   "vitE": 15000
+   "vitA": 200000,
+   "vitD": 10000,
+   "vitE": 15000,
+   "biotin": 2
   },
   "odeklarerat": [
    "Co"
   ],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [
    "Kobolt"
   ],
@@ -1879,9 +2077,14 @@ const PRODUKTER = [
    "I": 5,
    "Co": 5,
    "Fe": 1000,
+   "vitA": 100000,
+   "vitD": 10000,
    "vitE": 3000
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [
+   "biotin"
+  ],
   "ejTakkontroll": [],
   "sockerStatus": "okant_sockerravara",
   "forp": 8,
@@ -1942,6 +2145,12 @@ const PRODUKTER = [
    "Fe": 1000
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
+  ],
   "ejTakkontroll": [],
   "sockerStatus": "okant_sockerravara",
   "forp": 8,
@@ -2000,9 +2209,13 @@ const PRODUKTER = [
    "I": 10,
    "Co": 7,
    "Fe": 1000,
-   "vitE": 6000
+   "vitA": 200000,
+   "vitD": 20000,
+   "vitE": 6000,
+   "biotin": 20
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [],
   "sockerStatus": "okant_sockerravara",
   "forp": 8,
@@ -2066,6 +2279,12 @@ const PRODUKTER = [
   },
   "odeklarerat": [
    "Fe"
+  ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
   ],
   "ejTakkontroll": [
    "Järn"
@@ -2134,6 +2353,12 @@ const PRODUKTER = [
   },
   "odeklarerat": [
    "Co"
+  ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD",
+   "vitE",
+   "biotin"
   ],
   "ejTakkontroll": [
    "Kobolt"
@@ -2226,9 +2451,13 @@ const PRODUKTER = [
    "smbrp": 150,
    "socker": 45,
    "starkelse": 25,
-   "vitE": 10000
+   "vitA": 550000,
+   "vitD": 30000,
+   "vitE": 10000,
+   "biotin": 38
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [],
   "sockerStatus": "deklarerat",
   "forp": 5,
@@ -2309,9 +2538,15 @@ const PRODUKTER = [
    "energi": 6,
    "smbrp": 110,
    "socker": 45,
-   "starkelse": 15
+   "starkelse": 15,
+   "vitA": 600000,
+   "vitD": 65000,
+   "biotin": 15
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [
+   "vitE"
+  ],
   "ejTakkontroll": [],
   "sockerStatus": "deklarerat",
   "forp": 2,
@@ -2364,10 +2599,15 @@ const PRODUKTER = [
    "Co": 10,
    "Fe": 2500,
    "smbrp": 150,
-   "vitE": 2000
+   "vitE": 2000,
+   "biotin": 5
   },
   "odeklarerat": [
    "I"
+  ],
+  "vitOdeklarerat": [
+   "vitA",
+   "vitD"
   ],
   "ejTakkontroll": [
    "Jod"
@@ -2445,11 +2685,17 @@ const PRODUKTER = [
    "I": 25,
    "smbrp": 108,
    "socker": 45,
-   "starkelse": 17
+   "starkelse": 17,
+   "vitA": 175000,
+   "vitD": 50000,
+   "biotin": 26.25
   },
   "odeklarerat": [
    "Co",
    "Fe"
+  ],
+  "vitOdeklarerat": [
+   "vitE"
   ],
   "ejTakkontroll": [
    "Järn",
@@ -2532,11 +2778,17 @@ const PRODUKTER = [
    "energi": 7.4,
    "smbrp": 145,
    "socker": 85,
-   "starkelse": 45
+   "starkelse": 45,
+   "vitA": 19000,
+   "vitD": 26600,
+   "biotin": 15.2
   },
   "odeklarerat": [
    "Co",
    "Fe"
+  ],
+  "vitOdeklarerat": [
+   "vitE"
   ],
   "ejTakkontroll": [
    "Järn",
@@ -2652,12 +2904,16 @@ const PRODUKTER = [
    "smbrp": 94,
    "socker": 45,
    "starkelse": 2.0,
-   "vitE": 6000
+   "vitA": 25000,
+   "vitD": 35000,
+   "vitE": 6000,
+   "biotin": 20
   },
   "odeklarerat": [
    "Co",
    "Fe"
   ],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [
    "Järn",
    "Kobolt"
@@ -2784,9 +3040,13 @@ const PRODUKTER = [
    "I": 20,
    "Co": 4,
    "Fe": 1630,
-   "vitE": 4000
+   "vitA": 300000,
+   "vitD": 30000,
+   "vitE": 4000,
+   "biotin": 15
   },
   "odeklarerat": [],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [],
   "sockerStatus": "okant_sockerravara",
   "forp": 10,
@@ -2838,13 +3098,17 @@ const PRODUKTER = [
    "I": 84,
    "Co": 9,
    "smbrp": 10,
-   "vitE": 19650
+   "vitA": 616000,
+   "vitD": 181500,
+   "vitE": 19650,
+   "biotin": 25
   },
   "odeklarerat": [
    "P",
    "Mg",
    "Fe"
   ],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [
    "Järn"
   ],
@@ -2947,12 +3211,16 @@ const PRODUKTER = [
    "I": 100,
    "Co": 15,
    "smbrp": 268,
-   "vitE": 30000
+   "vitA": 925000,
+   "vitD": 200000,
+   "vitE": 30000,
+   "biotin": 37
   },
   "odeklarerat": [
    "Mg",
    "Fe"
   ],
+  "vitOdeklarerat": [],
   "ejTakkontroll": [
    "Järn"
   ],
@@ -3001,12 +3269,112 @@ const PRODUKTER = [
   "konfidens": "hog",
   "kontrollerad": "2026-07-30",
   "luckor": 10
+ },
+ {
+  "id": "krafft-vitamin-multi-pellets",
+  "namn": "VITAMIN MULTI PELLETS",
+  "tillverkare": "KRAFFT",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pellets",
+  "malgrupp": [
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 12.0,
+  "dosMax": 20.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Blandas i foder, 60 g/dag. Maxgiva 100 g/dag. 1 dl = ca 60 g. 2,5 kg räcker ca 40 dagar, 7 kg ca 110 dagar.",
+  "naring": {
+   "Na": 1,
+   "smbrp": 100,
+   "vitA": 750000,
+   "vitD": 65000,
+   "vitE": 9600,
+   "biotin": 25
+  },
+  "odeklarerat": [
+   "Ca",
+   "P",
+   "Mg",
+   "Cu",
+   "Zn",
+   "Mn",
+   "Se",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "vitOdeklarerat": [],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Selen",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 2.5,
+  "krPerKg": 92.71,
+  "krPerKgMax": 131.6,
+  "saljare": [
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/vitaminer-mineraler/8332-krafft-vitamin-multi-7kg-7350015761650.html",
+    "pris": 649,
+    "forp": 7,
+    "krPerKg": 92.71,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/fodertillskott-krafft-vitamin-multi-pellets?variant=2000595211888",
+    "pris": 649,
+    "forp": 7,
+    "krPerKg": 92.71,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/krafft-multivitamin-3-kg",
+    "pris": 329,
+    "forp": 2.5,
+    "krPerKg": 131.6,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/vitaminer-mineraler/8252-krafft-vitamin-multi-2-5kg-7350015761643.html",
+    "pris": 329,
+    "forp": 2.5,
+    "krPerKg": 131.6,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/fodertillskott-krafft-vitamin-multi-pellets",
+    "pris": 329,
+    "forp": 2.5,
+    "krPerKg": 131.6,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/vitamin-multi-pellets/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
  }
 ];
 /* PRODUKTDATA-SLUT */
 
 /* ========================= NORMER (SLU 289) ============================== */
 // Makro, g per 100 kg kroppsvikt och dygn. [min, max] — punkt när SLU anger punkt.
+// Samtliga värden ur SLU 289 tabell 15.
 const MAKRO = [
   {Ca:[4.0,4.0], P:[2.8,2.8], Mg:[1.5,1.5], NaCl:[5.1,5.1]},   // underhåll
   {Ca:[6.0,6.0], P:[3.6,3.6], Mg:[1.9,1.9], NaCl:[7,7]},       // arbete <30 %
@@ -3014,20 +3382,113 @@ const MAKRO = [
   {Ca:[8.0,8.0], P:[5.8,5.8], Mg:[3.0,3.0], NaCl:[9,13]},      // 50–75 %
   {Ca:[8.0,8.0], P:[5.8,5.8], Mg:[3.0,3.0], NaCl:[13,21]}      // 75–130 %
 ];
+
+// Övriga hästkategorier, SLU 289 tabell 15. Ersätter arbetsraden helt.
+const MAKRO_KAT = {
+  "drakt79":  {Ca:[5.6,5.6],  P:[4.0,4.0], Mg:[1.5,1.5], NaCl:[5.1,5.1]},
+  "drakt911": {Ca:[7.2,7.2],  P:[5.3,5.3], Mg:[1.6,1.6], NaCl:[5.6,5.6]},
+  "digi13":   {Ca:[11.8,11.8],P:[7.6,7.6], Mg:[2.3,2.3], NaCl:[6.5,6.5]},
+  "digi46":   {Ca:[7.9,7.9],  P:[5.0,5.0], Mg:[2.1,2.1], NaCl:[6.0,6.0]},
+  "digi6":    {Ca:[7.5,7.5],  P:[4.7,4.7], Mg:[1.8,1.8], NaCl:[5.9,5.9]},
+  "vaxt46":   {Ca:[17.2,17.2],P:[9.6,9.6], Mg:[2.1,2.1], NaCl:[2.2,2.2]},
+  "vaxt712":  {Ca:[10.3,10.3],P:[5.7,5.7], Mg:[1.7,1.7], NaCl:[3.1,3.1]},
+  "vaxt1324": {Ca:[7.5,7.5],  P:[4.2,4.2], Mg:[1.6,1.6], NaCl:[3.8,3.8]},
+  "vaxt2536": {Ca:[6.2,6.2],  P:[3.4,3.4], Mg:[1.5,1.5], NaCl:[4.5,4.5]}
+};
+
+// Etiketter, energitillägg och proteinkrav per kategori.
+// Energitillägg för dräktighet och digivning ur foderskolan del 2.
+// Proteinbehov: 6 g smb rp/MJ för underhåll och arbete, 12 för dräktighets- och
+// digivningstillägget, 10 vid 6 mån ålder avtagande mot 6 vid 3 år.
+const KATEGORI = {
+  "vuxen":    {namn:"Vuxen häst (över 3 år)",            protMJ:6},
+  "drakt79":  {namn:"Dräktig, månad 8–9",   energi:0.15, protMJ:12},
+  "drakt10":  {namn:"Dräktig, månad 10",    energi:0.22, protMJ:12, makro:"drakt911"},
+  "drakt11":  {namn:"Dräktig, månad 11",    energi:0.30, protMJ:12, makro:"drakt911"},
+  "digi13":   {namn:"Digivande, månad 1–3", energi:1.00, protMJ:12},
+  "digi46":   {namn:"Digivande, månad 4–6", energi:0.60, protMJ:12},
+  "digi6":    {namn:"Digivande, månad 6+",  energi:0.40, protMJ:12},
+  "vaxt46":   {namn:"Växande, 4–6 mån",  vaxt:0.63, protMJ:10},
+  "vaxt712":  {namn:"Växande, 7–12 mån", vaxt:0.59, protMJ:9},
+  "vaxt1324": {namn:"Växande, 13–24 mån",vaxt:0.57, protMJ:8},
+  "vaxt2536": {namn:"Växande, 25–36 mån",vaxt:0.57, protMJ:7}
+};
+
+// Energitillägg för arbete i procent av underhållsbehovet, SLU 289 tabell 9.
+const ARBNAMN = ["Inget arbete","Lätt — fritidsridning","Medel — ridskoleverksamhet",
+                 "Hårt — fälttävlan, viss trav- och galoppträning",
+                 "Mycket hårt — trav- och galopptävling, distansritt"];
 // Mikro, mg per 100 kg kroppsvikt och dygn.
 const MIKRO_UH  = {Fe:[40,50], Mn:[40,50], Cu:[10,12], Zn:[40,50], Co:[0.1,0.1], I:[0.35,0.35], Se:[0.2,0.2]};
 const MIKRO_ARB = {Fe:[80,100],Mn:[80,100],Cu:[20,25], Zn:[80,100],Co:[0.2,0.2], I:[0.35,0.35], Se:[0.2,0.2]};
 // Maximal toleransgräns, mg per 100 kg och dygn (SLU 289 tabell 17).
 const TAK = {Fe:3000, Mn:3000, Cu:2400, Zn:1500, Co:30, I:10, Se:5};
-// Energitillägg i procent av underhåll — bandens mittvärden.
-const ARBFAKTOR = [0, 0.15, 0.40, 0.62, 1.00];
+// Energitillägg i procent av underhållsbehovet, SLU 289 tabell 9.
+// Tidigare användes bandmittvärden (0/15/40/62/100). Tabell 9 anger de faktiska
+// siffrorna och används nu i stället.
+const ARBFAKTOR = [0, 0.25, 0.50, 0.75, 1.20];
 
 const MIKROLISTA = ["Zn","Cu","Mn","Fe","Se","I","Co"];
+/* ---------- fodermedelstabell ------------------------------------------------
+   Näringsvärden per kg torrsubstans ur SLU:s fodertabell för häst
+   (se Kunskapsbank/07). Stärkelse ur SLU 289 tabell 29 där den finns —
+   null betyder ej deklarerad, aldrig noll.
+
+   Tabellen saknar mikromineraler helt. Det är inte ett fel i insamlingen utan i
+   källan, och det får inte tolkas som att halten är noll: en takkontroll som
+   räknar odeklarerat som noll har inte kontrollerat någonting.
+   -------------------------------------------------------------------------- */
+const FODERTABELL = [
+  {id:"havre",     namn:"Havre, kärna",        typ:"kraft", ts:87, energi:11.1, smbrp:86,  Ca:0.8,  P:3.8,  Mg:1.3, starkelse:340,  spannmal:true},
+  {id:"korn",      namn:"Korn, kärna",         typ:"kraft", ts:87, energi:12.6, smbrp:84,  Ca:0.5,  P:4.0,  Mg:1.3, starkelse:520,  spannmal:true},
+  {id:"vetekli",   namn:"Vetekli",             typ:"kraft", ts:87, energi:9.8,  smbrp:120, Ca:1.7,  P:12.0, Mg:5.3, starkelse:null, spannmal:true},
+  {id:"betfiber",  namn:"Betfiber, omelasserad",typ:"kraft",ts:90, energi:12.8, smbrp:54,  Ca:7.0,  P:1.0,  Mg:1.4, starkelse:0,    spannmal:false},
+  {id:"betfiberm", namn:"Betfiber, melasserad",typ:"kraft", ts:91, energi:12.4, smbrp:73,  Ca:7.7,  P:1.2,  Mg:1.2, starkelse:0,    spannmal:false},
+  {id:"linfro",    namn:"Linfrö",              typ:"kraft", ts:93, energi:16.8, smbrp:194, Ca:2.8,  P:5.7,  Mg:3.9, starkelse:null, spannmal:false},
+  {id:"sojamjol",  namn:"Sojamjöl, extraherat",typ:"kraft", ts:87, energi:13.4, smbrp:448, Ca:3.2,  P:7.2,  Mg:2.6, starkelse:null, spannmal:false},
+  {id:"olja",      namn:"Vegetabilisk olja",   typ:"kraft", ts:100,energi:31.3, smbrp:0,   Ca:0,    P:0,    Mg:0,   starkelse:0,    spannmal:false, olja:true},
+  {id:"halm",      namn:"Halm, stråsäd",       typ:"grov",  ts:90, energi:6.0,  smbrp:0,   Ca:3.3,  P:1.1,  Mg:1.3, starkelse:0,    spannmal:false},
+  {id:"grasfrohalm",namn:"Gräsfröhalm",        typ:"grov",  ts:90, energi:6.5,  smbrp:30,  Ca:3.3,  P:1.4,  Mg:1.4, starkelse:0,    spannmal:false},
+  {id:"lusern",    namn:"Lusernpellets",       typ:"grov",  ts:90, energi:8.5,  smbrp:110, Ca:14.0, P:2.5,  Mg:2.2, starkelse:15,   spannmal:false}
+];
+
+let extraFoder = [];      // tillagda fodermedel utöver primäranalysen
+let foderRaknare = 0;
+let KANDIDATER = null;    // produkter som får föreslås — utesluter befintligt tillskott
+
 const MAKROLISTA = ["Ca","P","Mg"];
+
+/* ---------- vitaminer, SLU 289 tabell 18 -----------------------------------
+   Per 100 kg kroppsvikt och dygn. A och D i IE, E och biotin i mg.
+
+   Vitaminerna behandlas annorlunda än mineralerna, och skälet är viktigt:
+   grovfodrets vitamininnehåll analyseras normalt inte, och SLU 289 anger att
+   ett välbärgat vallfoder plus daglig utevistelse i regel täcker behovet. Ett
+   beräknat underskott vore därför en artefakt av att indata saknas, inte ett
+   fynd. Vitaminerna redovisas i tabellen och prövas mot toleransgränserna —
+   men de driver inte produktförslagen.
+
+   B1 och B2 utelämnas: SLU 289 anger att bristsymptom inte är påvisade hos
+   häst, och de deklareras sällan.                                            */
+const VITLISTA = ["vitA","vitD","vitE","biotin"];
+const VIT_NAMN = {vitA:"Vitamin A (IE)", vitD:"Vitamin D (IE)",
+                  vitE:"Vitamin E (mg)", biotin:"Biotin (mg)"};
+const VIT_UH   = {vitA:[3000,4000], vitD:[400,500],  vitE:[75,75],   biotin:[0.1,0.1]};
+const VIT_HART = {vitA:[7500,7500], vitD:[750,750],  vitE:[200,200], biotin:[0.15,0.15]};
+const VIT_TAK  = {vitA:48000, vitD:6600, vitE:3000};   // biotin saknar angiven gräns
 
 let enhet = "ts";
 let valdId = null;          // id på produkt som räknas in i foderstaten
 let sisteForslag = [];      // senaste utvärderingen, för uppslag vid val
+
+/* Korten är klickbara div-element. Enter och mellanslag ska göra samma sak som
+   ett klick, annars går de inte att nå med tangentbord. */
+function kortTangent(ev, el){
+  if(ev.key === "Enter" || ev.key === " " || ev.key === "Spacebar"){
+    ev.preventDefault();
+    el.click();
+  }
+}
 
 function valj(nyckel){
   valdId = (valdId === nyckel) ? null : nyckel;
@@ -3131,6 +3592,269 @@ function slumpaAnalys(){
   rakna();
 }
 
+/* ---------- rimlighetskontroll av indata -----------------------------------
+   Varnar, blockerar inte. Intervallen kommer från spännvidden i SLU 308 tabell 2
+   (över 1 000 svenska hästvallfoder) och från SLU 289 tabell 31. Ett värde
+   utanför intervallet är osannolikt, inte omöjligt — men oftast ett skrivfel.
+   -------------------------------------------------------------------------- */
+const RIMLIGT = {
+  energi: [5, 13,  "MJ/kg ts", "svenskt vallfoder ligger på 6,0–12,5 (SLU 308 tabell 2)"],
+  smbrp:  [0, 200, "g/kg ts",  "svenskt vallfoder ligger på 0–196 (SLU 308 tabell 2)"],
+  ts:     [20, 95, "%",        "ensilage under 50, hösilage 50–84, hö över 84"],
+  vikt:   [50, 1200, "kg",     ""],
+  Ca:     [0.5, 15, "g/kg ts", "svenskt vallfoder ligger på 1,1–14,8 (SLU 308 tabell 2)"],
+  P:      [0.3, 6,  "g/kg ts", "svenskt vallfoder ligger på 0,6–4,8 (SLU 308 tabell 2)"],
+  Mg:     [0.2, 5,  "g/kg ts", ""],
+  wsc:    [0, 300,  "g/kg ts", ""]
+};
+
+function validera(givaTS, enh){
+  const fel = [];
+  Object.keys(RIMLIGT).forEach(id => {
+    const el = document.getElementById(id);
+    if(!el || el.value === "") return;
+    const v = parseFloat(el.value);
+    if(isNaN(v)) return;
+    const [lo, hi, enhetstext, kalla] = RIMLIGT[id];
+    if(v < lo || v > hi)
+      fel.push("<strong>"+(el.previousElementSibling ? el.previousElementSibling.textContent : id)
+        + " "+f1(v)+" "+enhetstext+"</strong> ligger utanför det rimliga intervallet "
+        + f1(lo)+"–"+f1(hi)+(kalla ? " — "+kalla : "")+".");
+  });
+  const perHundra = givaTS/enh;
+  if(givaTS > 0 && (perHundra < 0.5 || perHundra > 3.5))
+    fel.push("<strong>Givan "+f1(perHundra)+" kg ts per 100 kg häst</strong> ligger utanför "
+      + "0,5–3,5. SLU 289 anger konsumtionsförmågan till 1,5–3,0 för hästar.");
+  const el = document.getElementById("validering");
+  if(el) el.innerHTML = fel.length
+    ? '<div class="msg m-bad">'+fel.join("<br>")+'<br><br>Beräkningen körs ändå, men '
+      + 'kontrollera värdena — utanför dessa intervall är ett skrivfel vanligare än ett '
+      + 'ovanligt foder.</div>' : "";
+}
+
+/* ---------- spara och dela via URL ----------------------------------------
+   Hela tillståndet ligger i adressfältets hash. Ingen inloggning, inget konto,
+   ingenting lagrat på någon server — länken är sparningen. Samma princip som
+   HästSveriges foderstatsprogram.
+
+   localStorage används medvetet inte: tillståndet ska gå att dela.
+   -------------------------------------------------------------------------- */
+const FALT_ID = ["vikt","typ","hingst","arbete","kategori","tillvaxt","ts","giva",
+                 "energi","smbrp","wsc","Ca","P","Mg","Na","Zn","Cu","Mn","Fe",
+                 "Se","I","Co","befProdukt","befDos"];
+let laserTillstand = false;
+
+function b64enc(s){ return btoa(unescape(encodeURIComponent(s)))
+  .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function b64dec(s){ s = s.replace(/-/g,"+").replace(/_/g,"/");
+  return decodeURIComponent(escape(atob(s))); }
+
+function sparaTillstand(){
+  if(laserTillstand) return;
+  const t = {v:1, f:{}, e:enhet, x:[], vald:valdId};
+  FALT_ID.forEach(id => { const el = document.getElementById(id);
+    if(el && el.value !== "") t.f[id] = el.value; });
+  extraFoder.forEach(f => t.x.push({k:f.kalla, t:f.tabellId||null, n:f.namn,
+    ty:f.typ, kg:f.kg, ts:f.ts, na:f.n, st:f.starkelse}));
+  try{
+    history.replaceState(null, "", "#" + b64enc(JSON.stringify(t)));
+  }catch(e){ /* filprotokoll i vissa webbläsare tillåter inte replaceState */ }
+}
+
+function lasTillstand(){
+  const h = location.hash.slice(1);
+  if(!h) return false;
+  let t;
+  try { t = JSON.parse(b64dec(h)); } catch(e){ return false; }
+  if(!t || typeof t !== "object") return false;
+  laserTillstand = true;
+  try{
+    // Okända fält ignoreras tyst — en gammal länk ska ladda, inte krascha.
+    Object.keys(t.f || {}).forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = t.f[id];
+    });
+    if(t.e === "foder" || t.e === "ts") enhet = t.e;
+    extraFoder = [];
+    (t.x || []).forEach(f => {
+      const bas = FODERTABELL.find(x => x.id === f.t);
+      extraFoder.push({
+        nyckel: "f"+(++foderRaknare), kalla: f.k || "eget", tabellId: f.t || null,
+        namn: f.n || "Foder", typ: f.ty || "kraft", kg: f.kg || 0, ts: f.ts || 87,
+        n: f.na || {}, starkelse: (f.st===undefined ? null : f.st),
+        spannmal: bas ? !!bas.spannmal : false, olja: bas ? !!bas.olja : false,
+        odeklarerat: bas
+          ? ["Na","Zn","Cu","Mn","Fe","Se","I","Co"].concat(bas.starkelse===null?["stärkelse"]:[])
+          : ["Zn","Cu","Mn","Fe","Se","I","Co"]
+      });
+    });
+    valdId = t.vald || null;
+  } finally { laserTillstand = false; }
+  return true;
+}
+
+function kopieraLank(){
+  sparaTillstand();
+  const url = location.href;
+  const klar = () => { const b = document.getElementById("kopieraKnapp");
+    if(b){ const gammal = b.textContent; b.textContent = "Länken är kopierad";
+      setTimeout(() => b.textContent = gammal, 2200); } };
+  if(navigator.clipboard) navigator.clipboard.writeText(url).then(klar, () => prompt("Kopiera länken:", url));
+  else prompt("Kopiera länken:", url);
+}
+
+/* ---------- tillskott hästen redan får ------------------------------------
+   Räknas in i tillfört innan underskotten beräknas, och ingår i underlaget för
+   takkontrollen när nya förslag doseras. Produkten kan inte föreslås igen.
+
+   Foderskolan del 5: "några extra selentillskott skall i allmänhet inte
+   tillföras om hästen ges ett mineralfoder (selen är giftigt i för hög dos)."
+   -------------------------------------------------------------------------- */
+function fyllBefintligt(){
+  const s = document.getElementById("befProdukt");
+  const grupper = {};
+  PRODUKTER.forEach(p => (grupper[p.kategori] = grupper[p.kategori] || []).push(p));
+  s.innerHTML = '<option value="">Inget — hästen får inget tillskott i dag</option>'
+    + Object.keys(grupper).sort().map(k =>
+        '<optgroup label="'+k+'">'
+        + grupper[k].map(p => '<option value="'+p.id+'">'+p.namn+' · '+p.tillverkare+'</option>').join("")
+        + '</optgroup>').join("");
+}
+
+function befintligt(){
+  const id = document.getElementById("befProdukt").value;
+  if(!id) return null;
+  const p = PRODUKTER.find(x => x.id === id);
+  if(!p) return null;
+  const g = num(document.getElementById("befDos"));
+  return {p, dos: (g||0)/1000, dosG: g||0};
+}
+
+/* ---------- övriga fodermedel ---------- */
+function fyllTabellval(){
+  const s = document.getElementById("tabellval");
+  s.innerHTML = '<option value="">Lägg till ur fodertabell…</option>'
+    + FODERTABELL.map(f => '<option value="'+f.id+'">'+f.namn+'</option>').join("");
+  s.onchange = () => { if(s.value){ laggTillTabell(s.value); s.value=""; } };
+}
+
+function laggTillTabell(id){
+  const t = FODERTABELL.find(f => f.id === id);
+  if(!t) return;
+  extraFoder.push({
+    nyckel: "f"+(++foderRaknare), kalla: "tabell", tabellId: id,
+    namn: t.namn, typ: t.typ, kg: 1, ts: t.ts,
+    n: {energi:t.energi, smbrp:t.smbrp, Ca:t.Ca, P:t.P, Mg:t.Mg},
+    starkelse: t.starkelse, spannmal: !!t.spannmal, olja: !!t.olja,
+    // Tabellen saknar dessa. null, inte 0.
+    odeklarerat: ["Na","Zn","Cu","Mn","Fe","Se","I","Co"]
+      .concat(t.starkelse===null ? ["stärkelse"] : [])
+  });
+  renderFoder(); rakna();
+}
+
+function laggTillEget(){
+  extraFoder.push({
+    nyckel: "f"+(++foderRaknare), kalla: "eget", namn: "Eget foder",
+    typ: "kraft", kg: 1, ts: 87,
+    n: {energi:null, smbrp:null, Ca:null, P:null, Mg:null, Na:null},
+    starkelse: null, spannmal: false, olja: false,
+    odeklarerat: ["Zn","Cu","Mn","Fe","Se","I","Co"]
+  });
+  renderFoder(); rakna();
+}
+
+function taBortFoder(nyckel){
+  extraFoder = extraFoder.filter(f => f.nyckel !== nyckel);
+  renderFoder(); rakna();
+}
+
+function andraFoder(nyckel, falt, varde){
+  const f = extraFoder.find(x => x.nyckel === nyckel);
+  if(!f) return;
+  const tal = parseFloat(varde);
+  if(falt === "namn")      f.namn = varde;
+  else if(falt === "typ")  f.typ = varde;
+  else if(falt === "kg")   f.kg = isNaN(tal) ? 0 : tal;
+  else if(falt === "ts")   f.ts = isNaN(tal) ? 0 : tal;
+  else if(falt === "starkelse") f.starkelse = isNaN(tal) ? null : tal;
+  else f.n[falt] = isNaN(tal) ? null : tal;
+  rakna();
+}
+
+function renderFoder(){
+  const el = document.getElementById("foderlista");
+  if(!extraFoder.length){
+    el.innerHTML = '<p class="note" style="font-style:italic">Inga övriga fodermedel tillagda. '
+      + 'Foderstaten består bara av grovfodret ovan.</p>';
+    return;
+  }
+  let h = "";
+  extraFoder.forEach(f => {
+    const eget = f.kalla === "eget";
+    h += '<div class="foderrad">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">'
+      + (eget
+          ? '<input type="text" value="'+f.namn.replace(/"/g,"&quot;")+'" style="width:auto;flex:1;min-width:150px;font-weight:600"'
+            + ' oninput="andraFoder(\''+f.nyckel+'\',\'namn\',this.value)">'
+          : '<strong style="flex:1;min-width:150px">'+f.namn+'</strong>')
+      + '<select style="width:auto" onchange="andraFoder(\''+f.nyckel+'\',\'typ\',this.value)">'
+      + '<option value="grov"'+(f.typ==="grov"?" selected":"")+'>Grovfoder</option>'
+      + '<option value="kraft"'+(f.typ==="kraft"?" selected":"")+'>Kraftfoder</option></select>'
+      + '<button class="slumpa" style="border-color:var(--bad);color:var(--bad);padding:4px 10px"'
+      + ' onclick="taBortFoder(\''+f.nyckel+'\')">Ta bort</button></div>'
+      + '<div class="grid g4" style="margin-top:9px">'
+      + fodFalt(f,"kg","Mängd (kg foder/dygn)",f.kg)
+      + fodFalt(f,"ts","Torrsubstans (%)",f.ts);
+    if(eget){
+      h += fodFalt(f,"energi","Energi (MJ/kg ts)",f.n.energi)
+         + fodFalt(f,"smbrp","Smb rp (g/kg ts)",f.n.smbrp)
+         + fodFalt(f,"Ca","Ca (g/kg ts)",f.n.Ca)
+         + fodFalt(f,"P","P (g/kg ts)",f.n.P)
+         + fodFalt(f,"Mg","Mg (g/kg ts)",f.n.Mg)
+         + fodFalt(f,"Na","Na (g/kg ts)",f.n.Na)
+         + fodFalt(f,"starkelse","Stärkelse (g/kg ts)",f.starkelse);
+    } else {
+      h += '<div style="grid-column:span 2;font-size:12.5px;color:var(--muted);align-self:end">'
+         + f.n.energi+' MJ · '+f.n.smbrp+' g smb rp · Ca '+f.n.Ca+' · P '+f.n.P+' · Mg '+f.n.Mg
+         + ' per kg ts'+(f.starkelse!==null ? ' · stärkelse '+f.starkelse+' g' : '')+'</div>';
+    }
+    h += '</div>';
+    if(f.odeklarerat.length)
+      h += '<div class="note" style="margin:7px 0 0;font-size:12px">Odeklarerat i denna post: '
+         + f.odeklarerat.join(", ")+'. Räknas inte som noll — takkontrollen kan inte pröva dem.</div>';
+    h += '</div>';
+  });
+  el.innerHTML = h;
+}
+
+function fodFalt(f, falt, etikett, varde){
+  return '<div><label>'+etikett+'</label><input type="number" step="0.1" value="'
+    + (varde===null||varde===undefined ? "" : varde)
+    + '" oninput="andraFoder(\''+f.nyckel+'\',\''+falt+'\',this.value)"></div>';
+}
+
+/* Summerar de extra fodermedlens bidrag. Returnerar ts-mängder och näring. */
+function extraBidrag(){
+  const ut = {tsGrov:0, tsKraft:0, energi:0, smbrp:0, starkelse:0,
+              starkelseOkand:false, mikroOkand:false, spannmalKg:0, oljaKg:0};
+  MAKROLISTA.concat(["NaCl"]).forEach(m => ut[m] = 0);
+  extraFoder.forEach(f => {
+    const ts = (f.kg||0) * (f.ts||0)/100;
+    if(f.typ === "grov") ut.tsGrov += ts; else ut.tsKraft += ts;
+    ut.energi += (f.n.energi||0) * ts;
+    ut.smbrp  += (f.n.smbrp||0)  * ts;
+    MAKROLISTA.forEach(m => ut[m] += (f.n[m]||0) * ts);
+    ut.NaCl += (f.n.Na||0) * 2.542 * ts;
+    if(f.starkelse === null) ut.starkelseOkand = true;
+    else ut.starkelse += f.starkelse * ts;
+    if(f.odeklarerat.some(m => MIKROLISTA.indexOf(m) >= 0)) ut.mikroOkand = true;
+    if(f.spannmal) ut.spannmalKg += (f.kg||0);
+    if(f.olja) ut.oljaKg += (f.kg||0);
+  });
+  return ut;
+}
+
 function tabellvarden(){
   // Schabloner för gräsvallfoder, per kg ts. Selen medvetet 0.
   const v = enhet==="ts" ? {Se:0, I:0.34, Co:0.07} : {Se:0, I:0.30, Co:0.06};
@@ -3160,20 +3884,65 @@ function rakna(){
     A[id] = raw===null ? null : raw*k;
   });
 
-  // ---- tillfört per dygn ----
+  // ---- tillfört per dygn: primäranalysen plus övriga fodermedel ----
+  validera(givaTS, enh);
+
+  const ex = extraBidrag();
   const till = {};
-  MAKROLISTA.forEach(m => till[m] = (A[m]||0)*givaTS);
-  till.NaCl = (A.Na||0)*givaTS*2.542;        // Na → NaCl
+  MAKROLISTA.forEach(m => till[m] = (A[m]||0)*givaTS + ex[m]);
+  till.NaCl = (A.Na||0)*givaTS*2.542 + ex.NaCl;   // Na → NaCl
+  // Mikromineraler kommer bara från primäranalysen — tabellfodren deklarerar dem inte
   MIKROLISTA.forEach(m => till[m] = (A[m]||0)*givaTS);
-  const tillEnergi = (A.energi||0)*givaTS;
-  const tillProt   = (A.smbrp||0)*givaTS;
+  const tillEnergi = (A.energi||0)*givaTS + ex.energi;
+  const tillProt   = (A.smbrp||0)*givaTS  + ex.smbrp;
+  const tsGrovTot  = givaTS + ex.tsGrov;          // grovfoder styr minimigivan
+  const tsTot      = tsGrovTot + ex.tsKraft;
+
+  // ---- tillskott hästen redan får ----
+  const bef = befintligt();
+  if(bef && bef.dos > 0){
+    const b = bidrag(bef.p, bef.dos);
+    Object.keys(b).forEach(m => till[m] = (till[m]||0) + b[m]);
+  }
+  befInfo.innerHTML = bef
+    ? (bef.dosG > 0
+        ? '<div class="msg m-ok">Räknar in <strong>'+f0(bef.dosG)+' g '+bef.p.namn
+          + '</strong> per dygn. Produkten kan inte föreslås igen, och takkontrollen '
+          + 'utgår från att den redan finns i foderstaten.</div>'
+        : '<div class="msg m-warn">Ange en giva i gram, annars räknas produkten inte in.</div>')
+    : "";
 
   // ---- behov ----
   const arbIdx = parseInt(arbete.value);
-  const uh = 0.5*Math.pow(vikt,0.75) * parseFloat(typ.value) * parseFloat(hingst.value);
-  const behEnergi = uh * (1+ARBFAKTOR[arbIdx]);
-  const behProt   = behEnergi*6;
-  const mk = MAKRO[arbIdx], mi = arbIdx===0 ? MIKRO_UH : MIKRO_ARB;
+  const katId  = document.getElementById("kategori").value || "vuxen";
+  const kat    = KATEGORI[katId];
+  const vaxande = !!kat.vaxt;
+
+  // Underhållsbehov. Växande hästar har egen koefficient, SLU 289 tabell 4.
+  const koeff = vaxande ? kat.vaxt : 0.5;
+  const uh = koeff*Math.pow(vikt,0.75) * parseFloat(typ.value) * parseFloat(hingst.value);
+
+  // Tillägg. Arbete och kategori är additiva — ett dräktigt sto kan arbeta.
+  const arbTillagg = uh * ARBFAKTOR[arbIdx];
+  const katTillagg = uh * (kat.energi || 0);
+
+  // Tillväxtenergi, SLU 289: MJ = tillväxt(kg) × [1350 + 67,94×ålder − 1,093×ålder²] × 13,45/1000
+  // Ålder tas som mitten av kategorins spann. Utan angiven tillväxt räknas den inte.
+  const alderMitt = {vaxt46:5, vaxt712:9, vaxt1324:18, vaxt2536:30}[katId] || 0;
+  const tillvaxtG = vaxande ? num(document.getElementById("tillvaxt")) : null;
+  const vaxtTillagg = (vaxande && tillvaxtG)
+    ? (tillvaxtG/1000) * (1350 + 67.94*alderMitt - 1.093*alderMitt*alderMitt) * 13.45/1000
+    : 0;
+
+  const behEnergi = uh + arbTillagg + katTillagg + vaxtTillagg;
+  // Proteinbehovet räknas per tilläggsdel: 6 g/MJ för underhåll och arbete,
+  // kategorins egen kvot för dräktighets-, digivnings- och tillväxttillägget.
+  const behProt = (uh + arbTillagg)*6 + (katTillagg + vaxtTillagg)*kat.protMJ;
+
+  const makroNyckel = kat.makro || (katId === "vuxen" ? null : katId);
+  const mk = makroNyckel && MAKRO_KAT[makroNyckel] ? MAKRO_KAT[makroNyckel] : MAKRO[arbIdx];
+  // Mikronormer: högdräktiga, digivande och växande följer samma kolumn som arbete
+  const mi = (arbIdx === 0 && katId === "vuxen") ? MIKRO_UH : MIKRO_ARB;
 
   const beh = {};
   MAKROLISTA.forEach(m => beh[m] = [mk[m][0]*enh, mk[m][1]*enh]);
@@ -3181,16 +3950,35 @@ function rakna(){
   MIKROLISTA.forEach(m => beh[m] = [mi[m][0]*enh, mi[m][1]*enh]);
   const tak = {}; MIKROLISTA.forEach(m => tak[m] = TAK[m]*enh);
 
+  // Vitaminbehov. Hårt arbete = arbetsband 3 och uppåt (trav, galopp, distans).
+  const vt = arbIdx >= 3 ? VIT_HART : VIT_UH;
+  const vBeh = {}, vTak = {};
+  VITLISTA.forEach(m => vBeh[m] = [vt[m][0]*enh, vt[m][1]*enh]);
+  VITLISTA.forEach(m => { if(VIT_TAK[m]) vTak[m] = VIT_TAK[m]*enh; });
+
   // ---- underskott mot NEDRE gränsen ----
+  // Ett mikromineral som lämnats tomt i analysen är odeklarerat, inte noll. Att
+  // räkna fram ett underskott ur uteblivna uppgifter vore samma fel som att låta
+  // takkontrollen passera på odeklarerade ämnen — bara åt andra hållet.
+  //
+  // Selen är det avsiktliga undantaget: SLU 289 anger att svenska jordar är
+  // selenfattiga och att tillskott behövs i de allra flesta fall. Nollantagandet
+  // är där välgrundat, inte en lucka.
+  const oanalyserat = MIKROLISTA.filter(m => m !== "Se" && A[m] === null);
   const brist = {};
   MAKROLISTA.concat(["NaCl"]).forEach(m => { const d = beh[m][0]-till[m]; if(d>0.001) brist[m]=d; });
-  MIKROLISTA.forEach(m => { const d = beh[m][0]-till[m]; if(d>0.0001) brist[m]=d; });
+  MIKROLISTA.forEach(m => {
+    if(oanalyserat.indexOf(m) >= 0) return;
+    const d = beh[m][0]-till[m]; if(d>0.0001) brist[m]=d;
+  });
 
   // ---- utvärdera produkter mot underskotten (görs före tabellen, så att en
   //      vald produkt kan räknas in i den) ----
   const bristLista = Object.keys(brist);
+  KANDIDATER = PRODUKTER.filter(p => !bef || p.id !== bef.p.id);
+  const kandidater = KANDIDATER;
   sisteForslag = bristLista.length
-    ? PRODUKTER.map(p => utvardera(p, brist, till, beh, tak, enh, vikt))
+    ? kandidater.map(p => utvardera(p, brist, till, beh, tak, enh, vikt))
                .filter(x => x.poang > 0)
                .sort((a,b) => b.poang - a.poang
                            || ((a.kostnad==null)-(b.kostnad==null))
@@ -3225,6 +4013,18 @@ function rakna(){
   }
   const tot = m => till[m] + (extra[m]||0);
 
+  // ---- vitaminer: enbart från tillskott. Grovfodrets bidrag är okänt. ----
+  const vTill = {}; VITLISTA.forEach(m => vTill[m] = 0);
+  const vKallor = [];
+  const laggVit = (p, dos, namn) => {
+    let nagot = false;
+    VITLISTA.forEach(m => { const v = p.naring[m];
+      if(v != null){ vTill[m] += v*dos; nagot = true; } });
+    if(nagot) vKallor.push(namn);
+  };
+  if(bef && bef.dos > 0) laggVit(bef.p, bef.dos, bef.p.namn+" (ges redan)");
+  if(vald) (vald.kombo ? vald.delar : [vald]).forEach(d => laggVit(d.p, d.dos, d.p.namn));
+
   // ================= UTDATA =================
   let h = "";
 
@@ -3255,9 +4055,14 @@ function rakna(){
      + '<th class="n">Av nedre&nbsp;gräns</th><th>Status</th></tr></thead><tbody>';
 
   const grovMin = 1.0*enh, grovRek = [1.5*enh, 2.0*enh], grovMax = 3.0*enh;
-  h += rad("Grovfoder (kg ts)", rng([grovRek[0],grovRek[1]]), f1(givaTS),
-        givaTS/grovRek[0]*100, givaTS<grovMin?"low":(givaTS>grovMax?"high":(givaTS<grovRek[0]?"high":"ok")),
-        stapel(grovRek[0], grovRek[1], givaTS, 0, grovMax));
+  h += rad("Grovfoder (kg ts)", rng([grovRek[0],grovRek[1]]), f1(tsGrovTot),
+        tsGrovTot/grovRek[0]*100,
+        tsGrovTot<grovMin?"low":(tsGrovTot>grovMax?"high":(tsGrovTot<grovRek[0]?"high":"ok")),
+        stapel(grovRek[0], grovRek[1], givaTS, ex.tsGrov, grovMax));
+  if(ex.tsKraft > 0)
+    h += '<tr><td>Kraftfoder (kg ts)</td><td class="barcell"></td><td class="n">—</td>'
+       + '<td class="n">'+f1(ex.tsKraft)+'</td><td class="n">—</td>'
+       + '<td><span class="pill p-ok">räknas ej mot grovfodergivan</span></td></tr>';
   h += rad("Energi (MJ)", f0(behEnergi), f0(tillEnergi), tillEnergi/behEnergi*100,
         tillEnergi<behEnergi*0.95?"low":(tillEnergi>behEnergi*1.15?"high":"ok"),
         stapel(behEnergi, behEnergi, tillEnergi, 0, null));
@@ -3267,9 +4072,34 @@ function rakna(){
 
   [["Ca","Kalcium (g)"],["P","Fosfor (g)"],["Mg","Magnesium (g)"],["NaCl","Natriumklorid (g)"]]
     .forEach(([m,l]) => h += radM(l, beh[m], tot(m), null, extra[m]));
-  MIKROLISTA.forEach(m => h += radM(m+" (mg)", beh[m], tot(m), tak[m], extra[m]));
+  MIKROLISTA.forEach(m => {
+    if(oanalyserat.indexOf(m) >= 0 && tot(m) <= 0){
+      h += '<tr><td>'+m+' (mg)</td><td class="barcell"></td>'
+         + '<td class="n">'+rng(beh[m])+'</td><td class="n">—</td><td class="n">—</td>'
+         + '<td><span class="pill p-high">ej analyserat</span></td></tr>';
+      return;
+    }
+    h += radM(m+" (mg)", beh[m], tot(m), tak[m], extra[m]);
+  });
 
   const kvot = tot("P")>0 ? tot("Ca")/tot("P") : 0;
+  // ---- vitaminrader ----
+  VITLISTA.forEach(m => {
+    const t = vTill[m], b = vBeh[m], tk = vTak[m];
+    const overTak = tk && t > tk;
+    const pill = overTak ? '<span class="pill p-high">ÖVER TAK</span>'
+      : t <= 0 ? '<span class="pill p-high">okänt</span>'
+      : t >= b[0] ? '<span class="pill p-ok">täckt av tillskott'
+                    + (tk ? ' · '+f0(t/tk*100)+' % av tak' : '')+'</span>'
+      : '<span class="pill p-high">'+f0(t/b[0]*100)+' % från tillskott</span>';
+    h += '<tr class="'+(overTak?"over":"")+'"><td>'+VIT_NAMN[m]+'</td>'
+       + '<td class="barcell">'+(t>0 ? stapel(b[0], b[1], 0, t, tk||null) : '')+'</td>'
+       + '<td class="n">'+rng(b)+'</td>'
+       + '<td class="n">'+(t>0 ? f1(t) : '—')+'</td>'
+       + '<td class="n">'+(t>0 ? f0(t/b[0]*100)+' %' : '—')+'</td>'
+       + '<td>'+pill+'</td></tr>';
+  });
+
   h += '<tr class="'+(kvot<1.1?"deficit":"")+'"><td>Ca/P-kvot</td>'
      + '<td class="barcell">'+stapel(1.2, 1.8, kvot, 0, null)+'</td><td class="n">1,2–1,8</td>'
      + '<td class="n">'+f1(kvot)+'</td><td class="n">—</td><td>'
@@ -3278,6 +4108,32 @@ function rakna(){
         : kvot<=1.8?'<span class="pill p-ok">i intervall</span>'
         : '<span class="pill p-high">hög</span>')+'</td></tr>';
   h += "</tbody></table>";
+
+  // ---- känslighet för givan ----
+  // Foderintaget är enligt Kunskapsbank/05 den näst största felkällan, efter
+  // provtagningen. Den skattas nästan alltid — sällan vägs fodret.
+  if(givaTS > 0 && bristLista.length){
+    const rader = bristLista.slice(0,6).map(m => {
+      const perKg = (till[m] - (m==="NaCl" ? ex.NaCl : (MAKROLISTA.indexOf(m)>=0 ? ex[m] : 0))) / givaTS;
+      const lag = till[m] - perKg*givaTS*0.2, hog = till[m] + perKg*givaTS*0.2;
+      return m+" "+f0(lag/beh[m][0]*100)+"–"+f0(hog/beh[m][0]*100)+" %";
+    });
+    h += '<details style="margin-top:12px"><summary>Vad händer om givan är fel skattad?</summary>'
+       + '<div style="margin-top:8px;font-size:13px">Vid ±20 % på grovfodergivan ('
+       + f1(givaTS*0.8)+'–'+f1(givaTS*1.2)+' kg ts) blir täckningen mot nedre behovsgräns:<br>'
+       + rader.join(" · ")
+       + '<br><br>Fodret vägs sällan. Enligt kunskapsbankens kapitel 5 är intaget den näst '
+       + 'största felkällan efter provtagningen — större än laboratoriets mätosäkerhet.</div></details>';
+  }
+
+  h += '<p class="note"><strong>Om vitaminraderna.</strong> Grovfodrets vitamininnehåll '
+     + 'analyseras normalt inte och är därför okänt här — vitaminerna räknas enbart från '
+     + 'tillskott. SLU 289 anger att ett välbärgat vallfoder plus daglig utevistelse i regel '
+     + 'täcker behovet hos hästar på underhållsfoderstat och i lätt till medelhårt arbete. '
+     + 'Ett tomt fält betyder alltså att uppgift saknas, inte att hästen får för lite. '
+     + 'Toleransgränserna prövas däremot på riktigt, eftersom överskott bara kan komma från '
+     + 'tillskott.'
+     + (vKallor.length ? ' Räknade källor: '+vKallor.join(", ")+'.' : '')+'</p>';
 
   h += '<p class="note">Behoven visas som intervall där SLU 289 anger intervall. Procenttalet avser '
      + '<strong>nedre</strong> gränsen — mot övre gränsen blir täckningen lägre. HästSveriges '
@@ -3290,13 +4146,45 @@ function rakna(){
      + 'jod, 38× för zink och 75× eller mer för övriga.</p>';
 
   /* --- anmärkningar --- */
-  if(givaTS < grovMin)
+  // ---- stärkelse, spannmål och olja: SLU 289 riktlinjer för kraftfodergivan ----
+  if(ex.starkelse > 0 || ex.starkelseOkand){
+    const takDygn = 500*enh, takTillf = 150*enh;
+    if(ex.starkelse > takDygn)
+      h += msg("bad","Stärkelsegivan "+f0(ex.starkelse)+" g överstiger SLU:s tak på 500 g per "
+        +"100 kg kroppsvikt och dygn ("+f0(takDygn)+" g). Risk för feljäsning i grovtarmen, "
+        +"kolik och magsår. Minska kraftfodret.");
+    else if(ex.starkelse > takTillf)
+      h += msg("warn","Stärkelsegivan "+f0(ex.starkelse)+" g ligger under dygnstaket "+f0(takDygn)
+        +" g men över taket per utfodringstillfälle, "+f0(takTillf)+" g. Fördela på flera givor.");
+    if(ex.starkelseOkand)
+      h += msg("warn","Minst ett fodermedel saknar deklarerad stärkelsehalt. Den beräknade "
+        +"stärkelsegivan är därför ett underskattat värde, inte ett fullständigt.");
+  }
+  if(ex.spannmalKg > 0.4*enh)
+    h += msg("warn","Spannmålsbaserat kraftfoder "+f1(ex.spannmalKg)+" kg överstiger SLU:s "
+      +"riktlinje 0,4 kg per 100 kg kroppsvikt och utfodringstillfälle ("+f1(0.4*enh)+" kg). "
+      +"Fördela på flera givor.");
+  if(ex.oljaKg*1000 > 75*enh)
+    h += msg("warn","Oljegivan "+f0(ex.oljaKg*1000)+" g överstiger SLU:s tak 75 g per 100 kg "
+      +"kroppsvikt och dygn ("+f0(75*enh)+" g).");
+  if(oanalyserat.length)
+    h += msg("warn","Grovfoderanalysen saknar värden för "+oanalyserat.join(", ")
+      +". Dessa räknas varken som noll eller som täckta — inget underskott beräknas och "
+      +"toleransgränsen kan inte prövas. Vill du att de ska ingå, fyll i analysvärdena eller "
+      +"tryck på <em>Fyll i schablonvärden</em>. SLU 308 rekommenderar analys av järn, mangan, "
+      +"zink och koppar när foderstaten till 100 % består av vallfoder.");
+  if(ex.mikroOkand)
+    h += msg("warn","Fodermedel ur tabellen saknar mikromineralvärden. Zink, koppar, mangan, "
+      +"järn, selen, jod och kobolt räknas därför enbart från grovfoderanalysen — "
+      +"det verkliga innehållet är högre, men okänt.");
+
+  if(tsGrovTot < grovMin)
     h += msg("bad","Grovfodergivan understiger minimigivan 1 kg ts per 100 kg häst ("+f1(grovMin)+" kg ts). "
       +"Öka givan innan något tillskott övervägs — den frågan går före mineralbalansen.");
-  else if(givaTS < grovRek[0])
+  else if(tsGrovTot < grovRek[0])
     h += msg("warn","Givan uppfyller minimigivan men ligger under rekommendationen 1,5–2 kg ts per 100 kg häst ("
       +f1(grovRek[0])+"–"+f1(grovRek[1])+" kg ts).");
-  if(givaTS > grovMax)
+  if(tsGrovTot > grovMax)
     h += msg("warn","Givan överstiger den övre gränsen för de flesta hästars konsumtionsförmåga (3 kg ts per 100 kg). "
       +"Äter hästen upp den är det i sig inget problem.");
   if(kvot>0 && kvot<1.1)
@@ -3333,8 +4221,12 @@ function rakna(){
   h += '<div class="card"><h2>4. Produktförslag</h2>';
 
   if(bristLista.length===0){
-    h += msg("ok","Grovfodret täcker samtliga nedre behovsgränser. Inget tillskott behövs för de ämnen "
-      +"som ingår i beräkningen. Kontrollera ändå selen och salt separat om de inte är analyserade.");
+    h += msg("ok", bef && bef.dosG>0
+      ? "Foderstaten täcker samtliga nedre behovsgränser med "+f0(bef.dosG)+" g "+bef.p.namn
+        +" som du redan ger. Inget ytterligare tillskott behövs — att lägga på mer skulle vara "
+        +"stapling utan nytta."
+      : "Grovfodret täcker samtliga nedre behovsgränser. Inget tillskott behövs för de ämnen "
+        +"som ingår i beräkningen. Kontrollera ändå selen och salt separat om de inte är analyserade.");
   } else if(sisteForslag.length===0){
     h += msg("warn","Ingen produkt i databasen kan täcka något underskott utan att spränga en toleransgräns.");
   } else {
@@ -3368,6 +4260,7 @@ function rakna(){
   h += "</div>";
 
   ut.innerHTML = h;
+  sparaTillstand();
 }
 
 /* ---------- doseringsintervall i gram per dygn för en given vikt ---------- */
@@ -3414,7 +4307,7 @@ function byggKombos(bas, brist, till, beh, tak, enh, vikt){
     Object.keys(brist).forEach(m => { const d = beh[m][0]-till2[m]; if(d > 1e-4) rest[m] = d; });
     if(!Object.keys(rest).length) return;              // a klarar allt ensam
 
-    PRODUKTER.forEach(pb => {
+    (KANDIDATER||PRODUKTER).forEach(pb => {
       if(pb.id === a.p.id) return;
       const b = utvardera(pb, rest, till2, beh, tak, enh, vikt);
       if(!b || b.poang <= 0 || !b.tackta.length) return;
@@ -3537,6 +4430,14 @@ function utvardera(p, brist, till, beh, tak, enh, vikt){
 /* ---------- prisspridning och återförsäljarlista för en produkt ----------
    Delas av de enskilda korten och kombinationskorten. Dosen skickas med så
    att kronor per dygn kan visas per återförsäljare.                        */
+/* Antal dagar sedan en prisuppgift kontrollerades. null om datum saknas. */
+function prisAlder(datum){
+  if(!datum) return null;
+  const d = new Date(datum);
+  if(isNaN(d)) return null;
+  return Math.round((Date.now() - d.getTime()) / 86400000);
+}
+
 function saljareBlock(p, dos, rubrik){
   const salj = (p.saljare||[]).filter(s => s.krPerKg!=null);
   if(!salj.length) return "";
@@ -3550,7 +4451,10 @@ function saljareBlock(p, dos, rubrik){
   }
   h += '<details onclick="event.stopPropagation()"><summary>'
      + (rubrik||"Återförsäljare")+' ('+salj.length+')</summary><table class="rt">';
+  let gamla = 0;
   salj.forEach((s,j) => {
+    const dagar = prisAlder(s.kontrollerad);
+    if(dagar !== null && dagar > 90) gamla++;
     h += '<tr class="'+(j===0?"bast":"")+'"><td>'
        + (s.url ? '<a href="'+s.url+'" target="_blank" rel="noopener" style="color:var(--brand)">'
             +(s.namn||'—')+'</a>' : (s.namn||'—'))
@@ -3558,16 +4462,25 @@ function saljareBlock(p, dos, rubrik){
        + '</td><td class="n">'+(s.forp!=null?f1(s.forp)+' kg':'—')+'</td>'
        + '<td class="n">'+(s.pris!=null?f0(s.pris)+' kr':'—')+'</td>'
        + '<td class="n">'+f0(s.krPerKg)+' kr/kg</td>'
-       + '<td class="n">'+f1(dos*s.krPerKg)+' kr/dygn</td></tr>';
+       + '<td class="n">'+f1(dos*s.krPerKg)+' kr/dygn</td>'
+       + '<td class="n" style="font-size:11.5px;color:var(--muted)">'
+       + (s.kontrollerad || '—')
+       + (dagar !== null && dagar > 90 ? ' <span class="pill p-high" style="font-size:10px">gammalt</span>' : '')
+       + '</td></tr>';
   });
-  return h + '</table></details>';
+  h += '</table>';
+  if(gamla)
+    h += '<div class="note" style="margin-top:6px">'+gamla+' av '+salj.length
+       + ' prisuppgifter är äldre än 90 dagar. Priser åldras snabbast av allt i databasen — '
+       + 'kontrollera hos säljaren innan du köper.</div>';
+  return h + '</details>';
 }
 
 /* ---------- kort för en kombination av två produkter ---------- */
 function kortKombo(r,i){
   const ar = valdId===r.nyckel;
   let h = '<div class="prod'+(ar?" vald":"")
-    + '" onclick="valj(\''+r.nyckel+'\')">'
+    + '" role="button" tabindex="0" onkeydown="kortTangent(event,this)" onclick="valj(\''+r.nyckel+'\')">'
     + '<div class="prod-h"><div><span class="rank">'+(i+1)+'</span>'
     + '<span class="prod-n">'+r.delar.map(d=>d.p.namn).join(" + ")+'</span>'
     + (ar?'<span class="valdmark">räknas in ovan</span>':'')
@@ -3615,9 +4528,9 @@ function kort(r,i){
   const konf = p.konfidens==="hog" ? "" :
     ' <span class="chip c-cap" style="font-size:10.5px">konfidens '+p.konfidens+'</span>';
   const meta = p.tillverkare+' · '+p.kategori+(p.forp ? ' · '+p.forp+' kg' : '');
-  // Bilden är antingen en lokal kopia (bilder/) eller en hotlänk till
-  // tillverkaren. Initialerna ligger alltid kvar under bilden — tar den bort
-  // sig själv vid laddningsfel syns de i stället.
+  // Bilderna hotlänkas från tillverkarnas servrar och kan brytas när de gör om
+  // sina webbplatser. Initialerna ligger alltid kvar under bilden — tar den
+  // bort sig själv vid laddningsfel syns de i stället.
   const initialer = (p.tillverkare||p.namn).replace(/[^A-Za-zÅÄÖåäö ]/g,"")
     .split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join("");
   let bild = '<div class="bildslot"><div class="bild bild-fb">'+initialer+'</div>';
@@ -3627,7 +4540,7 @@ function kort(r,i){
   bild += '</div>';
 
   let h = '<div class="prod'+(ar?" vald":"")
-    + '" onclick="valj(\''+p.id+'\')">'
+    + '" role="button" tabindex="0" onkeydown="kortTangent(event,this)" onclick="valj(\''+p.id+'\')">'
     + '<div class="prod-h"><div style="display:flex;gap:12px;align-items:flex-start">'
     + bild
     + '<div><span class="rank">'+(i+1)+'</span>'
@@ -3638,6 +4551,10 @@ function kort(r,i){
 
   h += '<div class="chips">';
   r.tackta.forEach(m => h += '<span class="chip c-fix">✓ '+m+' täckt</span>');
+  // E-vitamin är relevant vid selen: SLU 289 anger att de förstärker och delvis
+  // ersätter varandra. Visas därför när produkten täcker selen.
+  if(r.tackta.indexOf("Se") >= 0 && p.naring.vitE != null)
+    h += '<span class="chip c-fix">E-vitamin '+f0(p.naring.vitE*r.dos)+' mg</span>';
   r.delvis.forEach(m => h += '<span class="chip c-part">~ '+m+' delvis</span>');
   r.saknas.forEach(m => h += '<span class="chip c-miss">– '+m+' saknas i produkten</span>');
   r.takBrytare.forEach(m => h += '<span class="chip c-cap">! dos kapad av '+m+'-tak</span>');
@@ -3719,9 +4636,13 @@ function stapel(nedre, ovre, franGrov, franTill, tak){
   const bandL = pc(nedre);
   const bandB = ovre > nedre ? Math.max(pc(ovre) - bandL, 1.2) : 0;
 
-  let h = '<div class="barwrap" title="Grovfoder '+f1(franGrov)
-        + (franTill ? ' + tillskott '+f1(franTill) : '')
-        + ' = '+f1(total)+' · behov '+rng([nedre,ovre])+'">';
+  const beskrivning = "Grovfoder "+f1(franGrov)
+        + (franTill ? " plus tillskott "+f1(franTill) : "")
+        + " ger totalt "+f1(total)+", vilket är "+f0(total/nedre*100)
+        + " procent av behovet "+rng([nedre,ovre])
+        + (tak ? ". Toleransgräns "+f0(tak) : "");
+  let h = '<div class="barwrap" role="img" aria-label="'+beskrivning.replace(/"/g,"&quot;")
+        + '" title="'+beskrivning.replace(/"/g,"&quot;")+'">';
   if(bandB > 0)
     h += '<div class="barband" style="left:'+bandL+'%;width:'+bandB+'%"></div>';
   h += '<div class="barbehov" style="left:'+bandL+'%"></div>'
@@ -3765,7 +4686,13 @@ function radM(namn, b, t, tak, extra){
 }
 function msg(t,txt){ return '<div class="msg m-'+t+'">'+txt+'</div>'; }
 
-/* ---------- init ---------- */
+/* ---------- init ----------
+   vikt_ måste vara definierad innan något anropar rakna(). Deklarationen låg
+   tidigare sist i skriptet, medan setEnhet() under initieringen anropar rakna()
+   — vilket gav ReferenceError i temporal dead zone och gjorde att avsnitt 3 och
+   4 aldrig renderades. */
+const vikt_ = document.getElementById("vikt");
+
 datakalla.innerHTML = '<strong>Verklig produktdata.</strong> '+PRODUKTER.length
   +' matchningsbara produkter av '+PRODUKTKALLA.antal_i_databas+' i databasen, byggd '
   +PRODUKTKALLA.byggd+'. Uppgifterna kommer ur tillverkarnas egna deklarationer och är '
@@ -3775,7 +4702,34 @@ datakalla.innerHTML = '<strong>Verklig produktdata.</strong> '+PRODUKTER.length
   +'bilderna tillhör tillverkarna och används inte i denna öppna prototyp. '
   +'Detta är ett beräkningsunderlag, inte rådgivning.';
 
-const vikt_ = document.getElementById("vikt");
+function fyllKategori(){
+  const s = document.getElementById("kategori");
+  s.innerHTML = Object.keys(KATEGORI).map(k =>
+    '<option value="'+k+'"'+(k==="vuxen"?" selected":"")+'>'+KATEGORI[k].namn+'</option>').join("");
+  s.onchange = () => {
+    const k = KATEGORI[s.value];
+    document.getElementById("vaxtFalt").style.display = k.vaxt ? "" : "none";
+    const info = [];
+    if(k.energi) info.push("Energitillägg "+f0(k.energi*100)+" % av underhållsbehovet");
+    if(k.vaxt)   info.push("Underhållskoefficient "+k.vaxt+" × V^0,75 (SLU 289 tabell 4). "
+      + "Ange daglig tillväxt för att räkna in tillväxtenergin — utan den visas bara underhåll");
+    if(k.protMJ !== 6) info.push(k.protMJ+" g smb rp per MJ i tillägget, mot 6 för underhåll");
+    if(s.value.indexOf("vaxt")===0) info.push("Räkna på hästens <strong>aktuella</strong> vikt, "
+      + "inte förväntad vuxenvikt. Vid 3 år räknas hästen som vuxen näringsmässigt");
+    document.getElementById("katInfo").innerHTML = info.length
+      ? '<div class="msg m-warn" style="margin-bottom:0">'+info.join(". ")+'.</div>' : "";
+    rakna();
+  };
+}
+
+fyllTabellval();
+fyllBefintligt();
+fyllKategori();
+lasTillstand();          // måste ligga efter att listorna fyllts, före render
+setEnhet(enhet);
+renderFoder();
+if(document.getElementById("kategori").onchange)
+  document.getElementById("kategori").onchange();
 document.querySelectorAll("input,select").forEach(el => {
   el.addEventListener("input", rakna);
   el.addEventListener("change", rakna);

@@ -28,12 +28,9 @@ MAL = HAR.parent / "index.html"
 REFERENSVIKT_KG = 500
 
 # Produktbilder. False = inga bilder alls, korten visar varumärkets initialer.
-#
-# Standard är False för den publika prototypen. Bilderna tillhör tillverkarna,
+# Standard är False för den publika prototypen — bilderna tillhör tillverkarna
 # och varken hotlänkning eller egna kopior är självklart oproblematiskt i ett
-# publikt repo — se DATAKALLOR.md. Utan bilder fungerar sidan fullt ut.
-#
-# Sätt till True när tillstånd finns, eller när repot är privat.
+# publikt repo. Se DATAKALLOR.md. Utan bilder fungerar sidan fullt ut.
 VISA_BILDER = False
 
 # databasfält -> lösarens nyckel
@@ -41,7 +38,10 @@ MAKRO = {"ca_g": "Ca", "p_g": "P", "mg_g": "Mg", "na_g": "Na"}
 MIKRO = {"cu_mg": "Cu", "zn_mg": "Zn", "mn_mg": "Mn",
          "se_mg": "Se", "i_mg": "I", "co_mg": "Co", "fe_mg": "Fe"}
 OVRIGT = {"energy_mj": "energi", "protein_g": "smbrp",
-          "sugar_g": "socker", "starch_g": "starkelse", "vit_e_mg": "vitE"}
+          "sugar_g": "socker", "starch_g": "starkelse"}
+# Vitaminer, SLU 289 tabell 18. Enheter: A och D i IE, E och biotin i mg.
+VITAMIN = {"vit_a_ie": "vitA", "vit_d3_ie": "vitD",
+           "vit_e_mg": "vitE", "biotin_mg": "biotin"}
 
 # Minsta antal deklarerade näringsfält för att produkten ska tas med.
 # Enkelnäring — rent salt, ren magnesium, selen+E — deklarerar med rätta bara
@@ -100,6 +100,13 @@ def konvertera(prod):
         if n.get(falt) is not None:
             naring[nyckel] = n[falt]
 
+    vit_odeklarerat = []
+    for falt, nyckel in VITAMIN.items():
+        if n.get(falt) is None:
+            vit_odeklarerat.append(nyckel)
+        else:
+            naring[nyckel] = n[falt]
+
     grans = (MIN_NARINGSFALT_ENKEL if prod.get("category") == "enkelnaring"
              else MIN_NARINGSFALT)
     if len(naring) < grans:
@@ -139,6 +146,7 @@ def konvertera(prod):
         "dosNot": (prod.get("dose_note") or "")[:240] or None,
         "naring": naring,
         "odeklarerat": odeklarerat,
+        "vitOdeklarerat": vit_odeklarerat,
         "ejTakkontroll": prod.get("_ej_takkontrollerbara") or [],
         "sockerStatus": prod.get("_sugar_status"),
         "forp": forp,
@@ -146,8 +154,8 @@ def konvertera(prod):
         "krPerKgMax": med_pris[-1]["krPerKg"] if med_pris else None,
         "saljare": salj,
         # Lokal kopia används när den finns (hamta-bilder.py har körts), annars
-        # hotlänk till tillverkaren. Gränssnittet faller tillbaka på varumärkets
-        # initialer när ingendera fungerar — eller när VISA_BILDER är False.
+        # hotlänk. Gränssnittet faller tillbaka på varumärkets initialer när
+        # ingendera fungerar — eller när VISA_BILDER är False.
         "bild": (prod.get("image_local") or prod.get("image_url")) if VISA_BILDER else None,
         "bildLokal": bool(prod.get("image_local")) and VISA_BILDER,
         "bildKalla": prod.get("image_source"),
@@ -195,15 +203,9 @@ def main():
         print("  %-46s %s" % (i, s))
     print("\nPrisuppgift saknas för %d av %d medtagna."
           % (sum(1 for r in med if r["krPerKg"] is None), len(med)))
-    if not VISA_BILDER:
-        print("Produktbilder AV — korten visar varumärkets initialer. "
-              "Sätt VISA_BILDER = True när tillstånd finns.")
-    else:
-        lok = sum(1 for r in med if r["bildLokal"])
-        print("Bild saknas för %d av %d medtagna. %d lokala kopior, %d hotlänkade."
-              % (sum(1 for r in med if not r["bild"]), len(med), lok, len(med)-lok))
-        if lok and lok < len(med):
-            print("  Blandad bildkälla — kör hamta-bilder.py igen för de som misslyckades.")
+    print("Bild saknas för %d av %d medtagna; %d hämtas från återförsäljare."
+          % (sum(1 for r in med if not r["bild"]), len(med),
+             sum(1 for r in med if r["bildKalla"] == "aterforsaljare")))
     mt = sum(1 for r in med if r["dosTabell"])
     ph = sum(1 for r in med if r["dosBas"] == "per_hast")
     print("Vikttabell finns för %d produkter; %d doserar per häst utan tabell "

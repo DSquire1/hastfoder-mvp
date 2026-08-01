@@ -90,8 +90,16 @@
   .barwrap{position:relative;height:17px;background:#efece6;border-radius:3px}
   .barband{position:absolute;top:0;bottom:0;background:rgba(47,107,69,.13)}
   .barbehov{position:absolute;top:-3px;bottom:-3px;width:2px;background:#4a4640}
-  .bar1{position:absolute;top:0;bottom:0;left:0;background:var(--brand);border-radius:3px 0 0 3px}
-  .bar2{position:absolute;top:0;bottom:0;background:var(--ok)}
+  /* Fyra segment, i den ordning fodret hamnar i hästen:
+     grovfoder → övriga fodermedel → tillskott som redan ges → föreslaget.
+     Bruna toner för foder, gröna för tillskott — mörkgrönt för det som redan
+     ges, ljusgrönt för förslaget, så att skillnaden mellan nuläge och förslag
+     syns utan att bli fyra obesläktade färger. */
+  .seg{position:absolute;top:0;bottom:0}
+  .seg-grov{background:var(--brand);border-radius:3px 0 0 3px}
+  .seg-ovrigt{background:#c08b62}
+  .seg-bef{background:#1f4d33}
+  .seg-forslag{background:var(--ok)}
   .bartak{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--bad)}
   .barspill{position:absolute;right:2px;top:0;bottom:0;display:flex;align-items:center;
     color:#fff;font-weight:700;font-size:14px;line-height:1}
@@ -3899,11 +3907,27 @@ function rakna(){
   const tsTot      = tsGrovTot + ex.tsKraft;
 
   // ---- tillskott hästen redan får ----
+  // Bidraget hålls separat, inte bara summerat. Ligger det inne i grovfodrets
+  // segment ser stapeln ut att säga "detta ger ditt hö" när en del i själva
+  // verket kommer ur en påse — och avsnitt 2c finns till för att synliggöra
+  // just det.
   const bef = befintligt();
+  const befDel = {};
   if(bef && bef.dos > 0){
     const b = bidrag(bef.p, bef.dos);
-    Object.keys(b).forEach(m => till[m] = (till[m]||0) + b[m]);
+    Object.keys(b).forEach(m => { befDel[m] = b[m]; till[m] = (till[m]||0) + b[m]; });
   }
+
+  // Segmentens andelar per ämne, i staplingsordning.
+  // ex[] innehåller bara makromineraler och NaCl — tabellfodren deklarerar inga
+  // mikromineraler, så där är övrigt-segmentet alltid noll.
+  const franGrov = m => m === "NaCl" ? (A.Na||0)*givaTS*2.542 : (A[m]||0)*givaTS;
+  const delarFor = (m, forslag) => [
+    {v: franGrov(m),   klass:"seg-grov",    namn:"grovfodret"},
+    {v: ex[m] || 0,    klass:"seg-ovrigt",  namn:"övriga fodermedel"},
+    {v: befDel[m]||0,  klass:"seg-bef",     namn:"tillskottet du redan ger"},
+    {v: forslag || 0,  klass:"seg-forslag", namn:"det föreslagna tillskottet"}
+  ];
   befInfo.innerHTML = bef
     ? (bef.dosG > 0
         ? '<div class="msg m-ok">Räknar in <strong>'+f0(bef.dosG)+' g '+bef.p.namn
@@ -4014,16 +4038,17 @@ function rakna(){
   const tot = m => till[m] + (extra[m]||0);
 
   // ---- vitaminer: enbart från tillskott. Grovfodrets bidrag är okänt. ----
-  const vTill = {}; VITLISTA.forEach(m => vTill[m] = 0);
+  const vTill = {}, vBef = {}, vForslag = {};
+  VITLISTA.forEach(m => { vTill[m] = 0; vBef[m] = 0; vForslag[m] = 0; });
   const vKallor = [];
-  const laggVit = (p, dos, namn) => {
+  const laggVit = (p, dos, namn, hink) => {
     let nagot = false;
     VITLISTA.forEach(m => { const v = p.naring[m];
-      if(v != null){ vTill[m] += v*dos; nagot = true; } });
+      if(v != null){ vTill[m] += v*dos; hink[m] += v*dos; nagot = true; } });
     if(nagot) vKallor.push(namn);
   };
-  if(bef && bef.dos > 0) laggVit(bef.p, bef.dos, bef.p.namn+" (ges redan)");
-  if(vald) (vald.kombo ? vald.delar : [vald]).forEach(d => laggVit(d.p, d.dos, d.p.namn));
+  if(bef && bef.dos > 0) laggVit(bef.p, bef.dos, bef.p.namn+" (ges redan)", vBef);
+  if(vald) (vald.kombo ? vald.delar : [vald]).forEach(d => laggVit(d.p, d.dos, d.p.namn, vForslag));
 
   // ================= UTDATA =================
   let h = "";
@@ -4040,8 +4065,12 @@ function rakna(){
                      : f0(vald.dosG)+' g '+vald.p.namn)
        + '</strong> per dygn. Klicka igen för att ta bort.</div>';
   h += '<div class="barleg">'
-     + '<span><i style="background:var(--brand)"></i>Från grovfodret</span>'
-     + '<span><i style="background:var(--ok)"></i>Från tillskottet</span>'
+     + '<span><i style="background:var(--brand)"></i>Grovfoder</span>'
+     + (ex.tsGrov+ex.tsKraft > 0
+        ? '<span><i style="background:#c08b62"></i>Övriga fodermedel</span>' : '')
+     + (bef && bef.dosG > 0
+        ? '<span><i style="background:#1f4d33"></i>Tillskott du redan ger</span>' : '')
+     + '<span><i style="background:var(--ok)"></i>Föreslaget tillskott</span>'
      + '<span><i style="background:#4a4640;width:3px"></i>Behovet (mittlinjen)</span>'
      + '<span><i style="background:rgba(47,107,69,.30)"></i>Behovets intervall</span>'
      + '<span><i style="background:var(--bad);width:3px"></i>Toleransgräns</span></div>'
@@ -4058,20 +4087,26 @@ function rakna(){
   h += rad("Grovfoder (kg ts)", rng([grovRek[0],grovRek[1]]), f1(tsGrovTot),
         tsGrovTot/grovRek[0]*100,
         tsGrovTot<grovMin?"low":(tsGrovTot>grovMax?"high":(tsGrovTot<grovRek[0]?"high":"ok")),
-        stapel(grovRek[0], grovRek[1], givaTS, ex.tsGrov, grovMax));
+        stapel(grovRek[0], grovRek[1],
+               [{v:givaTS,     klass:"seg-grov",   namn:"grovfoderanalysen"},
+                {v:ex.tsGrov,  klass:"seg-ovrigt", namn:"övriga grovfoder"}], grovMax));
   if(ex.tsKraft > 0)
     h += '<tr><td>Kraftfoder (kg ts)</td><td class="barcell"></td><td class="n">—</td>'
        + '<td class="n">'+f1(ex.tsKraft)+'</td><td class="n">—</td>'
        + '<td><span class="pill p-ok">räknas ej mot grovfodergivan</span></td></tr>';
   h += rad("Energi (MJ)", f0(behEnergi), f0(tillEnergi), tillEnergi/behEnergi*100,
         tillEnergi<behEnergi*0.95?"low":(tillEnergi>behEnergi*1.15?"high":"ok"),
-        stapel(behEnergi, behEnergi, tillEnergi, 0, null));
+        stapel(behEnergi, behEnergi,
+               [{v:(A.energi||0)*givaTS, klass:"seg-grov",   namn:"grovfodret"},
+                {v:ex.energi,            klass:"seg-ovrigt", namn:"övriga fodermedel"}], null));
   h += rad("Smb råprotein (g)", f0(behProt), f0(tillProt), tillProt/behProt*100,
         tillProt<behProt?"low":(tillProt>behProt*1.6?"high":"ok"),
-        stapel(behProt, behProt, tillProt, 0, null));
+        stapel(behProt, behProt,
+               [{v:(A.smbrp||0)*givaTS, klass:"seg-grov",   namn:"grovfodret"},
+                {v:ex.smbrp,            klass:"seg-ovrigt", namn:"övriga fodermedel"}], null));
 
   [["Ca","Kalcium (g)"],["P","Fosfor (g)"],["Mg","Magnesium (g)"],["NaCl","Natriumklorid (g)"]]
-    .forEach(([m,l]) => h += radM(l, beh[m], tot(m), null, extra[m]));
+    .forEach(([m,l]) => h += radM(l, beh[m], tot(m), null, extra[m], delarFor(m, extra[m])));
   MIKROLISTA.forEach(m => {
     if(oanalyserat.indexOf(m) >= 0 && tot(m) <= 0){
       h += '<tr><td>'+m+' (mg)</td><td class="barcell"></td>'
@@ -4079,7 +4114,7 @@ function rakna(){
          + '<td><span class="pill p-high">ej analyserat</span></td></tr>';
       return;
     }
-    h += radM(m+" (mg)", beh[m], tot(m), tak[m], extra[m]);
+    h += radM(m+" (mg)", beh[m], tot(m), tak[m], extra[m], delarFor(m, extra[m]));
   });
 
   const kvot = tot("P")>0 ? tot("Ca")/tot("P") : 0;
@@ -4093,7 +4128,10 @@ function rakna(){
                     + (tk ? ' · '+f0(t/tk*100)+' % av tak' : '')+'</span>'
       : '<span class="pill p-high">'+f0(t/b[0]*100)+' % från tillskott</span>';
     h += '<tr class="'+(overTak?"over":"")+'"><td>'+VIT_NAMN[m]+'</td>'
-       + '<td class="barcell">'+(t>0 ? stapel(b[0], b[1], 0, t, tk||null) : '')+'</td>'
+       + '<td class="barcell">'+(t>0 ? stapel(b[0], b[1],
+             [{v:vBef[m],     klass:"seg-bef",     namn:"tillskottet du redan ger"},
+              {v:vForslag[m], klass:"seg-forslag", namn:"det föreslagna tillskottet"}],
+             tk||null) : '')+'</td>'
        + '<td class="n">'+rng(b)+'</td>'
        + '<td class="n">'+(t>0 ? f1(t) : '—')+'</td>'
        + '<td class="n">'+(t>0 ? f0(t/b[0]*100)+' %' : '—')+'</td>'
@@ -4101,7 +4139,8 @@ function rakna(){
   });
 
   h += '<tr class="'+(kvot<1.1?"deficit":"")+'"><td>Ca/P-kvot</td>'
-     + '<td class="barcell">'+stapel(1.2, 1.8, kvot, 0, null)+'</td><td class="n">1,2–1,8</td>'
+     + '<td class="barcell">'+stapel(1.2, 1.8,
+           [{v:kvot, klass:"seg-grov", namn:"foderstaten"}], null)+'</td><td class="n">1,2–1,8</td>'
      + '<td class="n">'+f1(kvot)+'</td><td class="n">—</td><td>'
      + (kvot<1.1?'<span class="pill p-low">under golv</span>'
         : kvot<1.2?'<span class="pill p-high">vid golvet</span>'
@@ -4627,28 +4666,44 @@ function rad(namn, behov, tillf, pct, status, bar){
    står ändå i sifferkolumnen intill.                                        */
 const AXEL_MAX = 200;   // procent av nedre behovsgräns
 
-function stapel(nedre, ovre, franGrov, franTill, tak){
+/* delar: [{v: mängd, klass: "seg-grov", namn: "grovfodret"}, …] i staplingsordning.
+   Bakåtkompatibel: skickas två tal i stället tolkas de som grovfoder + tillskott. */
+function stapel(nedre, ovre, delar, tak, extraArg){
   if(!(nedre > 0)) return '';
+  if(typeof delar === "number")
+    delar = [{v:delar, klass:"seg-grov", namn:"grovfodret"},
+             {v:tak||0, klass:"seg-forslag", namn:"tillskottet"}], tak = extraArg;
+
+  delar = (delar||[]).filter(d => d && d.v > 0.0000001);
+  const total = delar.reduce((s,d) => s + d.v, 0);
   const pc = v => Math.max(0, Math.min(AXEL_MAX, v/nedre*100)) / AXEL_MAX * 100;
-  const total  = franGrov + (franTill||0);
   const spiller = total/nedre*100 > AXEL_MAX;
 
   const bandL = pc(nedre);
   const bandB = ovre > nedre ? Math.max(pc(ovre) - bandL, 1.2) : 0;
 
-  const beskrivning = "Grovfoder "+f1(franGrov)
-        + (franTill ? " plus tillskott "+f1(franTill) : "")
-        + " ger totalt "+f1(total)+", vilket är "+f0(total/nedre*100)
+  const beskrivning = (delar.length
+        ? delar.map(d => f1(d.v)+" från "+d.namn).join(", ")
+        : "inget tillfört")
+        + ". Totalt "+f1(total)+", vilket är "+f0(total/nedre*100)
         + " procent av behovet "+rng([nedre,ovre])
         + (tak ? ". Toleransgräns "+f0(tak) : "");
-  let h = '<div class="barwrap" role="img" aria-label="'+beskrivning.replace(/"/g,"&quot;")
-        + '" title="'+beskrivning.replace(/"/g,"&quot;")+'">';
+  const attr = beskrivning.replace(/"/g,"&quot;");
+
+  let h = '<div class="barwrap" role="img" aria-label="'+attr+'" title="'+attr+'">';
   if(bandB > 0)
     h += '<div class="barband" style="left:'+bandL+'%;width:'+bandB+'%"></div>';
-  h += '<div class="barbehov" style="left:'+bandL+'%"></div>'
-     + '<div class="bar1" style="width:'+pc(franGrov)+'%"></div>';
-  if(franTill > 0)
-    h += '<div class="bar2" style="left:'+pc(franGrov)+'%;width:'+(pc(total)-pc(franGrov))+'%"></div>';
+  h += '<div class="barbehov" style="left:'+bandL+'%"></div>';
+
+  let ackumulerat = 0;
+  delar.forEach(d => {
+    const start = pc(ackumulerat);
+    ackumulerat += d.v;
+    const bredd = pc(ackumulerat) - start;
+    if(bredd > 0.05)
+      h += '<div class="seg '+d.klass+'" style="left:'+start+'%;width:'+bredd+'%"></div>';
+  });
+
   if(tak && tak/nedre*100 <= AXEL_MAX)
     h += '<div class="bartak" style="left:'+pc(tak)+'%" title="Toleransgräns '+f0(tak)+'"></div>';
   if(spiller)
@@ -4656,7 +4711,7 @@ function stapel(nedre, ovre, franGrov, franTill, tak){
   return h + '</div>';
 }
 
-function radM(namn, b, t, tak, extra){
+function radM(namn, b, t, tak, extra, delar){
   const pct = b[0]>0 ? t/b[0]*100 : 0;
   const takPct = tak ? t/tak*100 : null;
   let status = "ok";
@@ -4680,7 +4735,10 @@ function radM(namn, b, t, tak, extra){
   const e = extra || 0;
   const bidrag = e > 0.0001 ? ' <span class="delta">+'+f1(e)+'</span>' : '';
   return '<tr class="'+cls+'"><td>'+namn+'</td>'
-       + '<td class="barcell">'+stapel(b[0], b[1], t-e, e, tak)+'</td>'
+       + '<td class="barcell">'
+       + stapel(b[0], b[1], delar || [{v:t-e, klass:"seg-grov", namn:"grovfodret"},
+                                      {v:e,   klass:"seg-forslag", namn:"tillskottet"}], tak)
+       + '</td>'
        + '<td class="n">'+rng(b)+'</td><td class="n">'+f1(t)+bidrag+'</td>'
        + '<td class="n">'+f0(pct)+' %</td><td>'+pill+'</td></tr>';
 }

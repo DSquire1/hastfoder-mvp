@@ -1,0 +1,3787 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "byggd": "2026-07-31",
+    "antal_produkter": 36,
+    "schema": "schema.md",
+    "enhetsbas": "Näringsvärden avser per kg produkt om inte declaration_basis anger annat.",
+    "forbehall": "Uppgifterna är hämtade ur tillverkarnas egna produktdeklarationer. De är kommersiella källor och har inte granskats av tredje part. Databasen avgör inte vilket foder som är lämpligt — den visar vad produkterna innehåller.",
+    "kallor_per_varumarke": [
+      "Brogaarden",
+      "Dodson & Horrell",
+      "Eclipse Biofarmab",
+      "Granngården",
+      "Hippo",
+      "KRAFFT",
+      "Pavo",
+      "RS Mustang",
+      "St. Hippolyt",
+      "Trikem"
+    ],
+    "valideringsanmarkningar": 17
+  },
+  "produkter": [
+    {
+      "id": "brogaarden-vitamins-minerals",
+      "brand": "Brogaarden",
+      "manufacturer": "Brogaarden ApS / Brogaarden AB",
+      "product": "Brogaarden Vitamins & Minerals",
+      "category": "vitamin-mineraltillskott",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete",
+        "lattfodrad"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 90,
+        "p_g": 35,
+        "mg_g": 35,
+        "na_g": 35,
+        "k_g": 10,
+        "cl_g": 10,
+        "s_g": 1.7,
+        "protein_g": 150,
+        "fat_g": 30,
+        "fibre_g": 35,
+        "starch_g": 25,
+        "sugar_g": 45,
+        "energy_mj": 6.4,
+        "cu_mg": 1300,
+        "zn_mg": 4500,
+        "mn_mg": 3000,
+        "se_mg": 17,
+        "i_mg": 32,
+        "co_mg": 1.5,
+        "fe_mg": 2500,
+        "vit_a_ie": 550000,
+        "vit_d3_ie": 30000,
+        "vit_e_mg": 10000,
+        "biotin_mg": 38
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 40,
+      "dose_max_g": 150,
+      "dose_note": "Tabell efter kroppsvikt: 200 kg 40 g/dag (underhåll) – 50 g/dag (lätt/moderat arbete); 300 kg 60–75 g; 400 kg 80–100 g; 500 kg 100–125 g; 600 kg 120–150 g. Ges tillsammans med 1,75–2 kg hö/hösilage per 100 kg kroppsvikt. Medföljande mått innehåller 25 g.",
+      "dose_table": [
+        {
+          "vikt_kg": 200,
+          "dos_min_g": 40,
+          "dos_max_g": 50
+        },
+        {
+          "vikt_kg": 300,
+          "dos_min_g": 60,
+          "dos_max_g": 75
+        },
+        {
+          "vikt_kg": 400,
+          "dos_min_g": 80,
+          "dos_max_g": 100
+        },
+        {
+          "vikt_kg": 500,
+          "dos_min_g": 100,
+          "dos_max_g": 125
+        },
+        {
+          "vikt_kg": 600,
+          "dos_min_g": 120,
+          "dos_max_g": 150
+        }
+      ],
+      "package_sizes_kg": [
+        5,
+        20
+      ],
+      "retailers": [
+        {
+          "name": "Brogaarden AB",
+          "url": "https://brogaarden.se/products/brogaarden-vitamins-minerals",
+          "price_sek": 549,
+          "package_kg": 5,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://cdn.shopify.com/s/files/1/0033/3139/1606/files/Brogaarden_Vitamins_Minerals_S_web.0522.pdf",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://cdn.shopify.com/s/files/1/0033/3139/1606/products/59192_BrogaardenVitamins_Minerals_mfoder.jpg?v=1652959719",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Produktbladet anger torrsubstans 95 %, vilket bekräftar att deklarationen är per kg produkt (ej per kg ts).",
+        "Energi anges som 'Lättsmält energi 6,4 MJ/kg' (smältbar energi, DE) samt 0,57 FE/kg — inte omsättningsbar energi (ME). Fältet energy_mj innehåller alltså DE, inte OE.",
+        "Koppar, zink, mangan och selen anges som '50 % organisk form'; uppdelningen i mg per form redovisas inte.",
+        "Selenhalt 17 mg/kg är hög — stapelrisk vid kombination med andra selenkällor.",
+        "Produktbladet daterat vers. 0522; kan vara äldre än nuvarande förpackning.",
+        "Granskning 2026-07-30: produktbladet är daterat 05/22 och är det äldsta underlaget i databasen. Ej verifierat mot nuvarande förpackning.",
+        "dose_table tillagd 2026-07-30. Raderna är ordagrant avlästa ur den vikttabell som redan fanns i dose_note (produktbladet Brogaarden_Vitamins_Minerals_S_web.0522.pdf). dos_min_g = underhåll, dos_max_g = lätt/moderat arbete. Inga rader har lagts till eller interpolerats.",
+        "sugar_g/starch_g DEKLARERADE och omverifierade 2026-07-30 mot det svenska produktbladet Brogaarden_Vitamins_Minerals_S_web.0522.pdf: 'Socker 4,5 %' = 45 g/kg och 'Stärkelse 2,5 %' = 25 g/kg. Befintliga värden stämde och har inte ändrats. Produktbladet marknadsför uttryckligen produkten som lämplig för hästar som inte bör få stora mängder socker och stärkelse.",
+        "PRODUKTBILD 2026-07-31: image_url är varumärkesägarens egen huvudproduktbild (position 1, 2048x2048 px) hämtad ur produktdatan på brogaarden.se (produkt-JSON för handle brogaarden-vitamins-minerals, art. 59192, 5 kg). Bilden avser 5 kg-förpackningen; 20 kg-varianten har en egen produktsida som inte kontrollerats."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "brogaarden-racing-mineral",
+      "brand": "Brogaarden",
+      "manufacturer": "Brogaarden ApS / Brogaarden AB (distributör)",
+      "product": "Racing Mineral",
+      "category": "vitamin-mineraltillskott",
+      "form": "pellets",
+      "target": [
+        "arbete",
+        "avel",
+        "unghast"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 126,
+        "p_g": 36,
+        "mg_g": 16,
+        "na_g": 33,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 790,
+        "zn_mg": 1550,
+        "mn_mg": 1190,
+        "se_mg": 10,
+        "i_mg": 20,
+        "co_mg": 4,
+        "fe_mg": 1630,
+        "vit_a_ie": 300000,
+        "vit_d3_ie": 30000,
+        "vit_e_mg": 4000,
+        "biotin_mg": 15
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 75,
+      "dose_max_g": 250,
+      "dose_note": "Hästar i träning 150 g/dag; avelshingstar 150 g/dag; dräktiga ston 225 g/dag; digivande ston 250 g/dag; unghästar och föl 150 g/dag; liten ponny 75 g/dag; större ponny 100–125 g/dag.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        10
+      ],
+      "retailers": [
+        {
+          "name": "Brogaarden AB",
+          "url": "https://brogaarden.se/products/racing-mineral-10kg",
+          "price_sek": 339,
+          "package_kg": 10,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://brogaarden.se/products/racing-mineral-10kg",
+      "source_type": "aterforsaljare",
+      "image_url": "https://cdn.shopify.com/s/files/1/0033/3139/1606/files/40114_Racing_Mineral_10kg_d330caa9-ecf8-4cf1-a51a-52c9ad8c5426.jpg?v=1722403545",
+      "image_source": "aterforsaljare",
+      "checked": "2026-07-30",
+      "confidence": "medel",
+      "data_gaps": [
+        "ENHETSBAS VITAMINER: rubriken på produktsidan lyder 'Näringstillsatser (IE/g; mg/kg)'. Vitamin A anges som '300 IE' och vitamin D3 som '30 IE'. Lagrade värden 300 000 respektive 30 000 IE/kg bygger på tolkningen att vitaminerna anges per gram. Bör verifieras mot förpackning.",
+        "Deklarationsbasen för analysvärdena anges inte uttryckligen; tolkad som per kg produkt. Ingen torrsubstanshalt anges.",
+        "Raden med analytiska ingredienser är delvis trasig på sajten ('Magnesium 1,6 >#/p###'); magnesium avläst som 1,6 %.",
+        "Råprotein, råfett, råfibrer, stärkelse, socker, kalium, klorid, svavel och energi ej deklarerade.",
+        "Varumärkesägare oklar: brogaarden.se anger leverantör 'Övriga'. Brand/manufacturer satt till Brogaarden som distributör — bör verifieras.",
+        "Inget separat produktblad hittades; uppgifterna kommer från distributörens webbutik, därav confidence medel.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Raden 'Analytiska ingredienser' på brogaarden.se omfattar enbart kalcium 12,6 %, fosfor 3,6 %, natrium 3,3 % och magnesium 1,6 % — varken socker eller stärkelse ingår. Sökt brogaarden.se, brogaarden.eu (danska produktsidan, identisk deklaration) och hogstafoderbutik.se 2026-07-30. Något separat produktblad som PDF för Racing Mineral finns inte. Värdena är därför null, INTE 0.",
+        "VARNING mot att tolka null som 0 för Racing Mineral: sammansättningen är vetekli, kalciumkarbonat, monokalciumfosfat, sojamjöl, salt, SOCKERRÖRSMELASS och magnesiumoxid. Melass är en ren sockerråvara och vetekli bär stärkelse — produkten är alltså inte en ren oorganisk mineralprodukt och en grundad nolla är utesluten. Halten är okänd, inte noll.",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt brogaarden.se, brogaarden.eu och hogstafoderbutik.se 2026-07-30. Utfodringsvägledningen på brogaarden.se är kategoribaserad (hästar i träning, avelshingstar, dräktiga/digivande ston, unghästar, liten/större ponny) och innehåller ingen vikttabell. Något svenskt produktblad som PDF för Racing Mineral finns inte; Hogsta Ridsport för inte produkten. dose_table därför null.",
+        "PRODUKTBILD 2026-07-31 FRÅN ÅTERFÖRSÄLJARE: image_url (2048x2048 px, art. 40114, 10 kg) är hämtad ur produktdatan på brogaarden.se, som för denna produkt är distributör och inte varumärkesägare — sajten anger själv leverantör 'Övriga'. Ingen tillverkarsajt för Racing Mineral är känd, så någon tillverkarbild kunde inte sökas. image_source är därför satt till aterforsaljare."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "dodson-horrell-daily-vitamins-minerals",
+      "brand": "Dodson & Horrell",
+      "manufacturer": "Dodson & Horrell Ltd (importör Brogaarden AB)",
+      "product": "Daily Vitamins & Minerals",
+      "category": "vitamin-mineraltillskott",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "lattfodrad",
+        "metabol"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 65,
+        "p_g": 20,
+        "mg_g": 11,
+        "na_g": 17.5,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 110,
+        "fat_g": 25,
+        "fibre_g": 135,
+        "starch_g": 15,
+        "sugar_g": 45,
+        "energy_mj": 6,
+        "cu_mg": 1075,
+        "zn_mg": 5000,
+        "mn_mg": 2000,
+        "se_mg": 13,
+        "i_mg": 12.5,
+        "co_mg": 3,
+        "fe_mg": 2000,
+        "vit_a_ie": 600000,
+        "vit_d3_ie": 65000,
+        "vit_e_mg": null,
+        "biotin_mg": 15
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 35,
+      "dose_max_g": 130,
+      "dose_note": "Tabell efter kroppsvikt: 200 kg 35 g/dag (underhåll) – 45 g/dag (lätt arbete); 300 kg 55–65 g; 400 kg 70–90 g; 500 kg 90–110 g; 600 kg 110–130 g. Ges tillsammans med 1,75–2 kg hö/hösilage per 100 kg kroppsvikt. 1 mått (100 ml) = 75 g.",
+      "dose_table": [
+        {
+          "vikt_kg": 200,
+          "dos_min_g": 35,
+          "dos_max_g": 45
+        },
+        {
+          "vikt_kg": 300,
+          "dos_min_g": 55,
+          "dos_max_g": 65
+        },
+        {
+          "vikt_kg": 400,
+          "dos_min_g": 70,
+          "dos_max_g": 90
+        },
+        {
+          "vikt_kg": 500,
+          "dos_min_g": 90,
+          "dos_max_g": 110
+        },
+        {
+          "vikt_kg": 600,
+          "dos_min_g": 110,
+          "dos_max_g": 130
+        }
+      ],
+      "package_sizes_kg": [
+        2
+      ],
+      "retailers": [
+        {
+          "name": "Brogaarden AB",
+          "url": "https://brogaarden.se/products/daily-vits-mins-suppl-2kg",
+          "price_sek": 427,
+          "package_kg": 2,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://cdn.shopify.com/s/files/1/0033/3139/1606/files/Daily_Vits_Mins_S_web0315.pdf",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://www.dodsonandhorrell.com/storage/Daily-Vitamains--Minerals-2kg-Sticker.png",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Deklarationsbasen anges inte uttryckligen och ingen torrsubstanshalt anges i det svenska produktbladet; tolkad som per kg produkt.",
+        "Vitamin E deklareras som 8 500 IE/kg, inte mg/kg. vit_e_mg lämnad null.",
+        "Kalium, klorid och svavel ej deklarerade. Salt anges som 4,6 % och natrium som 1,75 %.",
+        "Energi anges som 'Smältbar energi 6 MJ/kg' (DE) samt 0,45 FE/kg — inte omsättningsbar energi.",
+        "Produktbladet kommer från den svenska importören Brogaarden (vers. 1116) och kan avvika från Dodson & Horrells brittiska deklaration för samma produktnamn.",
+        "Produktbladet är daterat 2016 — risk för att receptet ändrats.",
+        "dose_table tillagd 2026-07-30. Raderna är ordagrant avlästa ur den vikttabell som redan fanns i dose_note (produktbladet Daily_Vits_Mins_S_web0315.pdf, vers. 1116). dos_min_g = underhåll, dos_max_g = lätt arbete. Inga rader har lagts till eller interpolerats.",
+        "sugar_g/starch_g DEKLARERADE och omverifierade 2026-07-30 mot det svenska produktbladet Daily_Vits_Mins_S_web0315.pdf (vers. 1116): 'Socker 4,5 %' = 45 g/kg och 'Stärkelse 1,5 %' = 15 g/kg. Befintliga värden stämde och har inte ändrats.",
+        "PRODUKTBILD 2026-07-31: image_url är og:image på tillverkarens BRITTISKA produktsida dodsonandhorrell.com/product/daily-vitamins-and-minerals och visar 2 kg-burken. Bilden avser alltså den brittiska marknadsförpackningen; den vara som Brogaarden importerar till Sverige kan ha annan etikett. Brogaarden AB (svensk importör) har egna bilder av produkten men är återförsäljare, varför tillverkarens bild valts."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 0.9
+    },
+    {
+      "id": "dodson-horrell-ultimate-balancer",
+      "brand": "Dodson & Horrell",
+      "manufacturer": "Dodson & Horrell Ltd (importör Brogaarden AB)",
+      "product": "Ultimate Balancer",
+      "category": "balanserare",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 27,
+        "p_g": 11,
+        "mg_g": 3,
+        "na_g": 4,
+        "k_g": 13,
+        "cl_g": 6.5,
+        "s_g": null,
+        "protein_g": 250,
+        "fat_g": 57.5,
+        "fibre_g": 55,
+        "starch_g": 100,
+        "sugar_g": 70,
+        "energy_mj": 11.2,
+        "cu_mg": 250,
+        "zn_mg": 630,
+        "mn_mg": 520,
+        "se_mg": 3.2,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": 360,
+        "vit_a_ie": 75800,
+        "vit_d3_ie": 10000,
+        "vit_e_mg": 1700,
+        "biotin_mg": 30
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 150,
+      "dose_max_g": 700,
+      "dose_note": "Tabell efter kroppsvikt: 200 kg 0,15 kg/dag (underhåll) – 0,2 kg/dag (lätt/moderat arbete); 300 kg 0,25–0,3 kg; 400 kg 0,35–0,45 kg; 500 kg 0,45–0,55 kg; 600 kg 0,55–0,7 kg. Fördelas på minst 3 lika måltider. Ej lämpligt vid moderat/hårt arbete. 1 liter väger ca 690 g.",
+      "dose_table": [
+        {
+          "vikt_kg": 200,
+          "dos_min_g": 150,
+          "dos_max_g": 200
+        },
+        {
+          "vikt_kg": 300,
+          "dos_min_g": 250,
+          "dos_max_g": 300
+        },
+        {
+          "vikt_kg": 400,
+          "dos_min_g": 350,
+          "dos_max_g": 450
+        },
+        {
+          "vikt_kg": 500,
+          "dos_min_g": 450,
+          "dos_max_g": 550
+        },
+        {
+          "vikt_kg": 600,
+          "dos_min_g": 550,
+          "dos_max_g": 700
+        }
+      ],
+      "package_sizes_kg": [
+        20
+      ],
+      "retailers": [
+        {
+          "name": "Brogaarden AB",
+          "url": "https://brogaarden.se/products/ultimate-balancer-20kg",
+          "price_sek": 657,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://cdn.shopify.com/s/files/1/0033/3139/1606/files/Ultimate_Balancer_S_web0916.pdf",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://www.dodsonandhorrell.com/storage/15.png",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Produktbladet anger torrsubstans 88 %, vilket bekräftar att deklarationen är per kg produkt (ej per kg ts).",
+        "Tillverkaren anger uttryckligen att mineralvärdena är samlade värden i produkten, inklusive naturligt förekommande mineraler från ingredienserna — inte enbart tillsatta mineraler.",
+        "Jod, kobolt och svavel ej deklarerade.",
+        "Energi anges som 'Smältbar energi 11,2 MJ/kg' (DE) samt 0,85 FE/kg — inte omsättningsbar energi.",
+        "Produktbladet kommer från den svenska importören Brogaarden (vers. 1118) och kan avvika från Dodson & Horrells brittiska deklaration för samma produktnamn.",
+        "dose_table tillagd 2026-07-30. Raderna är ordagrant avlästa ur den vikttabell som redan fanns i dose_note (produktbladet Ultimate_Balancer_S_web0916.pdf, vers. 1118), enbart omräknade från kg till gram (0,15 kg = 150 g osv.). dos_min_g = underhåll, dos_max_g = lätt/moderat arbete. Inga rader har lagts till eller interpolerats.",
+        "sugar_g/starch_g DEKLARERADE och omverifierade 2026-07-30 mot det svenska produktbladet Ultimate_Balancer_S_web0916.pdf (vers. 1118): 'Stärkelse 10 %' = 100 g/kg och 'Socker 7 %' = 70 g/kg. Befintliga värden stämde och har inte ändrats.",
+        "METABOL VARNING (Ultimate Balancer): socker + stärkelse = 17 % av produkten, och giveran är stor (upp till 700 g/dag för en 600 kg-häst). Vid maxgiva ger produkten ensam ca 49 g socker + 70 g stärkelse = ca 119 g socker/stärkelse per dag. Produkten bör därför inte rekommenderas rutinmässigt till hästar med insulinresistens, PPID eller PSSM. Sockerrörsmelass ingår i sammansättningen.",
+        "Odeklarerade mikromineraler: Jod, Kobolt anges inte i den källa som använts (https://cdn.shopify.com/s/files/1/0033/3139/1606/files/Ultimate_Balancer_S_web0916.pdf). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen.",
+        "PRODUKTBILD 2026-07-31: image_url är og:image på tillverkarens BRITTISKA produktsida dodsonandhorrell.com/product/ultimate-balancer. Samma fil används av D&H som produktminiatyr i kategorilistan (storage/thumbs/150x240/15.png), vilket bekräftar att den är produktbilden (20 kg-säcken) och inte en miljöbild. Bilden är stående, inte kvadratisk, eftersom det är en fodersäck. Avser brittisk marknadsförpackning; den vara Brogaarden importerar till Sverige kan ha annan etikett."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 1.0
+    },
+    {
+      "id": "eclipse-biomagnesium",
+      "brand": "Eclipse Biofarmab",
+      "manufacturer": "Eclipse Biofarmab AB",
+      "product": "BioMagnesium",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": 11,
+        "mg_g": 289,
+        "na_g": 0,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 16,
+        "fat_g": 1,
+        "fibre_g": 5,
+        "starch_g": 0,
+        "sugar_g": 0,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": null,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 10,
+      "dose_max_g": 25,
+      "dose_note": "Doseringsavsnittet anger 1 dosmatt = 10 g (ger 2,9 g magnesium): ponny 1 dosmatt, hast 2 dosmatt, stor hast 2,5 dosmatt/dag. OBS: kallan ar internt motsagelsefull - storleksavsnittet raknar dagsgivor utifran 20 g/dag. Dosintervallet 10-25 g bygger pa doseringsavsnittets 10 g/dosmatt.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        0.4,
+        1.5,
+        5
+      ],
+      "retailers": [
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/biomagnesium-400-g-eclipse-biofarmab",
+          "price_sek": 169,
+          "package_kg": 0.4,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/muskler-leder/kompletteringsfoder-biomagnesium-eclipse-biofarmab",
+          "price_sek": 369,
+          "package_kg": 1.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/eclipse-biofarmab/biomagnesium-1500g",
+          "price_sek": 369,
+          "package_kg": 1.5,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/biomagnesium",
+      "source_type": "tillverkare",
+      "image_url": "https://www.eclipsebiofarmab.se/pub_images/original/M0646-1.JPG",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "medel",
+      "data_gaps": [
+        "Kallan ar internt motsagelsefull om dosmattets storlek (10 g vs 20 g) - dosangivelsen osaker.",
+        "Analytiska bestandsdelar omraknade fran % till g/kg (magnesium 28,9 %, natrium 0 %, fosfor 1,1 %, raprotein 1,6 %, rafett 0,1 %, vaxttrad 0,5 %).",
+        "Kallan anger uttryckligen 'Produkten innehaller inga tillsatser' - inga sparamnen eller vitaminer.",
+        "Ca, K, Cl, S och energi deklareras inte. Raska 63,4 % och vattenhalt 1 % saknar schemafalt.",
+        "sugar_g och starch_g satta till 0 (GRUNDAD NOLLA, ej deklarerad siffra): tillverkarens sammansättning är 'magnesiumoxid, magnesiumfosfat och magnesiumkelat' och tillverkaren anger uttryckligen 'Produkten innehåller inga tillsatser' (eclipsebiofarmab.se, kontrollerad 2026-07-30). Ingen socker- eller stärkelsebärande råvara ingår; råprotein 1,6 % förklaras av magnesiumkelatet, som är proteinbundet magnesium. Tillverkaren anger inget tal för socker eller stärkelse - nollan vilar på råvarusammansättningen. Lämplig för metabola hästar ur kolhydratsynpunkt.",
+        "Kontroll 2026-07-31: Hooks priser ar oforandrade - BioMagnesium 400 g 169 kr och Kompletteringsfoder BioMagnesium (1,5 kg) 369 kr. Inga nya poster infogade eftersom bade butik, forpackningsstorlek och pris redan finns i retailers[].",
+        "Prisinsamling 2026-07-30: samtliga priser ar ordinarie priser (ingen rea noterad). Bade Hooks och Hogsta har 369 kr for 1,5 kg. Produkten salj aven under det tidigare namnet 'Biomag Forte'.",
+        "Pris ej funnet 2026-07-30 for 5 kg-forpackningen hos Hooks, Hogsta Foderbutik, Vetapotek och Apotea.",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt eclipsebiofarmab.se (produktsida + produktbladet '0646 Produktblad'), granngarden.se (tillverkarens produktblad i kopia), hogstafoderbutik.se, vetapotek.se, hooks.se och svenskridsport.com 2026-07-30. Ingen vikttabell finns. Tillverkarens dosering är kategoribaserad (ponny 1 dosmått, häst 2 dosmått, stor häst över 600 kg 2,5 dosmått) och 600 kg är den enda vikt som nämns - det räcker inte som vikttabell. dose_table satt till null.",
+        "Motsägelsen om dosmåttets storlek utredd 2026-07-30: tillverkarens eget produktblad för BioMagnesium (art. 0649/0646/0648, hämtat som PDF via Granngården) anger 'DOSERING: 1-2 dosmått dagligen, blandas väl i kraftfodret. 1 dosmått = 10 g ger 2,9 g magnesium och 0,11 g fosfor'. 10 g stämmer exakt mot deklarationen (28,9 % Mg ger 2,89 g och 1,1 % P ger 0,11 g per 10 g). Formuleringen '20 g/dag' i STORLEK-avsnittet på produktsidan avser dagsgivan för en normalstor häst (2 dosmått x 10 g), inte dosmåttets storlek. Det är alltså ingen verklig motsägelse: 1 dosmått = 10 g. Confidence lämnad oförändrad enligt instruktion.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Selen, Zink anges inte i den källa som använts (https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/biomagnesium). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "grundad_nolla",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Selen",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.3
+    },
+    {
+      "id": "eclipse-biomineral-total",
+      "brand": "Eclipse Biofarmab",
+      "manufacturer": "Eclipse Biofarmab AB",
+      "product": "BioMineral Total",
+      "category": "vitamin-mineraltillskott",
+      "form": "pulver",
+      "target": [
+        "underhall",
+        "arbete",
+        "unghast",
+        "avel",
+        "senior"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 200,
+        "p_g": 63,
+        "mg_g": 25,
+        "na_g": 45,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": 0,
+        "sugar_g": 0,
+        "energy_mj": null,
+        "cu_mg": 2000,
+        "zn_mg": 5500,
+        "mn_mg": 3750,
+        "se_mg": 25,
+        "i_mg": 30,
+        "co_mg": null,
+        "fe_mg": 500,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 20,
+      "dose_max_g": 50,
+      "dose_note": "1 dosmatt = 20 g. Ponny 1 dosmatt/dag (20 g), hast 2 dosmatt/dag (40 g), stor hast over 600 kg 2,5 dosmatt/dag (50 g). Blandas i kraftfodret. BSD-markt, tavlingskarens 0. Vid 40 g/dag ges 1 mg selen/dag.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        1.2,
+        3.6
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/biomineral-total-1200g",
+          "price_sek": 249,
+          "package_kg": 1.2,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/kompletteringsfoder-biomineral-total-eclipse-biofarmab",
+          "price_sek": 249,
+          "package_kg": 1.2,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/biomineral-total",
+      "source_type": "tillverkare",
+      "image_url": "https://www.eclipsebiofarmab.se/pub_images/original/M0537-1.JPG",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kallan deklarerar tillsatser per 1000 g och per 20 g - per-kg-kolumnen anvand direkt.",
+        "Ca/P/Na omraknade fran % till g/kg (20 % / 6,3 % / 4,5 %). Ca/P-kvot anges till 3,2.",
+        "Magnesium saknas i analytiska bestandsdelar; mg_g 25 g/kg ar OMRAKNAT fran tillverkarens dosmattstext '1 dosmatt = 20 g ger 0,5 g magnesium' (0,5 g / 0,02 kg = 25 g/kg). Lagre sakerhet an ovriga varden.",
+        "Kisel deklareras endast i dosmattstexten (20 g ger 1 g kisel = 50 g/kg) och saknar schemafalt.",
+        "K, Cl, S, protein, fett, fiber, energi, Co samt samtliga vitaminer (A, D3, E, biotin) deklareras inte trots produktnamnet 'Total'.",
+        "sugar_g och starch_g satta till 0 (GRUNDAD NOLLA, ej deklarerad siffra): tillverkarens sammansättning är 'kalciumkarbonat, mononatriumfosfat, kiselgur, magnesiumoxid, mangansulfat, zinksulfat, kopparsulfat, järnsulfat, kaliumjodid, selenjäst' (eclipsebiofarmab.se, kontrollerad 2026-07-30). Samtliga råvaror utom en är oorganiska mineralsalter eller kiselgur; ingen socker- eller stärkelsebärande råvara ingår. RESERVATION: selenjäst är en organisk råvara, men inblandningen är spårnivå (ger 25 mg Se/kg) och jäst är varken en socker- eller stärkelsekälla i analytisk mening. Tillverkaren anger inget tal för socker eller stärkelse - nollan vilar på råvarusammansättningen. Lämplig för metabola hästar ur kolhydratsynpunkt.",
+        "Prisinsamling 2026-07-30: bada priserna ar ordinarie priser (ingen rea noterad). Hooks produktsida (art.nr 820163) anger INTE forpackningsstorlek; package_kg 1,2 ar antaget utifran att priset ar identiskt med Hogstas verifierade 1,2 kg-forpackning - bor kontrolleras. Hooks anger dessutom 'Ej i lager online'.",
+        "Kontroll 2026-07-31: Hooks pris ar oforandrat 249 kr och produktsidan anger fortfarande INGEN forpackningsstorlek - reservationen ovan om att package_kg 1,2 ar antaget kvarstar alltsa. Ingen ny post infogad eftersom bade butik, forpackning och pris ar oforandrade.",
+        "Pris ej funnet 2026-07-30 for 3,6 kg-forpackningen hos Hogsta Foderbutik, Hooks, Vetapotek och Apotea.",
+        "Odeklarerade mikromineraler: Kobolt anges inte i den källa som använts (https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/biomineral-total). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "grundad_nolla",
+      "_ej_takkontrollerbara": [
+        "Kobolt"
+      ],
+      "_completeness": 0.7
+    },
+    {
+      "id": "eclipse-rehalyt-basic",
+      "brand": "Eclipse Biofarmab",
+      "manufacturer": "Eclipse Biofarmab AB",
+      "product": "Rehalyt Basic",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 4.5,
+        "p_g": null,
+        "mg_g": 4.5,
+        "na_g": 262,
+        "k_g": 61,
+        "cl_g": 459,
+        "s_g": null,
+        "protein_g": 136,
+        "fat_g": 1,
+        "fibre_g": 5,
+        "starch_g": 0,
+        "sugar_g": 84,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": null,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 20,
+      "dose_max_g": 60,
+      "dose_note": "Efter latt svettning 20-30 g, efter kraftig svettning 50-60 g. Kallan anger att 60 g ersatter salterna i ca 5 liter svett. Ges vid behov, inte som daglig underhallsgiva.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        1.5,
+        3,
+        12
+      ],
+      "retailers": [
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/elektrolyter-eclipse-biofarmab-rehalyt-basic-1-5-kg-7330824012525/",
+          "price_sek": 329,
+          "package_kg": 1.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/elektrolyter-eclipse-biofarmab-rehalyt-basic-3-kg-7330824012532/",
+          "price_sek": 679,
+          "package_kg": 3,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/elektrolyter-eclipse-biofarmab-rehalyt-basic-1-5-kg-7330824012525/",
+          "price_sek": 2299,
+          "package_kg": 12,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Svensk Ridsport",
+          "url": "https://www.svenskridsport.com/products/eclipse-rehalyt-basic-3kg",
+          "price_sek": 849,
+          "package_kg": 3,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://www.eclipsebiofarmab.se/produkter/hast/elektrolyter/rehalyt-basic",
+      "source_type": "tillverkare",
+      "image_url": "https://www.eclipsebiofarmab.se/pub_images/original/M1252-1.JPG",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "lag",
+      "data_gaps": [
+        "Analytiska bestandsdelar omraknade fran % till g/kg (natrium 26,2 %, kalium 6,1 %, klorider 45,9 %, kalcium 0,45 %, magnesium 0,45 %, raprotein 13,6 %, rafett 0,1 %, vaxttrad 0,5 %).",
+        "sugar_g 84 g/kg ar deklarerat som 'glukos 8,4 %' - avser glukos specifikt, inte total sockerhalt.",
+        "P, S, energi, samtliga sparamnen (inkl. selen) och samtliga vitaminer deklareras inte.",
+        "MISSTANKEN OM DUBBELBOKFÖRING AV sugar_g UTREDD 2026-07-30 - AVFÄRDAD. Tillverkarens produktsida (eclipsebiofarmab.se/produkter/hast/elektrolyter/rehalyt-basic) hämtad om och läst i sin helhet. De två 84-talen kommer från två separata, oberoende avsnitt i deklarationen: (a) TILLSATSER: 'Aminosyror: 2b17034, Glycin 84 g' per 1000 g, och (b) ANALYTISKA BESTÅNDSDELAR: '...klorider 45,9 %, glukos 8,4 %'. Glukos 8,4 % = 84 g/kg är alltså en egen deklarerad analytisk beståndsdel, inte en upprepning av glycinsiffran. Värdet styrks oberoende av att SAMMANSÄTTNING lyder 'Natriumklorid, kaliumklorid, dextros, kelaterat magnesium, kelaterat kalcium' - dextros är en deklarerad råvara och glukos är just dextros. Sammanträffandet 84 g glycin / 84 g glukos är en slump. sugar_g 84 BEHÅLLS som DEKLARERAT värde.",
+        "Summakontrollen som tidigare väckte misstanke förklaras också: råaska 81,6 % motsvarar mineralerna (Na 26,2 + K 6,1 + Cl 45,9 + Ca 0,45 + Mg 0,45 = 79,1 %), och råprotein 13,6 % härrör från glycinet (84 g glycin ger ca 9,8 % råprotein) plus proteinet i de kelaterade Mg- och Ca-salterna. Ask + protein + glukos + fett + växttråd = 104,2 %, vilket ligger inom normal deklarationsmarginal. Överskottet är alltså inte ett tecken på dubbelräkning av socker.",
+        "starch_g satt till 0 (GRUNDAD NOLLA, ej deklarerad siffra): tillverkarens sammansättning omfattar endast fem råvaror - natriumklorid, kaliumklorid, dextros, kelaterat magnesium och kelaterat kalcium. Ingen av dessa är stärkelsebärande; dextros är en monosackarid. Den analytiska deklarationen är dessutom i praktiken heltäckande (summerar till ca 100 %) och lämnar inget utrymme för stärkelse. Tillverkaren anger inget tal för stärkelse - nollan vilar på råvarusammansättningen.",
+        "TOLKNINGSNOT FÖR METABOLA HÄSTAR: sugar_g 84 g/kg avser glukos. Vid kraftig svettning (60 g produkt) ges ca 5 g glukos, vid lätt svettning (20-30 g) ca 1,7-2,5 g. Det är försumbara mängder även för en insulinresistent häst. Produkten ges dessutom vid behov, inte som daglig underhållsgiva.",
+        "Raska 81,6 % samt tillsatsen glycin 2b17034 84 g/kg deklareras men saknar schemafalt.",
+        "Raproteinvardet 13,6 % harror sannolikt fran glycintillsatsen.",
+        "Granskning 2026-07-30: summan av deklarerade beståndsdelar blir 1017 g/kg, alltså över 100 %. Källans egen deklaration går också över 100 %. Sockerhalten 84 g/kg är dessutom identisk med glycintillsatsen 84 g/kg — möjlig dubbelbokföring. Värdena bör kontrolleras mot förpackning innan de används.",
+        "Ej i sortimentet hos Hööks 2026-07-31. Sökt hooks.se/search?q=rehalyt och ?q=eclipse rehalyt - noll träffar båda gångerna. Hööks för flera andra Eclipse Biofarmab-produkter (BioMineral Total, Selo-E, BioMagnesium, B-vitamin Total m.fl.) men inte elektrolytpreparatet Rehalyt Basic.",
+        "Prisinsamling 2026-07-30: samtliga priser ar ordinarie priser (ingen rea noterad). Stor prisskillnad for 3 kg: Vetapotek 679 kr mot Svensk Ridsport 849 kr. Vetapoteks 12 kg-variant saknar egen URL i insamlingen - lankad till 1,5 kg-sidan som visar alla tre varianterna med pris.",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt eclipsebiofarmab.se (produktsida + produktbladet '1252 Produktblad'), vetapotek.se, hooks.se, svenskridsport.com, apotea.se och hogstafoderbutik.se 2026-07-30. Ingen vikttabell finns. Doseringen är svettmängdsbaserad (lätt svettning 20-30 g, kraftig svettning 50-60 g; 60 g ersätter salterna i ca 5 liter svett) vilket inte är en vikttabell. dose_table satt till null.",
+        "Tillverkaren anger 1 dosmått = 20 g för Rehalyt Basic (kontrollerat mot produktsidan 2026-07-30). Storleksavsnittet räknar dagsgivor vid 20 g/dag, vilket är konsekvent.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Selen, Zink anges inte i den källa som använts (https://www.eclipsebiofarmab.se/produkter/hast/elektrolyter/rehalyt-basic). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Selen",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.3
+    },
+    {
+      "id": "eclipse-selo-e-vitamin",
+      "brand": "Eclipse Biofarmab",
+      "manufacturer": "Eclipse Biofarmab AB",
+      "product": "Selo-E Vitamin",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": null,
+        "mg_g": null,
+        "na_g": 2,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 18,
+        "fat_g": 70,
+        "fibre_g": 13,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": 90,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": 70500,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 11,
+      "dose_max_g": 33,
+      "dose_note": "1 dosmatt = 22 g. Ponny 0,5 dosmatt/dag (11 g), hast 1 dosmatt/dag (22 g), stor hast over 600 kg 1,5 dosmatt/dag (33 g). Vid 22 g/dag ges 2 mg selen och 1550 mg E-vitamin/dag.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        0.9,
+        1.8
+      ],
+      "retailers": [
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/kosttillskott-eclipse-biofarmab-selo-e-900-g-7330824009778/",
+          "price_sek": 279,
+          "package_kg": 0.9,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/eclipse-biofarmab/selo-e-900g",
+          "price_sek": 329,
+          "package_kg": 0.9,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/eclipse-biofarmab/seloe-1800gr",
+          "price_sek": 599,
+          "package_kg": 1.8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/e-vitamin/e-vitamin-900-g-selo-e-eclipse-biofarmab",
+          "price_sek": 329,
+          "package_kg": 0.9,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/selo-e",
+      "source_type": "tillverkare",
+      "image_url": "https://www.eclipsebiofarmab.se/pub_images/original/M0976-1.JPG",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kallan deklarerar tillsatser per 1000 g och per 22 g - per-kg-kolumnen anvand direkt.",
+        "Protein/fett/fiber/Na omraknade fran % till g/kg (1,8 % / 7,0 % / 1,3 % / 0,2 %).",
+        "Ca, P, Mg, K, Cl, S, starkelse, socker, energi, Cu, Zn, Mn, I, Co, Fe samt vitamin A/D3/biotin deklareras inte.",
+        "Raska 6,4 % deklareras men saknar schemafalt.",
+        "Selenkallan ar selenjast 3b810 (organiskt selen), 90 mg Se/kg.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Analytiska beståndsdelar omfattar råprotein, växttråd, råolja/råfett, råaska och natrium - varken socker eller stärkelse anges. VARNING FÖR METABOLA HÄSTAR: tillverkarens sammansättning är 'Dextros, inulin' (eclipsebiofarmab.se, kontrollerad 2026-07-30), dvs bäraren är druvsocker med inulin som fibertillsats. Sockerhalten är därmed sannolikt mycket hög, men eftersom tillverkaren inte anger något tal har sugar_g lämnats null - INGEN siffra har härletts och ingen härledning har gjorts från systerprodukten Trikem E+Selen. Produkten bör inte rekommenderas till insulinresistenta hästar utan att halten först kontrolleras hos Eclipse Biofarmab. Sökt eclipsebiofarmab.se (produktsida + '0976 Produktblad'), vetapotek.se och hogstafoderbutik.se 2026-07-30.",
+        "starch_g: varken dextros eller inulin är stärkelse (inulin är en fruktanpolymer), och ingen stärkelsebärande råvara är deklarerad. Nolla har ändå INTE satts eftersom bärarämnet i E-vitaminpreparatet 3a700 inte är deklarerat och sådana premixer ofta är stärkelsebelagda. Notera dock att inulin är en fruktan - relevant för fångkänsliga hästar även om det inte fångas av fälten sugar_g/starch_g.",
+        "Prisinsamling 2026-07-30: angivna priser ar ordinarie priser (ingen rea noterad). Prisspridningen for 900 g ar stor (279-329 kr).",
+        "Hooks listar Selo-E 900 g till 150 kr (art.nr 820214) men produkten ar markerad 'Ej i lager online' och priset avviker kraftigt fran ovriga butiker - bedomt som inaktuellt och darfor INTE infogat i retailers[].",
+        "UTREDD 2026-07-31 - Hooks 150 kr var ett REAPRIS, inte ett inaktuellt pris. Hooks soklista visar produkten som '150 KR -55% 329 KR', dvs ordinarie pris 329 kr och reapris 150 kr (55 % rabatt). Ordinarie pris 329 kr ar darfor nu infort i retailers[]; reapriset 150 kr ar INTE infort. Ordinarie pris stammer exakt med Hogsta Ridsports 329 kr for samma forpackning. Produkten var fortfarande markerad 'Ej i lager online' 2026-07-31, vilket talar for utforsaljning. RESERVATION: Hooks produktsida anger inte forpackningsstorleken i klartext - package_kg 0,9 vilar pa Hooks egen URL-slug (e-vitamin-900-g-selo-e) och pa art.nr 820214, samma artikelnummer som noterades for 900 g 2026-07-30.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Zink anges inte i den källa som använts (https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/selo-e). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.3
+    },
+    {
+      "id": "granngarden-hast-balans",
+      "brand": "Granngården",
+      "manufacturer": "Granngården (eget varumärke)",
+      "product": "Mineralfoder Granngården Häst Balans",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 120,
+        "p_g": 30,
+        "mg_g": 50,
+        "na_g": 60,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 900,
+        "zn_mg": 2200,
+        "mn_mg": 1200,
+        "se_mg": 20,
+        "i_mg": 5,
+        "co_mg": 5,
+        "fe_mg": 1000,
+        "vit_a_ie": 100000,
+        "vit_d3_ie": 10000,
+        "vit_e_mg": 3000,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 50,
+      "dose_max_g": 200,
+      "dose_note": "Ponnyer och hastar i vila 50-75 g; latt motion eller arbete 75-100 g; normal traning eller arbete 100-150 g; hard traning eller arbete 150-200 g. 1 dl mineralpellets vager cirka 100 g. Maxgiva 250 g per dag.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        8,
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-balans-15kg",
+          "price_sek": 379,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-balans-8kg",
+          "price_sek": 279,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.granngarden.se/mineralfoder-granngarden-hast-balans-15kg",
+      "source_type": "tillverkare",
+      "image_url": "https://v.imgi.no/qjh585qnhf",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "PRISKONTROLL 2026-07-31: 15 kg-priset 379 kr ar omverifierat direkt i webblasaren och stammer (jamforpris 25,27 kr/kg bekraftar 15 kg). 8 kg-forpackningen har nu ocksa fatt pris: 279 kr (jamforpris 34,88 kr/kg bekraftar 8 kg). Bada ar ordinarie pris inkl. moms, ingen rea.",
+        "Biotin ej deklarerat",
+        "Kalium, klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad; raaska anges till 66%",
+        "Makromineraler anges i procent i kallan (Ca 12%, P 3%, Mg 5%, Na 6%) och har raknats om till g/kg",
+        "Sparamnen deklareras som foreningsnamn; tolkas som mg grundamne per kg",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt granngarden.se produktsida (mineralfoder-granngarden-hast-balans-15kg), Granngårdens eget produktblad 1238133_a_GG_Produktblad.pdf (https://www.granngarden.se/productassets/51e8c7c8-0a47-467e-8302-ee36c7a610fc/1238133_a_gg_produktblad.pdf) och Granngårdens hästfoderguide (granngarden.se/kunskap/hast/hastfoderguide) 2026-07-30. Givan anges endast per arbetsnivå (ponny/vila, lätt motion, normal träning, hård träning) med maxgiva 250 g/dag, aldrig per hästvikt",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Granngårdens produktblad 1238133_a_GG_Produktblad.pdf listar under 'ANALYTISKA BESTÅNDSDELAR PER KG' endast kalcium 12 %, fosfor 3 %, kalcium/fosforkvot 4, magnesium 5 %, natrium 6 % och råaska 66 % - varken socker eller stärkelse. Sökt produktbladet och granngarden.se produktsida (mineralfoder-granngarden-hast-balans-15kg) 2026-07-30",
+        "Observation (ej ett värde): produktbladet anger däremot råvarusammansättningen: kalk, fodermjöl, natriumklorid, monokalciumfosfat, magnesiumoxid, lusern, vitamin- och spårämnespremix, vegetabiliskt fett, melass. Melass är en sockerbärande råvara och fodermjöl en stärkelsebärande, dvs. socker och stärkelse förekommer sannolikt i bärarmaterialet även om halten inte deklareras. Detta är skälet till null och inte 0 - relevant vid bedömning för metabol häst",
+        "Produktbild: Granngardens bild-CDN (v.imgi.no) levererar bildfilen utan filandelse i URL:en. image_url pekar pa originalbilden 3000x3000 px (vit bakgrund, sacken), hamtad ur produktsidans bildgalleri 2026-07-31."
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "granngarden-hast-bas",
+      "brand": "Granngården",
+      "manufacturer": "Granngården (eget varumärke)",
+      "product": "Mineralfoder Granngården Häst Bas",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "lattfodrad"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 140,
+        "p_g": 30,
+        "mg_g": 45,
+        "na_g": 60,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 900,
+        "zn_mg": 2000,
+        "mn_mg": 1000,
+        "se_mg": 20,
+        "i_mg": 5,
+        "co_mg": 5,
+        "fe_mg": 1000,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 50,
+      "dose_max_g": 150,
+      "dose_note": "Ponnyer och hastar i vila 50-75 g; hastar i latt motion eller arbete 75-100 g; hastar i normal traning eller arbete 100-150 g. 1 dl mineralpellets vager cirka 100 g. Maxgiva 250 g per dag.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        8,
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-bas-15kg",
+          "price_sek": 319,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-bas-8kg",
+          "price_sek": 269,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.granngarden.se/mineralfoder-granngarden-hast-bas-15kg",
+      "source_type": "tillverkare",
+      "image_url": "https://v.imgi.no/kchdkfjq3f",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "PRISKONTROLL 2026-07-31: 15 kg-priset 319 kr ar omverifierat direkt i webblasaren och stammer (jamforpris 21,27 kr/kg bekraftar 15 kg). 8 kg-forpackningen har nu ocksa fatt pris: 269 kr (jamforpris 33,63 kr/kg bekraftar 8 kg). Bada ar ordinarie pris inkl. moms, ingen rea. Notera att 8 kg kostar 12,36 kr/kg mer an 15 kg.",
+        "Inga vitaminer deklarerade (produkten anges innehalla spåramnespremix, ej vitaminpremix)",
+        "Kalium, klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad; raaska anges till 69%",
+        "Makromineraler anges i procent i kallan (Ca 14%, P 3%, Mg 4,5%, Na 6%) och har raknats om till g/kg",
+        "Sparamnen deklareras som foreningsnamn (zinkoxid, manganoxid m.fl.); tolkas som mg grundamne per kg",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt granngarden.se produktsida (mineralfoder-granngarden-hast-bas-15kg), Granngårdens eget produktblad 1238132_a_GG_Produktblad.pdf (https://www.granngarden.se/productassets/66ab90e4-c31a-4256-b0ca-db51aaf8db45/1238132_a_gg_produktblad.pdf) och Granngårdens hästfoderguide (granngarden.se/kunskap/hast/hastfoderguide) 2026-07-30. Givan anges endast per arbetsnivå (ponny/vila, lätt motion, normal träning) med maxgiva 250 g/dag, aldrig per hästvikt",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Granngårdens produktblad 1238132_a_GG_Produktblad.pdf listar under 'ANALYTISKA BESTÅNDSDELAR PER KG' endast kalcium 14 %, fosfor 3 %, kalcium/fosforkvot 4,7, magnesium 4,5 %, natrium 6 % och råaska 69 % - varken socker eller stärkelse. Sökt produktbladet och granngarden.se produktsida (mineralfoder-granngarden-hast-bas-15kg) 2026-07-30",
+        "Observation (ej ett värde): produktbladet anger däremot råvarusammansättningen: kalk, fodermjöl, natriumklorid, monokalciumfosfat, magnesiumoxid, lusern, vegetabiliskt fett, spårämnespremix, melass. Melass är en sockerbärande råvara och fodermjöl en stärkelsebärande, dvs. socker och stärkelse förekommer sannolikt i bärarmaterialet även om halten inte deklareras. Detta är skälet till null och inte 0 - relevant vid bedömning för metabol häst",
+        "Produktbild: Granngardens bild-CDN (v.imgi.no) levererar bildfilen utan filandelse i URL:en. image_url pekar pa originalbilden 3000x3000 px (vit bakgrund, sacken), hamtad ur produktsidans bildgalleri 2026-07-31."
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 0.7
+    },
+    {
+      "id": "granngarden-hast-plus",
+      "brand": "Granngården",
+      "manufacturer": "Granngården (eget varumärke)",
+      "product": "Mineralfoder Granngården Häst Plus",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 100,
+        "p_g": 40,
+        "mg_g": 60,
+        "na_g": 65,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 1000,
+        "zn_mg": 3000,
+        "mn_mg": 1500,
+        "se_mg": 20,
+        "i_mg": 10,
+        "co_mg": 7,
+        "fe_mg": 1000,
+        "vit_a_ie": 200000,
+        "vit_d3_ie": 20000,
+        "vit_e_mg": 6000,
+        "biotin_mg": 20
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 50,
+      "dose_max_g": 200,
+      "dose_note": "Ponny 50-75 g; hastar i normal traning eller arbete 100-125 g; hard traning eller arbete 150-200 g; draktiga och digivande ston 150-200 g. 1 dl mineralpellets vager cirka 100 g. Maxgiva 250 g per dag.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        8,
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-plus-15kg",
+          "price_sek": 509,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-plus-8kg",
+          "price_sek": 349,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.granngarden.se/mineralfoder-granngarden-hast-plus-15kg",
+      "source_type": "tillverkare",
+      "image_url": "https://v.imgi.no/c7xzrhmjqj",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "PRISKONTROLL 2026-07-31: 15 kg-priset 509 kr ar omverifierat direkt i webblasaren och stammer (jamforpris 33,93 kr/kg bekraftar 15 kg). 8 kg-forpackningen har nu ocksa fatt pris: 349 kr (jamforpris 43,63 kr/kg bekraftar 8 kg). Bada ar ordinarie pris inkl. moms, ingen rea.",
+        "Zink deklareras uppdelat (zinkoxid 2 000 mg + zinksulfat 1 000 mg) och har summerats till 3 000 mg/kg",
+        "Mangan deklareras uppdelat (manganoxid 1 000 mg + mangansulfat 500 mg) och har summerats till 1 500 mg/kg",
+        "Selen deklareras uppdelat (selen 3b801 18 mg + selenjast 3b811 2 mg) och har summerats till 20 mg/kg",
+        "Kalium, klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad; raaska anges till 68%",
+        "Makromineraler anges i procent i kallan (Ca 10%, P 4%, Mg 6%, Na 6,5%) och har raknats om till g/kg",
+        "Produkten anges innehalla polyfenoler motsvarande 1 000 mg naturlig vitamin E per kg (utover deklarerade 6 000 mg vitamin E)",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt granngarden.se produktsida (mineralfoder-granngarden-hast-plus-15kg), Granngårdens eget produktblad 1238134_a_GG_Produktblad.pdf (https://www.granngarden.se/productassets/e41d0b2c-9e47-499e-9655-eff37736ae38/1238134_a_gg_produktblad.pdf) och Granngårdens hästfoderguide (granngarden.se/kunskap/hast/hastfoderguide) 2026-07-30. Givan anges endast per arbetsnivå/kategori (ponny, normal träning, hård träning, dräktiga/digivande ston) med maxgiva 250 g/dag, aldrig per hästvikt",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Granngårdens produktblad 1238134_a_GG_Produktblad.pdf listar under 'ANALYTISKA BESTÅNDSDELAR PER KG' endast kalcium 10 %, fosfor 4 %, kalcium/fosforkvot 2,5, magnesium 6 %, natrium 6,5 % och råaska 68 % - varken socker eller stärkelse. Sökt produktbladet och granngarden.se produktsida (mineralfoder-granngarden-hast-plus-15kg) 2026-07-30",
+        "Observation (ej ett värde): produktbladet anger däremot råvarusammansättningen: kalk, monokalciumfosfat, fodermjöl, natriumklorid, magnesiumoxid, lusern, vitamin- och spårämnespremix, vegetabiliskt fett, melass. Melass är en sockerbärande råvara och fodermjöl en stärkelsebärande, dvs. socker och stärkelse förekommer sannolikt i bärarmaterialet även om halten inte deklareras. Detta är skälet till null och inte 0 - relevant vid bedömning för metabol häst",
+        "Produktbild: Granngardens bild-CDN (v.imgi.no) levererar bildfilen utan filandelse i URL:en. image_url pekar pa originalbilden 3000x3000 px (vit bakgrund, sacken), hamtad ur produktsidans bildgalleri 2026-07-31."
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "hippo-selection-standard",
+      "brand": "Hippo",
+      "manufacturer": "Svenska Foder",
+      "product": "HippoSelection Standard",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 90,
+        "p_g": 35,
+        "mg_g": 35,
+        "na_g": 65,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 575,
+        "zn_mg": 2000,
+        "mn_mg": 1000,
+        "se_mg": 18,
+        "i_mg": 12,
+        "co_mg": 8.0,
+        "fe_mg": 750,
+        "vit_a_ie": 160000,
+        "vit_d3_ie": 15000,
+        "vit_e_mg": 4200,
+        "biotin_mg": 2.0
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 60,
+      "dose_max_g": 220,
+      "dose_note": "Utfodringsanvisning. Rekommenderad daglig giva: HippoSelection Mineralfoder per häst (500 kg) och dag. Lätt till normalt arbete, 60-120 g. Hårt till intensivt arbete, 100-200 g. Lågdräktiga ston, 60-120 g. Högdräktiga ston, 100-200 g. Digivande ston, 100-220 g. Unghästar, 60-200 g. Ponny och övriga hästar, 60-120 g.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        5,
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Foderboden",
+          "url": "https://www.foderboden.se/product/hipposelection-standard-pellets-15kg",
+          "price_sek": 559,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Ramsjö Gård",
+          "url": "https://ramsjo.se/produkt/hipposelection-standard-15kg/",
+          "price_sek": 549,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Djur&Natur",
+          "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-standard/",
+          "price_sek": 225,
+          "package_kg": 5,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Djur&Natur",
+          "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-standard/",
+          "price_sek": 559,
+          "package_kg": 15,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/hipposelection-standard-pellets-5kg",
+          "price_sek": 219,
+          "package_kg": 5,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://issuu.com/svenskafoder/docs/220913_n_ringsdeklaration_mineralfoder_tillskott_v",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://www.svenskafoder.se/wp-content/uploads/2023/11/Produktbilder_HippoSelection_Mineralfoder_Standard_15kg.webp",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalium, klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad",
+        "Utfodringsrekommendation: Svenska Foders egen produktsida (svenskafoder.se) och Djur&Natur (djurochnatur.se) publicerar ingen giva. Doseringstabellen i dose_note ar tillverkarens utfodringsanvisning sa som den atergavs av aterforsaljaren Sagro 2026-07-30: https://www.sagro.se/gard-djur/djurhallning/hast/hipposelection-standard-pellets-15kg-540kg-pall. Tabellrubriken lyder 'HippoSelection Mineralfoder per hast (500 kg) och dag', dvs. den ar gemensam for mineralfoderserien",
+        "Doseringen ar angiven for 500 kg kroppsvikt per hast och dag, ej per 100 kg kroppsvikt; dose_min_g/dose_max_g spanner hela tabellen (lagsta 60 g, hogsta 220 g)",
+        "Koksalt deklareras separat: 170 g/kg (ej omraknat till klor)",
+        "Deklarationen ar Svenska Foders samlingsblad 'Naringsdeklaration HippoSelection Mineralfoder' (issuu, publicerad 2022-09-13, revision 2025-02); produktsida: https://www.svenskafoder.se/produkt/foder/hastfoder/hippo-hastfoder/hipposelection-mineralfoder/hipposelection-standard/",
+        "Prisuppgift: Svenska Foders egen webbplats (svenskafoder.se) publicerar inga priser; retailers[] avser fristaende aterforsaljare kontrollerade 2026-07-30. Priser for 5 kg-forpackningen ar ej insamlade (Ramsjo Gard listar 5 kg till 219 kr, ej verifierad pa egen produktsida)",
+        "PRISINSAMLING 2026-07-31 (Djur&Natur = Svenska Foders egen butikskedja, samt Foderboden): 5 kg-priset ar nu insamlat och raden ovan om att det saknas ar overspelad. Djur&Natur 5 kg 225 kr och 15 kg 559 kr (variantpriser lasta ur produktsidans WooCommerce-variantdata, bada display_price = display_regular_price, dvs ingen rea). Foderboden 5 kg 219 kr (slut i lager). Foderbodens 15 kg-pris ar oforandrat 559 kr sedan 2026-07-30 och har darfor inte dubblerats. Djur&Natur och Foderboden har identiskt 15 kg-pris; Ramsjo Gard ligger 10 kr lagre.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Svenska Foders näringsdeklaration 'HippoSelection Mineralfoder' (issuu, revision 250219) innehåller raderna Mineraler (kalcium, fosfor, kalcium/fosfor-kvot, magnesium, natrium, koksalt), Fodertillsatser (vitaminer, spårämnen) samt Form och Förpackningsstorlek - ingen rad för socker eller stärkelse och ingen råvarusammansättning. Sökt 2026-07-30: issuu-deklarationen (sidbilden granskad direkt), tillverkarens produktsida svenskafoder.se/produkt/.../hipposelection-standard/, samt återförsäljarna foderboden.se, ramsjo.se, sagro.se och naturnarabutik.se - ingen av dem publicerar socker- eller stärkelsehalt",
+        "Observation (ej ett värde): Svenska Foder rubricerar produkten 'Mineralfoder med låg andel stärkelse' på svenskafoder.se och listar 'Med låg andel stärkelse' som produktegenskap, men anger ingen halt. Formuleringen visar att stärkelse förekommer i bärarmaterialet och är därför inget stöd för en nolla. Råvarusammansättningen (bärarmaterial) publiceras inte av tillverkaren, varken i deklarationen eller på produktsidan"
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "hippo-selection-strength",
+      "brand": "Hippo",
+      "manufacturer": "Svenska Foder",
+      "product": "HippoSelection Strength",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "unghast",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 115,
+        "p_g": 30,
+        "mg_g": 40,
+        "na_g": 65,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 720,
+        "zn_mg": 2200,
+        "mn_mg": 1440,
+        "se_mg": 20,
+        "i_mg": 14,
+        "co_mg": 12,
+        "fe_mg": 960,
+        "vit_a_ie": 240000,
+        "vit_d3_ie": 28000,
+        "vit_e_mg": 5000,
+        "biotin_mg": 4.0
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 60,
+      "dose_max_g": 200,
+      "dose_note": "Rekommenderad daglig giva per häst (500 kg): Hästar i hårt till intensivt arbete 100-200 g. Långdräktiga ston 60-120 g. Högdräktiga ston 100-200 g. Digivande ston 100-200 g. Unghästar 60-200 g. Ponny och övriga hästar 60-120 g.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        5,
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Ramsjö Gård",
+          "url": "https://ramsjo.se/produkt/hipposelection-strength-15kg/",
+          "price_sek": 469,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Djur&Natur",
+          "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-strength/",
+          "price_sek": 235,
+          "package_kg": 5,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Djur&Natur",
+          "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-strength/",
+          "price_sek": 585,
+          "package_kg": 15,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/hipposelection-strength-pellets-5kg",
+          "price_sek": 235,
+          "package_kg": 5,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/hipposelection-strength-pellets-15kg",
+          "price_sek": 579,
+          "package_kg": 15,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://issuu.com/svenskafoder/docs/220913_n_ringsdeklaration_mineralfoder_tillskott_v",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://www.svenskafoder.se/wp-content/uploads/2023/11/Produktbilder_HippoSelection_Mineralfoder_Strength_15kg.webp",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalium, klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad",
+        "Utfodringsrekommendation: Svenska Foders egen produktsida publicerar ingen giva. Doseringstabellen i dose_note ar tillverkarens utfodringsanvisning sa som den atergavs pa aterforsaljaren Wermlands Skogsforrad AB:s produktsida for HippoSelection Strength 15 kg, hamtad 2026-07-30 via Internet Archive (wsfab.net var inte natbar direkt): https://web.archive.org/web/20250421181632/https://wsfab.net/produkt/hipposelection-strength-15-kg/",
+        "Kallans tabell for Strength saknar raden 'Hastar i latt till normalt arbete' som finns for Standard och Success; ingen rad har lagts till pa eget bevag",
+        "Doseringen ar angiven for 500 kg kroppsvikt per hast och dag, ej per 100 kg kroppsvikt; dose_min_g/dose_max_g spanner hela tabellen (lagsta 60 g, hogsta 200 g)",
+        "Koksalt deklareras separat: 170 g/kg",
+        "Av E-vitamin 5 000 mg ar 2 000 mg naturligt E-vitamin; av selen 20 mg ar 4,0 mg selenjast",
+        "Produktsida: https://www.svenskafoder.se/produkt/foder/hastfoder/hippo-hastfoder/hipposelection-mineralfoder/hipposelection-strength/",
+        "Prisuppgift: endast en aterforsaljare med publicerat pris hittad 2026-07-30. Svenska Foder publicerar inga priser. Foderbodens produktsida for Strength 15 kg gav 404 vid kontroll; sokt aven hos borjes.se, hooks.se, stigtomtakvarn.se och swedishagro.se utan publicerat pris",
+        "PRISINSAMLING 2026-07-31 - raden ovan ar overspelad. Foderbodens produktsida for Strength 15 kg fungerar nu (foderboden.se/sv/products/hipposelection-strength-pellets-15kg, 579 kr) och Djur&Natur (Svenska Foders egen butikskedja) publicerar bada storlekarna. Djur&Natur 5 kg 235 kr och 15 kg 585 kr (variantpriser lasta ur produktsidans WooCommerce-variantdata, display_price = display_regular_price, dvs ingen rea). Foderboden 5 kg 235 kr, 15 kg 579 kr. STOR AVVIKELSE for 15 kg: Ramsjo Gard 469 kr mot Djur&Natur 585 kr och Foderboden 579 kr - dvs over 110 kr spridning. Ramsjo-priset ar fran 2026-07-30 och bor kontrolleras om innan det anvands som referens.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Svenska Foders näringsdeklaration 'HippoSelection Mineralfoder' (issuu, revision 250219) innehåller raderna Mineraler (kalcium, fosfor, kalcium/fosfor-kvot, magnesium, natrium, koksalt), Fodertillsatser (vitaminer, spårämnen) samt Form och Förpackningsstorlek - ingen rad för socker eller stärkelse och ingen råvarusammansättning. Sökt 2026-07-30: issuu-deklarationen (sidbilden granskad direkt), tillverkarens produktsida svenskafoder.se/produkt/.../hipposelection-strength/, samt återförsäljarna ramsjo.se, naturnarabutik.se och foderboden.se - ingen av dem publicerar socker- eller stärkelsehalt",
+        "Observation (ej ett värde): Svenska Foder rubricerar produkten 'Mineralfoder med låg andel stärkelse' på svenskafoder.se, men anger ingen halt. Formuleringen visar att stärkelse förekommer i bärarmaterialet och är därför inget stöd för en nolla. Råvarusammansättningen (bärarmaterial) publiceras inte av tillverkaren"
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "hippo-selection-success",
+      "brand": "Hippo",
+      "manufacturer": "Svenska Foder",
+      "product": "HippoSelection Success",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 80,
+        "p_g": 35,
+        "mg_g": 60,
+        "na_g": 75,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 695,
+        "zn_mg": 2080,
+        "mn_mg": 1300,
+        "se_mg": 20,
+        "i_mg": 14,
+        "co_mg": 12,
+        "fe_mg": 880,
+        "vit_a_ie": 224000,
+        "vit_d3_ie": 24000,
+        "vit_e_mg": 8000,
+        "biotin_mg": 24
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 60,
+      "dose_max_g": 200,
+      "dose_note": "Utfodringsanvisning. Rekommenderad giva per häst och dag (500 kg kroppsvikt): Hästar i lätt till normalt arbete 60-120 g. Hästar i hårt till intensivt arbete 100-200 g. Långdräktiga ston 60-120 g. Högdräktiga ston 100-200 g. Digivande ston 100-200 g. Unghästar 60-200 g. Ponny och övriga hästar 60-120 g.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        5,
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Ramsjö Gård",
+          "url": "https://ramsjo.se/produkt/hipposelection-success-15kg/",
+          "price_sek": 579,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Djur&Natur",
+          "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-success/",
+          "price_sek": 235,
+          "package_kg": 5,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Djur&Natur",
+          "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-success/",
+          "price_sek": 595,
+          "package_kg": 15,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/hipposelection-success-pellets-5kg",
+          "price_sek": 269,
+          "package_kg": 5,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/hipposelection-success-pellets-15kg",
+          "price_sek": 619,
+          "package_kg": 15,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://issuu.com/svenskafoder/docs/220913_n_ringsdeklaration_mineralfoder_tillskott_v",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://www.svenskafoder.se/wp-content/uploads/2023/11/Produktbilder_HippoSelection_Mineralfoder_Success_15kg.webp",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalium, klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad",
+        "Utfodringsrekommendation: Svenska Foders egen produktsida publicerar ingen giva. Doseringstabellen i dose_note ar tillverkarens utfodringsanvisning sa som den atergavs pa aterforsaljaren Wermlands Skogsforrad AB:s produktsida for HippoSelection Success 15 kg, hamtad 2026-07-30 via Internet Archive (wsfab.net var inte natbar direkt): https://web.archive.org/web/20250316132333/https://wsfab.net/produkt/hipposelection-success-15-kg/",
+        "Doseringen ar angiven for 500 kg kroppsvikt per hast och dag, ej per 100 kg kroppsvikt; dose_min_g/dose_max_g spanner hela tabellen (lagsta 60 g, hogsta 200 g)",
+        "Kallan (wsfab) anger delvis andra naringsvarden an issuu-deklarationen (t.ex. Ca 75 g, P 40 g, Na 80 g, E-vitamin 6 000 mg); nutrients[] ar oforandrade och foljer fortfarande issuu-deklarationen",
+        "Koksalt deklareras separat: 200 g/kg",
+        "Organiska andelar: zinkchelat 416 mg, jarnfumarat 200 mg, kopparchelat 144 mg, selenjast 4,0 mg, naturligt E-vitamin 2 000 mg (alla ingar i totalvardena ovan)",
+        "Produktsida: https://www.svenskafoder.se/produkt/foder/hastfoder/hippo-hastfoder/hipposelection-mineralfoder/hipposelection-success/",
+        "Prisuppgift: endast en aterforsaljare med publicerat pris hittad 2026-07-30. Svenska Foder publicerar inga priser. Foderbodens produktsida for Success 15 kg gav 404 vid kontroll; sokt aven hos borjes.se, hooks.se, stigtomtakvarn.se och swedishagro.se utan publicerat pris",
+        "PRISINSAMLING 2026-07-31 - raden ovan ar overspelad. Foderbodens produktsida for Success 15 kg fungerar nu (619 kr). Djur&Natur (Svenska Foders egen butikskedja) 5 kg 235 kr och 15 kg 595 kr (variantpriser lasta ur produktsidans WooCommerce-variantdata, display_price = display_regular_price, dvs ingen rea). Foderboden 5 kg 269 kr, 15 kg 619 kr. AVVIKELSE: for 15 kg spanner priserna nu 579-619 kr (Ramsjo 579, Djur&Natur 595, Foderboden 619). For 5 kg ligger Foderboden 34 kr over Djur&Natur.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Svenska Foders näringsdeklaration 'HippoSelection Mineralfoder' (issuu, revision 250219) innehåller raderna Mineraler (kalcium, fosfor, kalcium/fosfor-kvot, magnesium, natrium, koksalt), Fodertillsatser (vitaminer, spårämnen) samt Form och Förpackningsstorlek - ingen rad för socker eller stärkelse och ingen råvarusammansättning. Sökt 2026-07-30: issuu-deklarationen (sidbilden granskad direkt), tillverkarens produktsida svenskafoder.se/produkt/.../hipposelection-success/, samt återförsäljarna ramsjo.se, naturnarabutik.se och wsfab.net (via Internet Archive) - ingen av dem publicerar socker- eller stärkelsehalt",
+        "Observation (ej ett värde): Svenska Foder rubricerar produkten 'Mineralfoder med låg andel stärkelse' på svenskafoder.se, men anger ingen halt. Formuleringen visar att stärkelse förekommer i bärarmaterialet och är därför inget stöd för en nolla. Råvarusammansättningen (bärarmaterial) publiceras inte av tillverkaren"
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "krafft-magnesium",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "MAGNESIUM",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": null,
+        "mg_g": 570,
+        "na_g": null,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": 0,
+        "sugar_g": 0,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": null,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 8,
+      "dose_max_g": 8,
+      "dose_note": "Blandas i fodret. Häst och ponny 8 g/dag. 15 ml = ca 8 g. En påse (500 g) räcker ca 50 dagar. Sammansättning: magnesiumoxid 100%.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        0.5
+      ],
+      "retailers": [
+        {
+          "name": "Stigtomta Kvarn",
+          "url": "https://stigtomtakvarn.se/hem/7032-krafft-magnesium-500g-pase-7350015761766.html",
+          "price_sek": 249,
+          "package_kg": 0.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "StallMagasinet",
+          "url": "https://stallmagasinet.se/krafft-magnesium-500-g",
+          "price_sek": 249,
+          "package_kg": 0.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/fodertillskott-krafft-magnesium-500g",
+          "price_sek": 249,
+          "package_kg": 0.5,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/magnesium/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/magnesium-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Magnesium 57% i analysgaranti/kg omräknat till 570 g/kg. Detta stämmer med sidans dosuppgift 4560 mg Mg per 8 g dagsdos (4560/8*1000 = 570 g/kg).",
+        "Endast råaska (97,1%) och magnesium deklareras - protein, fett, fiber, övriga mineraler, spårämnen och vitaminer ej deklarerade (produkten är ren magnesiumoxid).",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris inkl. moms, inga reapriser observerade. 500 g: 249 kr hos båda återförsäljarna.",
+        "Produkten säljs även av Granngården och Börjes Hästsport men priset kunde inte läsas från deras produktsidor (JavaScript-renderat respektive tom svarssida) - därför ej medtaget.",
+        "UPPDATERING 2026-07-31: Granngårdens pris är nu läst direkt i webbläsare: 500 g 249 kr, identiskt med Stigtomta Kvarn och StallMagasinet. Förpackningen verifierad mot jämförpriset 498 kr/kg. Börjes Hästsport är fortfarande inte kontrollerad.",
+        "Tillverkaren doserar per häst utan viktangivelse (samma giva 8 g/dag anges uttryckligen för både häst och ponny). Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF), KRAFFT Utfodrings ABC (PDF), KRAFFT Fodertavla (PDF), hogstafoderbutik.se, stigtomtakvarn.se, webbsökning 2026-07-30.",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g och starch_g satta till 0: produkten är 100 % magnesiumoxid enligt tillverkarens sammansättning ('Magnesiumoxid 100%', kraffthastfoder.se/produkter/produkter-alla/magnesium/, läst 2026-07-30). Det är en ren oorganisk mineralprodukt utan kolhydratbärande råvara; analysgarantin anger råaska 97,1 % och magnesium 57 %, dvs. produkten är praktiskt taget helt oorganisk. Ingen bärare av spannmål, melass eller lusern ingår. Nollan är alltså grundad i sammansättningen, inte i att uppgiften saknas.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Selen, Zink anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/magnesium/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "grundad_nolla",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Selen",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.1
+    },
+    {
+      "id": "krafft-miner-high-phosphorus",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "MINER HIGH PHOSPHORUS",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 33,
+        "p_g": 65,
+        "mg_g": 60,
+        "na_g": 50,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 60,
+        "fat_g": 60,
+        "fibre_g": 60,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 900,
+        "zn_mg": 3500,
+        "mn_mg": 1000,
+        "se_mg": 15,
+        "i_mg": 5,
+        "co_mg": null,
+        "fe_mg": 300,
+        "vit_a_ie": 100000,
+        "vit_d3_ie": 10000,
+        "vit_e_mg": 5000,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 80,
+      "dose_max_g": 180,
+      "dose_note": "Vuxen häst i vila/lätt arbete ca 80 g/dag; medelhögt/högpresterande arbete ca 120 g/dag; dräktiga ston (mån 7-11) 120 g/dag; ston i tidig digivning ca 180 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g. Avsedd att återställa mineralbalansen vid kalciumrik grovfodergiva (Ca/P-kvot 0,5).",
+      "dose_table": null,
+      "package_sizes_kg": [
+        8,
+        20
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/miner-high-phosphorus-20-kg",
+          "price_sek": 679,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/miner-balance-p-8kg",
+          "price_sek": 349,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/haest/413-krafft-miner-vit-balance-pellets-20kg-7350015760202.html",
+          "price_sek": 679,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/haest/405-krafft-miner-vit-balance-pell-8-kg-st-7314671660320.html",
+          "price_sek": 349,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-high-phosphorus-pellets-8kg",
+          "price_sek": 349,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-high-phosphorus-pellets-20kg",
+          "price_sek": 679,
+          "package_kg": 20,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-high-phosphorus/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/miner-high-phosphorus-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalium, klorid, svavel, kobolt, stärkelse, socker och energi (MJ) deklareras ej.",
+        "Koppar deklareras i två poster (kelat 450 mg + sulfat 450 mg) - summerat till 900 mg/kg. Zink i två poster (kelat 1750 mg + oxid 1750 mg) - summerat till 3500 mg/kg. Selen i två poster (L-selenometionin 7,5 mg + natriumselenit 7,5 mg) - summerat till 15 mg/kg.",
+        "Analysgaranti anges i % - omräknat till g/kg (3,3% Ca = 33 g/kg, 6,5% P = 65 g/kg).",
+        "Biotin ej deklarerat.",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris inkl. moms, inga reapriser observerade. 20 kg: 679 kr, 8 kg: 349 kr - identiska priser hos båda återförsäljarna. Granngården säljer produkten men priset renderas via JavaScript och kunde inte läsas.",
+        "UPPDATERING 2026-07-31: Granngårdens priser är nu lästa direkt i webbläsare och är identiska med de två övriga butikerna: 8 kg 349 kr, 20 kg 679 kr. Ordinarie pris inkl. moms, ingen rea. Tre av tre butiker har samma pris - sannolikt tillverkarens rekommenderade pris.",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF), KRAFFT Utfodrings ABC (PDF), KRAFFT Fodertavla (PDF), hogstafoderbutik.se, stigtomtakvarn.se, webbsökning 2026-07-30.",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g/starch_g: ej deklarerat av tillverkaren, lämnade som null. Produktsidans analysgaranti omfattar torrsubstans, råprotein, växttråd, råolja/råfett, råaska, Ca, P, Mg och Na - varken socker eller stärkelse ingår. KRAFFT Produktkatalog 2024, tabellen GUARANTEED ANALYSIS för Vitamins & Minerals (sid 65), saknar helt raderna Sugar % och Starch % för mineralprodukterna, medan motsvarande tabell för kraftfodren anger båda - uppgiften är alltså utelämnad, inte noll. Produkten innehåller kolhydratbärande råvaror (Lusern, Vete, Betmelass) så halten kan inte antas vara noll. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF, SE och GB), lantmannenlantbrukmaskin.se, webbsökning 2026-07-30.",
+        "Odeklarerade mikromineraler: Kobolt anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/miner-high-phosphorus/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Kobolt"
+      ],
+      "_completeness": 1.0
+    },
+    {
+      "id": "krafft-miner-original",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "MINER ORIGINAL",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 120,
+        "p_g": 40,
+        "mg_g": 60,
+        "na_g": 50,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 40,
+        "fat_g": 40,
+        "fibre_g": 40,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 900,
+        "zn_mg": 3500,
+        "mn_mg": 1000,
+        "se_mg": 15,
+        "i_mg": 5,
+        "co_mg": null,
+        "fe_mg": 300,
+        "vit_a_ie": 100000,
+        "vit_d3_ie": 10000,
+        "vit_e_mg": 5000,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 80,
+      "dose_max_g": 180,
+      "dose_note": "Vuxen häst i vila/lätt arbete ca 80 g/dag; medelhögt/högpresterande arbete ca 120 g/dag; dräktiga ston (mån 7-11) 120 g/dag; ston i tidig digivning ca 180 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        8,
+        20
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/krafft-miner-sack-20-kg",
+          "price_sek": 549,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/krafft-miner-8-kg",
+          "price_sek": 299,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/haest/310-krafft-miner-bla-pellets-20kg-7350015760189.html",
+          "price_sek": 549,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/haest/308-krafft-miner-bla-pell-8-kg-st-7314671660023.html",
+          "price_sek": 299,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hönsboa (Linzie Rengsjö AB)",
+          "url": "https://www.honsboa.se/Produkter/Hast/KRAFFT_Miner_Original_20_kg?id=402211",
+          "price_sek": 475,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Stigtomta Kvarn",
+          "url": "https://stigtomtakvarn.se/mineraler/5071-5264-krafft-mineral-bla-pellets.html",
+          "price_sek": 299,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-original-pellets-8kg",
+          "price_sek": 299,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-original-pellets-20kg",
+          "price_sek": 549,
+          "package_kg": 20,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-original/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/miner-original-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalium, klorid, svavel, kobolt, stärkelse, socker och energi (MJ) deklareras ej på produktsidan.",
+        "Koppar deklareras i två poster (kelat 450 mg + sulfat 450 mg) - summerat till 900 mg/kg. Zink i två poster (kelat 1750 mg + oxid 1750 mg) - summerat till 3500 mg/kg. Selen i två poster (L-selenometionin 7,5 mg + natriumselenit 7,5 mg) - summerat till 15 mg/kg.",
+        "Analysgaranti anges i % - omräknat till g/kg (t.ex. 12% Ca = 120 g/kg).",
+        "Biotin ej deklarerat.",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris, inkl. moms, inga reapriser observerade. 20 kg: 475-549 kr. 8 kg: 299 kr. Granngården säljer produkten men priset renderas via JavaScript och kunde inte läsas.",
+        "UPPDATERING 2026-07-31: Granngårdens priser är nu lästa direkt i webbläsare (JavaScript-renderat innehåll). 8 kg 299 kr, 20 kg 549 kr - identiska med Hogsta Ridsport och Glada Hästen. Ordinarie pris inkl. moms, ingen rea. Noteringen ovan om att Granngårdens pris inte kunde läsas är därmed överspelad.",
+        "Hönsboa anger 475 kr men produkten är beställningsvara (saldo 0, ca 14 dagars leveranstid).",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF), KRAFFT Utfodrings ABC (PDF), KRAFFT Fodertavla (PDF), hogstafoderbutik.se, stigtomtakvarn.se, webbsökning 2026-07-30.",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g/starch_g: ej deklarerat av tillverkaren, lämnade som null. Produktsidans analysgaranti omfattar torrsubstans, råprotein, växttråd, råolja/råfett, råaska, Ca, P, Mg och Na - varken socker eller stärkelse ingår. KRAFFT Produktkatalog 2024, tabellen GUARANTEED ANALYSIS för Vitamins & Minerals (sid 65), saknar helt raderna Sugar % och Starch % för mineralprodukterna, medan motsvarande tabell för kraftfodren anger båda - uppgiften är alltså utelämnad, inte noll. Produkten innehåller kolhydratbärande råvaror (Lusern, Vete, Betmelass) så halten kan inte antas vara noll. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF, SE och GB), lantmannenlantbrukmaskin.se, webbsökning 2026-07-30.",
+        "Odeklarerade mikromineraler: Kobolt anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/miner-original/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Kobolt"
+      ],
+      "_completeness": 1.0
+    },
+    {
+      "id": "krafft-miner-summer",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "MINER SUMMER",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 80,
+        "p_g": 40,
+        "mg_g": 60,
+        "na_g": 50,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 50,
+        "fat_g": 50,
+        "fibre_g": 60,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 900,
+        "zn_mg": 2800,
+        "mn_mg": 1000,
+        "se_mg": 15,
+        "i_mg": 5,
+        "co_mg": null,
+        "fe_mg": 300,
+        "vit_a_ie": 0,
+        "vit_d3_ie": 0,
+        "vit_e_mg": 0,
+        "biotin_mg": 0
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 100,
+      "dose_max_g": 200,
+      "dose_note": "Vuxen häst i vila/lätt arbete ca 100 g/dag; medelhögt/högpresterande arbete ca 150 g/dag; dräktiga ston (mån 7-11) 150 g/dag; ston i tidig digivning ca 200 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g. Avsedd för hästar på bete.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        8,
+        20
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/miner-gron",
+          "price_sek": 269,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/haest/426-krafft-miner-gron-pell-8kg-summer-7350015761674.html",
+          "price_sek": 289,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Stigtomta Kvarn",
+          "url": "https://stigtomtakvarn.se/mineraler/5073-6212-krafft-mineral-gron-pellets.html",
+          "price_sek": 289,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-summer-pellets-8kg",
+          "price_sek": 295,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-summer-pellets-20kg",
+          "price_sek": 459,
+          "package_kg": 20,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-summer/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/miner-summer-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Vitaminvärden satta till 0 eftersom produktsidan uttryckligen anger 'Innehåller ej vitaminer' - inga vitaminer finns i tillsatslistan.",
+        "Kalium, klorid, svavel, kobolt, stärkelse, socker och energi (MJ) deklareras ej.",
+        "Koppar deklareras i två poster (kelat 450 mg + sulfat 450 mg) - summerat till 900 mg/kg. Zink deklareras endast som zinkoxid 2800 mg. Selen endast som natriumselenit 15 mg.",
+        "Analysgaranti anges i % - omräknat till g/kg.",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris inkl. moms, inga reapriser observerade. 8 kg: 269-289 kr.",
+        "Pris för 20 kg-säcken ej funnet 2026-07-30 hos hogstafoderbutik.se, gladahasten.se, stigtomtakvarn.se, honsboa.se - dessa butiker för endast 8 kg-förpackningen. Granngården säljer produkten men priset renderas via JavaScript och kunde inte läsas.",
+        "UPPDATERING 2026-07-31: Granngårdens priser är nu lästa direkt i webbläsare och 20 kg-priset är därmed funnet för första gången: 8 kg 295 kr, 20 kg 459 kr. 8 kg-priset ligger 6-26 kr över de tidigare insamlade (269-289 kr). Ordinarie pris inkl. moms, ingen rea. Raden ovan om att 20 kg-priset saknas är därmed överspelad.",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF), KRAFFT Utfodrings ABC (PDF), KRAFFT Fodertavla (PDF), hogstafoderbutik.se, stigtomtakvarn.se, webbsökning 2026-07-30.",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g/starch_g: ej deklarerat av tillverkaren, lämnade som null. Produktsidans analysgaranti omfattar torrsubstans, råprotein, växttråd, råolja/råfett, råaska, Ca, P, Mg och Na - varken socker eller stärkelse ingår. KRAFFT Produktkatalog 2024, tabellen GUARANTEED ANALYSIS för Vitamins & Minerals (sid 65), saknar helt raderna Sugar % och Starch % för mineralprodukterna, medan motsvarande tabell för kraftfodren anger båda - uppgiften är alltså utelämnad, inte noll. Produkten innehåller kolhydratbärande råvaror (Lusern, Vete, Betmelass) så halten kan inte antas vara noll. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF, SE och GB), lantmannenlantbrukmaskin.se, webbsökning 2026-07-30.",
+        "Odeklarerade mikromineraler: Kobolt anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/miner-summer/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Kobolt"
+      ],
+      "_completeness": 1.0
+    },
+    {
+      "id": "krafft-miner-vitaminerals",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "MINER VITAMINERALS",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 120,
+        "p_g": 20,
+        "mg_g": 60,
+        "na_g": 50,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 40,
+        "fat_g": 40,
+        "fibre_g": 40,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 1200,
+        "zn_mg": 3500,
+        "mn_mg": 1000,
+        "se_mg": 15,
+        "i_mg": 5,
+        "co_mg": null,
+        "fe_mg": 300,
+        "vit_a_ie": 200000,
+        "vit_d3_ie": 10000,
+        "vit_e_mg": 15000,
+        "biotin_mg": 2
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 80,
+      "dose_max_g": 180,
+      "dose_note": "Vuxen häst i vila/lätt arbete ca 80 g/dag; medelhögt/högpresterande arbete ca 120 g/dag; dräktiga ston (mån 7-11) 120 g/dag; ston i tidig digivning ca 180 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        8,
+        20
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/mineraler-vitamineral-20-kg",
+          "price_sek": 689,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/miner-rod",
+          "price_sek": 379,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/krafft/843-krafft-miner-rod-extra-pell-8-kg-st-7314671660122.html",
+          "price_sek": 379,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-vitaminerals-pellets-8kg",
+          "price_sek": 379,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/mineralfoder-krafft-miner-vitaminerals-pellets-20kg",
+          "price_sek": 719,
+          "package_kg": 20,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-vitaminerals/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/miner-vitaminerals-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalium, klorid, svavel, kobolt, stärkelse, socker och energi (MJ) deklareras ej på produktsidan.",
+        "Koppar deklareras i två poster (kelat 510 mg + sulfat 690 mg) - summerat till 1200 mg/kg. Zink i två poster (kelat 1750 mg + oxid 1750 mg) - summerat till 3500 mg/kg. Selen i två poster (L-selenometionin 7,5 mg + natriumselenit 7,5 mg) - summerat till 15 mg/kg.",
+        "Analysgaranti anges i % - omräknat till g/kg.",
+        "Ytterligare deklarerade vitaminer som ej ryms i schemat: B1 250 mg, B2 250 mg, B6 50 mg, B12 2,5 mg, kalcium-D-pantotenat 125 mg, niacinamid 250 mg, folsyra 70 mg per kg.",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris inkl. moms, inga reapriser observerade. 8 kg: 379 kr (två butiker). 20 kg: 689 kr - endast funnet hos en återförsäljare (Hogsta Foderbutik); Glada Hästen och Stigtomta Kvarn för endast 8 kg-förpackningen.",
+        "Granngården säljer produkten men priset renderas via JavaScript och kunde inte läsas.",
+        "UPPDATERING 2026-07-31: Granngårdens priser är nu lästa direkt i webbläsare. 8 kg 379 kr (samma som Hogsta och Glada Hästen), 20 kg 719 kr - dvs 30 kr HÖGRE än Hogsta Foderbutiks 689 kr för samma förpackning. Ordinarie pris inkl. moms, ingen rea.",
+        "Tillverkaren doserar per häst utan viktangivelse. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF), KRAFFT Utfodrings ABC (PDF), KRAFFT Fodertavla (PDF), hogstafoderbutik.se, stigtomtakvarn.se, webbsökning 2026-07-30.",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g/starch_g: ej deklarerat av tillverkaren, lämnade som null. Produktsidans analysgaranti omfattar torrsubstans, råprotein, växttråd, råolja/råfett, råaska, Ca, P, Mg och Na - varken socker eller stärkelse ingår. KRAFFT Produktkatalog 2024, tabellen GUARANTEED ANALYSIS för Vitamins & Minerals (sid 65), saknar helt raderna Sugar % och Starch % för mineralprodukterna, medan motsvarande tabell för kraftfodren anger båda - uppgiften är alltså utelämnad, inte noll. Produkten innehåller kolhydratbärande råvaror (Lusern, Vete, Betmelass) så halten kan inte antas vara noll. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF, SE och GB), lantmannenlantbrukmaskin.se, webbsökning 2026-07-30.",
+        "Odeklarerade mikromineraler: Kobolt anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/miner-vitaminerals/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Kobolt"
+      ],
+      "_completeness": 1.0
+    },
+    {
+      "id": "krafft-pure-vacuum-salt",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "PURE VACUUM SALT",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": null,
+        "mg_g": null,
+        "na_g": 390,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": 0,
+        "sugar_g": 0,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": null,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 5,
+      "dose_max_g": 20,
+      "dose_note": "5-20 g/dag per 100 kg kroppsvikt för hästar i lätt till hårt arbete. Sidans SLU-baserade riktlinjer för saltbehov: underhåll 5,1 g/100 kg, lätt arbete 7 g/100 kg, medelhårt arbete 9 g/100 kg, hårt arbete 9-13 g/100 kg. 1 dl = 140 g, 15 ml = 20 g. 5 kg räcker ca 250 dagar.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        5
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/pure-vaccum-salt-5-kg",
+          "price_sek": 149,
+          "package_kg": 5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/krafft/6822-salt-lost-5-kg-7350015761568.html",
+          "price_sek": 149,
+          "package_kg": 5,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/salt/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/salt-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Natrium 39% i analysgaranti/kg omräknat till 390 g/kg.",
+        "Klorid deklareras ej numeriskt på produktsidan (sammansättning: natriumklorid) - lämnat null istället för att räkna fram stökiometriskt.",
+        "Endast råaska (99,5%) och natrium deklareras; inga övriga mineraler, spårämnen eller vitaminer.",
+        "Form ej explicit angiven på sidan; beskrivs som 'löst salt' i 5 kg påse - klassat som pulver.",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris inkl. moms, inga reapriser observerade. 5 kg: 149 kr hos båda återförsäljarna. Glada Hästen anger fraktavgift +100 kr p.g.a. vikt (ej inräknat i priset). Granngården säljer produkten men priset renderas via JavaScript och kunde inte läsas.",
+        "RÄTTELSE 2026-07-31: Granngården säljer INTE KRAFFT Pure Vacuum Salt. Ej i sortimentet hos Granngården 2026-07-31 - sökt granngarden.se/sok?q=krafft salt, ?q=krafft pure och ?q=vakuumsalt; träffarna är enbart andra KRAFFT-produkter samt pool- och fodersalt av andra märken (SP Salt, KNZ, Axal). Påståendet i raden ovan om att Granngården säljer produkten men att priset inte kunde läsas är alltså felaktigt och ska inte föras vidare.",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g och starch_g satta till 0: produkten är 100 % vakuumsalt (natriumklorid) enligt tillverkarens sammansättning - sammansättningen anges som enbart 'Natriumklorid' och produkten beskrivs som 'Foderråvara till hästar av rent vakuumsalt' (kraffthastfoder.se/produkter/produkter-alla/salt/, läst 2026-07-30). Analysgarantin anger råaska 99,5 % och natrium 39 %, dvs. produkten är i praktiken helt oorganisk. Ingen kolhydratbärande råvara ingår. Nollan är alltså grundad i sammansättningen, inte i att uppgiften saknas.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Selen, Zink anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/salt/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "grundad_nolla",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Selen",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.1
+    },
+    {
+      "id": "krafft-vitamin-e-pellets",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "VITAMIN E PELLETS",
+      "category": "enkelnaring",
+      "form": "pellets",
+      "target": [
+        "arbete",
+        "unghast",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": null,
+        "mg_g": null,
+        "na_g": 1,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 100,
+        "fat_g": 40,
+        "fibre_g": 60,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": 0,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": 17000,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 30,
+      "dose_max_g": 60,
+      "dose_note": "Hästar i hårt arbete eller digivande ston 60 g/dag; normalt arbetande hästar eller föl 30 g/dag. 1 dl = ca 60 g. 2,5 kg räcker ca 80 dagar, 7 kg ca 230 dagar.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        2.5,
+        7
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/vitamin-e",
+          "price_sek": 299,
+          "package_kg": 2.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/vitaminer-mineraler/8250-krafft-vitamin-e-2-5kg-7350015761629.html",
+          "price_sek": 299,
+          "package_kg": 2.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/vitaminer-mineraler/8415-krafft-vitamin-e-7kg-pase-7350015761636.html",
+          "price_sek": 589,
+          "package_kg": 7,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/fodertillskott-krafft-vitamin-e-pellets-7kg",
+          "price_sek": 589,
+          "package_kg": 7,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/vitamin-e-pellets/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/vitamin-e-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Selen satt till 0 eftersom produktsidan uttryckligen anger 'utan tillsats av selen'.",
+        "Endast vitamin E deklareras som tillsats; övriga vitaminer och mineraler ej deklarerade.",
+        "Kalcium, fosfor och magnesium anges ej i analysgarantin.",
+        "Analysgaranti anges i % - omräknat till g/kg (0,1% Na = 1 g/kg).",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris inkl. moms, inga reapriser observerade. 2,5 kg: 299 kr (två butiker). 7 kg: 589 kr - endast funnet hos Glada Hästen.",
+        "Stigtomta Kvarn listar Vitamin E Pellets till 569 kr men priset gäller en variantväljare (vikt) där förpackningsstorleken inte kunde bekräftas - posten utelämnad. Granngården säljer produkten men priset renderas via JavaScript och kunde inte läsas.",
+        "UPPDATERING 2026-07-31: Granngårdens pris är nu läst direkt i webbläsare: 7 kg 589 kr, identiskt med Glada Hästen. Förpackningen verifierad mot jämförpriset 84,14 kr/kg. Granngården för ENDAST 7 kg-förpackningen av Vitamin E Pellets - 2,5 kg-förpackningen finns inte i deras sortiment (sökt granngarden.se/sok?q=krafft vitamin 2026-07-31).",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g/starch_g: ej deklarerat av tillverkaren, lämnade som null. Produktsidans analysgaranti omfattar endast torrsubstans 86 %, råprotein 10 %, växttråd 6 %, råolja/råfett 4 %, råaska 2 % och natrium 0,1 % - varken socker eller stärkelse ingår. KRAFFT Produktkatalog 2024, tabellen GUARANTEED ANALYSIS för Vitamins & Minerals (sid 65), saknar också raderna Sugar % och Starch % för Vit E pellets. Bärarmaterialet är uttryckligen kolhydratbärande - sammansättning: Havre, Vete, Betmelass - så halten kan inte antas vara noll. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF, SE och GB), lantmannenlantbrukmaskin.se, webbsökning 2026-07-30.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Zink anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/vitamin-e-pellets/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.3
+    },
+    {
+      "id": "krafft-vitamin-multi-pellets",
+      "brand": "KRAFFT",
+      "manufacturer": "Lantmännen",
+      "product": "VITAMIN MULTI PELLETS",
+      "category": "vitamin-mineraltillskott",
+      "form": "pellets",
+      "target": [
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": null,
+        "mg_g": null,
+        "na_g": 1,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 100,
+        "fat_g": 30,
+        "fibre_g": 60,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": null,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": 750000,
+        "vit_d3_ie": 65000,
+        "vit_e_mg": 9600,
+        "biotin_mg": 25
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 60,
+      "dose_max_g": 100,
+      "dose_note": "Blandas i foder, 60 g/dag. Maxgiva 100 g/dag. 1 dl = ca 60 g. 2,5 kg räcker ca 40 dagar, 7 kg ca 110 dagar.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        2.5,
+        7
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/krafft-multivitamin-3-kg",
+          "price_sek": 329,
+          "package_kg": 2.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/vitaminer-mineraler/8252-krafft-vitamin-multi-2-5kg-7350015761643.html",
+          "price_sek": 329,
+          "package_kg": 2.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Glada Hästen",
+          "url": "https://gladahasten.se/vitaminer-mineraler/8332-krafft-vitamin-multi-7kg-7350015761650.html",
+          "price_sek": 649,
+          "package_kg": 7,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/fodertillskott-krafft-vitamin-multi-pellets",
+          "price_sek": 329,
+          "package_kg": 2.5,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/fodertillskott-krafft-vitamin-multi-pellets?variant=2000595211888",
+          "price_sek": 649,
+          "package_kg": 7,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.kraffthastfoder.se/produkter/produkter-alla/vitamin-multi-pellets/",
+      "source_type": "tillverkare",
+      "image_url": "https://www.kraffthastfoder.se/siteassets/produkter/produkter-2024/vitamin-multi-500x768.jpg?width=600",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Rent vitamintillskott - inga mineraler eller spårämnen (inkl. selen) deklareras i tillsatslistan, därför null.",
+        "Kalcium, fosfor och magnesium anges ej i analysgarantin.",
+        "Ytterligare deklarerade vitaminer som ej ryms i schemat: B1 300 mg, B2 450 mg, B6 450 mg, B12 10 mg, C 5800 mg, K3 420 mg, kalcium-D-pantotenat 1100 mg, niacinamid 3000 mg, folsyra 40 mg per kg.",
+        "Analysgaranti anges i % - omräknat till g/kg (0,1% Na = 1 g/kg).",
+        "Priser/återförsäljare ej insamlade.",
+        "UPPDATERING 2026-07-30: priser insamlade (raden ovan är inaktuell). Ordinarie pris inkl. moms, inga reapriser observerade. 2,5 kg: 329 kr (två butiker). 7 kg: 649 kr - endast funnet hos Glada Hästen. Granngården säljer produkten men priset renderas via JavaScript och kunde inte läsas.",
+        "UPPDATERING 2026-07-31: Granngårdens priser är nu lästa direkt i webbläsare. Produkten säljs där på EN produktsida med storleksväljare (2,5 KG / 7 KG); 7 kg-varianten har egen URL-parameter ?variant=2000595211888. 2,5 kg 329 kr och 7 kg 649 kr - identiskt med Glada Hästen. Förpackningsstorlekarna är verifierade mot Granngårdens jämförpris (131,60 kr/kg respektive 92,71 kr/kg).",
+        "SOCKER/STÄRKELSE 2026-07-30: sugar_g/starch_g: ej deklarerat av tillverkaren, lämnade som null. Produktsidans analysgaranti omfattar endast torrsubstans 86 %, råprotein 10 %, växttråd 6 %, råolja/råfett 3 %, råaska 3 % och natrium 0,1 % - varken socker eller stärkelse ingår. KRAFFT Produktkatalog 2024, tabellen GUARANTEED ANALYSIS för Vitamins & Minerals (sid 65), saknar också raderna Sugar % och Starch % för Vit Multi pellets. Bärarmaterialet är uttryckligen kolhydratbärande - sammansättning: Havre, Vete, Betmelass - så halten kan inte antas vara noll. Sökt kraffthastfoder.se produktsida, KRAFFT Produktkatalog 2024 (PDF, SE och GB), lantmannenlantbrukmaskin.se, webbsökning 2026-07-30.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Selen, Zink anges inte i den källa som använts (https://www.kraffthastfoder.se/produkter/produkter-alla/vitamin-multi-pellets/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "krafft.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Selen",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.4
+    },
+    {
+      "id": "pavo-18plus-vital",
+      "brand": "Pavo",
+      "manufacturer": "ForFarmers (Pavo)",
+      "product": "Pavo 18Plus Vital",
+      "category": "vitamin-mineraltillskott",
+      "form": "pellets",
+      "target": [
+        "senior",
+        "underhall"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 25.8,
+        "p_g": 10.2,
+        "mg_g": 2.2,
+        "na_g": 7.5,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 108,
+        "fat_g": 40,
+        "fibre_g": 250,
+        "starch_g": 17,
+        "sugar_g": 45,
+        "energy_mj": null,
+        "cu_mg": 2000,
+        "zn_mg": 2500,
+        "mn_mg": 2000,
+        "se_mg": 16,
+        "i_mg": 25,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": 175000,
+        "vit_d3_ie": 50000,
+        "vit_e_mg": null,
+        "biotin_mg": 26.25
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 16.5,
+      "dose_max_g": 16.5,
+      "dose_note": "16,5 gram per 100 kg kroppsvikt. Ponny (300 kg): 50 g. Häst (600 kg): 100 g.",
+      "dose_table": null,
+      "package_sizes_kg": [],
+      "retailers": [
+        {
+          "name": "Pavo webbshop",
+          "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-18plus-vital/",
+          "price_sek": 589,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Pavo webbshop",
+          "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-18plus-vital/",
+          "price_sek": 15,
+          "package_kg": 0.2,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/pavo/pavo-18-plus-vital-8-kg",
+          "price_sek": 589,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://www.pavo.se/horsefeed/bas-allround/pavo-18plus-vital/",
+      "source_type": "tillverkare",
+      "image_url": "https://media.pavo.nl/sqaure-1360/4105.jpg",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Deklarationsbasen anges inte uttryckligen; tolkad som per kg produkt. Ingen torrsubstanshalt anges.",
+        "Koppar deklareras uppdelat: 1 880 mg + 120 mg. Lagrat värde 2 000 mg/kg är summan.",
+        "Zink deklareras uppdelat: 250 mg + 2 250 mg. Lagrat värde 2 500 mg/kg är summan.",
+        "Mangan deklareras uppdelat: 200 mg + 1 800 mg. Lagrat värde 2 000 mg/kg är summan.",
+        "Selen deklareras uppdelat: 11,25 mg + 4,75 mg. Lagrat värde 16 mg/kg är summan. Hög selenhalt — stapelrisk.",
+        "Vitamin E deklareras dubbelt och i olika enheter: 'Vitamin E 5 250 IE' samt 'Vitamin E 750 mg' och 'Vitamin E-ekvivalenter 2 000 IE'. vit_e_mg lämnad null eftersom deklarationen inte är entydig.",
+        "Energi: sajten anger 0,69 EWpa och 'Smältbar 1 MJ/kg'. Det senare är uppenbart felaktigt; ingen omsättningsbar energi anges. energy_mj lämnad null.",
+        "Kalium, klorid, svavel, järn och kobolt ej deklarerade.",
+        "Förpackningsstorlekar ej utlästa ur källan.",
+        "Priser hämtade 2026-07-30 från pavo.se (8 kg 589 kr, 0,2 kg 15 kr) och hogstafoderbutik.se (8 kg 589 kr). package_sizes_kg lämnad orörd men förpackningarna 0,2 kg och 8 kg är bekräftade via butikerna.",
+        "0,2 kg-förpackningen var slut i lager hos pavo.se 2026-07-30; priset 15 kr är ordinarie listpris.",
+        "EJ I SORTIMENTET 2026-07-31: Pavo 18Plus Vital finns varken hos Granngården eller Foderboden. Sökt granngarden.se/sok?q=pavo, ?q=pavo vital och ?q=18plus vital samt foderboden.se/sv/search?query=pavo och ?query=18Plus. Båda butikerna för Pavo 18Plus Original/Sensitive respektive Pavo 18Plus 15 kg, vilket är GROVFODERBASERADE seniorfoder och en helt annan produkt än vitamin-/mineraltillskottet 18Plus Vital - de får inte förväxlas och deras priser har därför inte förts in.",
+        "dose_table satt till null 2026-07-30: produkten doseras redan per 100 kg kroppsvikt (16,5 g), så verktyget kan räkna direkt på hästens vikt. De två punkterna i noten (300 kg = 50 g, 600 kg = 100 g) är avrundade räkneexempel på samma regel, inte en separat publicerad vikttabell. Sökt pavo.se, pavo.nl och voedingswijzer.pavo.nl 2026-07-30.",
+        "Odeklarerade mikromineraler: Järn, Kobolt anges inte i den källa som använts (https://www.pavo.se/horsefeed/bas-allround/pavo-18plus-vital/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen.",
+        "PRODUKTBILD 2026-07-31: image_url är den svenska produktsidans og:image, som också förekommer i sidans galleri som huvudbild med bildtexten 'Pavo 18Plus Vital_8KG' (8 kg-hinken). Bilden ligger på Pavos gemensamma mediaserver media.pavo.nl, inte på pavo.se."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [
+        "Järn",
+        "Kobolt"
+      ],
+      "_completeness": 0.9
+    },
+    {
+      "id": "pavo-dailyfit",
+      "brand": "Pavo",
+      "manufacturer": "ForFarmers (Pavo)",
+      "product": "Pavo DailyFit",
+      "category": "vitamin-mineraltillskott",
+      "form": "block",
+      "target": [
+        "underhall",
+        "lattfodrad"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 24,
+        "p_g": 6,
+        "mg_g": 2,
+        "na_g": 3,
+        "k_g": 14,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 145,
+        "fat_g": 40,
+        "fibre_g": 185,
+        "starch_g": 45,
+        "sugar_g": 85,
+        "energy_mj": 7.4,
+        "cu_mg": 600,
+        "zn_mg": 1900,
+        "mn_mg": 2850,
+        "se_mg": 7.5,
+        "i_mg": 23,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": 19000,
+        "vit_d3_ie": 26600,
+        "vit_e_mg": null,
+        "biotin_mg": 15.2
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 70,
+      "dose_max_g": 140,
+      "dose_note": "Häst (600 kg): 1 brikett/dag. Ponny (300 kg): 0,5 brikett/dag. Tillverkaren anger brikettvikten till 140 g: 'Ein Brikett von nur 140 g enthält die gesamte Tagesdosis an Vitaminen, Mineralstoffen und Spurenelementen für ein Großpferd. Für Ponys ist ein halbes Brikett täglich ausreichend.' (pavo-futter.de). Omräknat: häst 140 g/dag, ponny 70 g/dag. Tillskott behövs enligt tillverkaren när hästen får mindre än 1,5 kg mineraliserat kraftfoder per dag (ponny 0,75 kg).",
+      "dose_table": [
+        {
+          "vikt_kg": 300,
+          "dos_min_g": 70,
+          "dos_max_g": 70
+        },
+        {
+          "vikt_kg": 600,
+          "dos_min_g": 140,
+          "dos_max_g": 140
+        }
+      ],
+      "package_sizes_kg": [],
+      "retailers": [
+        {
+          "name": "Pavo webbshop",
+          "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-dailyfit/",
+          "price_sek": 389,
+          "package_kg": 4.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Pavo webbshop",
+          "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-dailyfit/",
+          "price_sek": 909,
+          "package_kg": 13,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/summerfit",
+          "price_sek": 389,
+          "package_kg": 4.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/pavo-summerfit-15kg",
+          "price_sek": 909,
+          "package_kg": 13,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/fodertillskott-pavo-dailyfit-30-p-42kg",
+          "price_sek": 389,
+          "package_kg": 4.2,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/pavo-dailyfit-45kg",
+          "price_sek": 379,
+          "package_kg": 4.5,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/pavo-dailyfit-13kg",
+          "price_sek": 889,
+          "package_kg": 13,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.pavo.se/horsefeed/bas-allround/pavo-dailyfit/",
+      "source_type": "tillverkare",
+      "image_url": "https://media.pavo.nl/sqaure-1360/2882.jpg",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Deklarationsbasen anges inte uttryckligen; tolkad som per kg produkt. Ingen torrsubstanshalt anges.",
+        "Produkten säljs som briketter; form satt till 'block' som närmaste värde i schemat.",
+        "Brikettvikt ej deklarerad — dosering i gram kan inte fyllas i.",
+        "Mangan deklareras uppdelat: 2 137,5 mg + 712,5 mg. Lagrat värde 2 850 mg/kg är summan.",
+        "Selen deklareras uppdelat: 5,625 mg + 1,875 mg. Lagrat värde 7,5 mg/kg är summan.",
+        "Vitamin E deklareras som 4 560 IE/kg, inte mg/kg. vit_e_mg lämnad null.",
+        "Vitamin D3 (26 600 IE/kg) deklareras högre än vitamin A (19 000 IE/kg) — samma ovanliga mönster som Pavo Vital.",
+        "Klorid, svavel, järn och kobolt ej deklarerade.",
+        "Förpackningsstorlekar ej utlästa ur källan.",
+        "Priser hämtade 2026-07-30 från pavo.se och hogstafoderbutik.se; identiska hos båda (4,5 kg 389 kr, 13 kg 909 kr). Förpackningarna 4,5 kg (30 briketter) och 13 kg (90 briketter) är därmed bekräftade, men package_sizes_kg lämnad orörd.",
+        "Granngården säljer samma produkt som '4,2 kg / 30-pack' (art. 1238890); vikten avviker från Pavos egen uppgift 4,5 kg. Granngårdens pris kunde inte läsas (renderas med JavaScript) och är därför ej lagrat.",
+        "PRIS 2026-07-31 (Granngården, JavaScript-renderat pris läst i webbläsare): Granngårdens 30-pack anges som 4,2 kg och lagras därför med package_kg 4,2 - det är alltså INTE en dubblett av 4,5 kg-posterna utan butikens egen viktangivelse för samma 30-pack (se noten om brutto-/nettovikt nedan). REAPRIS: sidan visade 339 kr med texten '(Gäller till 2026-08-02)' och 'Tidigare lägsta pris 389 kr'. Lagrat värde är ordinarie priset 389 kr; reapriset 339 kr gäller t.o.m. 2026-08-02 och har inte förts in i retailers[]. Jämförpriset 80,71 kr/kg bekräftar 4,2 kg vid reapriset.",
+        "PRIS 2026-07-31 (Foderboden): 4,5 kg 379 kr och 13 kg 889 kr, båda ordinarie pris inkl. moms utan rea, men båda var slutsålda ('Slut på lager'). AVVIKELSE: Foderboden ligger 10 kr under Pavos/Hogstas 389 kr för 4,5 kg och 20 kr under deras 909 kr för 13 kg.",
+        "UPPDATERING 2026-07-30 — brikettvikten är nu funnen och gramdoseringen ifylld. Noteringen ovan om att 'Brikettvikt ej deklarerad' är därmed överspelad och kvarstår endast som historik.",
+        "Brikettvikt 140 g är DEKLARERAD av tillverkaren, inte härledd. Två av Pavos egna sajter anger den uttryckligen: pavo-futter.de/pferdefutter/allround/pavo-dailyfit/ ('Ein Brikett von nur 140 g enthält die gesamte Tagesdosis...') och pavo.nl/advies/wat-is-het-verschil-tussen-pavo-vital-en-dailyfit/ ('Een Pavo DailyFit koek weegt 140 gram'). Uppgiften kommer alltså från den tyska och nederländska marknaden, inte från pavo.se — den svenska produktsidan renderas med JavaScript och anger enbart antal briketter.",
+        "Kontrollräkning mot förpackningsvikt stämmer inte exakt: Pavo anger 4,5 kg = 30 briketter (150 g/brikett) och 13 kg = 90 briketter (144 g/brikett). Granngården, Ströh och Pauls Mühle anger däremot samma 30-pack som 4,2 kg, vilket ger exakt 140 g per brikett (4 200 / 30). Sannolik förklaring: 4,2 kg är nettovikt briketter och 4,5 kg brutto-/förpackningsvikt. Lagrat värde 140 g är tillverkarens deklarerade brikettvikt, inte den framräknade — beräkningen redovisas här enbart som stöd.",
+        "dose_min_g 70 g avser ponny 300 kg (halv brikett) och dose_max_g 140 g avser häst 600 kg (hel brikett). Det är alltså inte ett dosintervall för samma häst utan spannet mellan de två viktklasser tillverkaren anger.",
+        "En svensk återförsäljare (foderboden.se) listar en förpackning som '12,5 kg / 108 briketter', vilket skulle ge ca 116 g per brikett. Uppgiften strider mot Pavos egen 13 kg = 90 briketter och bedöms som ett butiksfel; den har inte lagts till grund för brikettvikten.",
+        "Doseringstabell per hästvikt utöver 300 kg respektive 600 kg publiceras inte av Pavo; fliken 'Voervoorschrift'/'Fütterungsempfehlung' på produktsidorna renderas med JavaScript och kunde inte läsas. Något separat produktblad som PDF för DailyFit hittades inte.",
+        "dose_table tillagd 2026-07-30 med exakt de två viktklasser tillverkaren deklarerar (300 kg = 70 g = halv brikett, 600 kg = 140 g = hel brikett). Inga mellanliggande rader har lagts till eftersom Pavo inte publicerar några. Sökt pavo.se, pavo-futter.de, pavo.nl och voedingswijzer.pavo.nl 2026-07-30.",
+        "Odeklarerade mikromineraler: Järn, Kobolt anges inte i den källa som använts (https://www.pavo.se/horsefeed/bas-allround/pavo-dailyfit/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen.",
+        "PRODUKTBILD 2026-07-31: image_url är den svenska produktsidans og:image, som också förekommer i sidans galleri som huvudbild med bildtexten 'Pavo DailyFit_4.5KG' (4,5 kg-förpackningen). Bilden ligger på Pavos gemensamma mediaserver media.pavo.nl, inte på pavo.se."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [
+        "Järn",
+        "Kobolt"
+      ],
+      "_completeness": 0.9
+    },
+    {
+      "id": "pavo-vital",
+      "brand": "Pavo",
+      "manufacturer": "ForFarmers (Pavo)",
+      "product": "Pavo Vital",
+      "category": "vitamin-mineraltillskott",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "lattfodrad"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 14.4,
+        "p_g": 2.6,
+        "mg_g": 1.2,
+        "na_g": 15.5,
+        "k_g": 21.3,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 94,
+        "fat_g": 27,
+        "fibre_g": 284,
+        "starch_g": 2.0,
+        "sugar_g": 45,
+        "energy_mj": 6.5,
+        "cu_mg": 800,
+        "zn_mg": 2500,
+        "mn_mg": 3750,
+        "se_mg": 10,
+        "i_mg": 30,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": 25000,
+        "vit_d3_ie": 35000,
+        "vit_e_mg": 6000,
+        "biotin_mg": 20
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 50,
+      "dose_max_g": 100,
+      "dose_note": "Häst (600 kg): 100 gram per dag. Ponny (300 kg): 50 gram per dag.",
+      "dose_table": [
+        {
+          "vikt_kg": 300,
+          "dos_min_g": 50,
+          "dos_max_g": 50
+        },
+        {
+          "vikt_kg": 600,
+          "dos_min_g": 100,
+          "dos_max_g": 100
+        }
+      ],
+      "package_sizes_kg": [
+        0.2,
+        8,
+        20
+      ],
+      "retailers": [
+        {
+          "name": "Pavo webbshop",
+          "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+          "price_sek": 609,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Pavo webbshop",
+          "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+          "price_sek": 569,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Pavo webbshop",
+          "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+          "price_sek": 1349,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/pavo-vital-8-kg",
+          "price_sek": 609,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/pavo-vital-refill-8-kg",
+          "price_sek": 569,
+          "package_kg": 8,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/vital-complete-20-kg",
+          "price_sek": 1349,
+          "package_kg": 20,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Granngården",
+          "url": "https://www.granngarden.se/fodertillskott-pavo-vital-refill-8kg",
+          "price_sek": 569,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/pavo-vital-8kg",
+          "price_sek": 609,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/pavo-vital-refill-8kg",
+          "price_sek": 569,
+          "package_kg": 8,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/pavo-vital-20kg",
+          "price_sek": 1319,
+          "package_kg": 20,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+      "source_type": "tillverkare",
+      "image_url": "https://media.pavo.nl/sqaure-1360/2721.jpg",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "medel",
+      "data_gaps": [
+        "Deklarationsbasen anges inte uttryckligen på produktsidan; tolkad som per kg produkt (halterna anges i % och mg/kg som 'Analytiska beståndsdelar'). Ingen torrsubstanshalt anges.",
+        "Selen deklareras uppdelat: 7,5 mg oorganiskt (3b801) + 2,5 mg organiskt (3b811). Lagrat värde 10 mg/kg är summan.",
+        "Tillverkaren deklarerar vitamin D3 (35 000 IE/kg) högre än vitamin A (25 000 IE/kg). Ovanligt förhållande, ej verifierat mot förpackning.",
+        "Klorid, svavel, järn och kobolt ej deklarerade.",
+        "Energi: 'Omsättningsbar 6,2 MJ/kg' använd. Sajten anger även 'Smältbar 7,8 MJ/kg' och 0,54 EWpa.",
+        "Halterna hämtade ur produktsidans inbäddade produktdata (specifikationsfliken renderas via JavaScript).",
+        "Rättad 2026-07-30 efter granskning mot Pavos eget produktblad (art. 8714765901374): Na 6,5→15,5 g/kg, Mn 2000→3750 mg/kg, vitamin E null→6000 mg/kg, stärkelse 2,4→2,0 g/kg, energi 6,2→6,5 MJ ME/kg. Ursprungsvärdena kom från pavo.se vars produktsida renderas med JavaScript och inte kunde läsas direkt.",
+        "Låg vitamin A-halt (25 000 IE/kg) är avsiktlig enligt tillverkaren, inte ett fel.",
+        "Produktbladet avser nederländsk vara; svensk variant kan avvika. Confidence därför medel.",
+        "dose_table tillagd 2026-07-30 och innehåller endast tillverkarens två deklarerade viktklasser (ponny 300 kg = 50 g, häst 600 kg = 100 g). Någon finare doseringstabell per hästvikt publiceras inte av Pavo. Sökt pavo.se, pavo.nl och voedingswijzer.pavo.nl 2026-07-30.",
+        "PRISINSAMLING 2026-07-31 (Granngården, Foderboden - JavaScript-renderade priser lästa i webbläsare): Granngården för ENDAST refill-förpackningen 8 kg (569 kr), inte hinken. Foderboden för alla tre: 8 kg hink 609 kr, 8 kg refill 569 kr, 20 kg 1 319 kr. Samtliga är ordinarie pris inkl. moms, ingen rea. AVVIKELSE: Foderbodens 20 kg-pris 1 319 kr är 30 kr LÄGRE än Pavos eget webbshopspris och Hogstas 1 349 kr. 8 kg-priserna är identiska i alla tre leden.",
+        "Odeklarerade mikromineraler: Järn, Kobolt anges inte i den källa som använts (https://www.pavo.se/horsefeed/bas-allround/pavo-vital/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen.",
+        "PRODUKTBILD 2026-07-31: image_url är hämtad ur og:image-metataggen i den råa HTML:en på den svenska produktsidan pavo.se/horsefeed/bas-allround/pavo-vital/. Sidans produktdel returnerade felmeddelandet 'Hoppsan, något gick fel!' vid hämtningen, så bilden kunde inte dubbelkollas mot sidans galleri — men samma og:image-mönster (media.pavo.nl/sqaure-1360/<id>.jpg) är verifierat som huvudproduktbild på Pavos övriga produktsidor. Bilden ligger på Pavos gemensamma mediaserver media.pavo.nl, inte på pavo.se."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [
+        "Järn",
+        "Kobolt"
+      ],
+      "_completeness": 1.0
+    },
+    {
+      "id": "rsmustang-mineral-bla",
+      "brand": "RS Mustang",
+      "manufacturer": "RS Mustang (Ridsportfoder / RS Mustang AB)",
+      "product": "RS Mustang Mineral BLÅ",
+      "category": "mineralfoder",
+      "form": "granulat",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 150,
+        "p_g": 35,
+        "mg_g": 50,
+        "na_g": 80,
+        "k_g": 2.6,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 900,
+        "zn_mg": 2500,
+        "mn_mg": 1000,
+        "se_mg": 15,
+        "i_mg": 3,
+        "co_mg": 13,
+        "fe_mg": 2000,
+        "vit_a_ie": 100000,
+        "vit_d3_ie": 10000,
+        "vit_e_mg": 5500,
+        "biotin_mg": 5
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": null,
+      "dose_max_g": null,
+      "dose_note": "Tillverkaren anger ingen numerisk giva. Utfodringsrekommendationer enligt produktbladet: 'Lämplig giva baseras på övrigt intag av mineraler från grov- och kraftfoder och hästens arbetsnivå, tillväxt, dräktighet/digivning. För utförlig foderstat kontakta foderrådgivare på RS Mustang.'",
+      "dose_table": null,
+      "package_sizes_kg": [
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/mustang-mineral-bla-15-kg",
+          "price_sek": 375,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Stigtomta Kvarn",
+          "url": "https://stigtomtakvarn.se/mineraler/467-rs-mustang-mineral-bla-15kg-7331876501968.html",
+          "price_sek": 385,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://rsmustang.se/wp-content/uploads/2024/06/MineralBla24.pdf",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://rsmustang.se/wp-content/uploads/2021/02/MineralBL%C3%85-1.jpg",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Tillverkaren publicerar ingen doseringsangivelse i gram, dl eller matt. Sokt 2026-07-30 i tillverkarens produktblad MineralBla24.pdf (rsmustang.se), samt hos aterforsaljarna hogstafoderbutik.se, stigtomtakvarn.se och trabolaget.se, som samtliga aterger produkttexten utan giva. Tillverkaren hanvisar i stallet till egen foderradgivning",
+        "Zink deklareras uppdelat (zinkoxid 1 250 mg + zinkklorid 1 250 mg) och har summerats till 2 500 mg/kg",
+        "Selen deklareras uppdelat (selenmetionin 3b815 5 mg + natriumselenit 3b802 10 mg) och har summerats till 15 mg/kg",
+        "Klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad",
+        "Ovriga deklarerade vitaminer ej i schemat: B1 250 mg, B2 200 mg, B6 100 mg, B12 2 mg, niacin 150 mg, pantotensyra 200 mg, folinsyra 30 mg",
+        "Prisuppgift: tillverkaren rsmustang.se publicerar inga priser. Insamlade priser avser 15 kg och spanner 375-385 kr (2026-07-30)",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Produktbladet MineralBla24.pdf (rsmustang.se) listar under 'Analytiska beståndsdelar per kg foder' endast kalcium, fosfor, magnesium, kalium, Ca/P-kvot, natrium samt vitamin- och spårämnestillsatser - varken socker eller stärkelse. Sökt produktbladet samt återförsäljarna hogstafoderbutik.se, stigtomtakvarn.se och trabolaget.se 2026-07-30",
+        "Observation (ej ett värde): produktbladet anger däremot sammansättningen: kalciumkarbonat, natriumklorid, monokalciumfosfat, magnesiumoxid, torkad betmassa, magnesiumfosfat, lusern, vetefodermjöl, betmelass, äppelarom. Betmelass är sockerbärande och vetefodermjöl stärkelsebärande, dvs. både socker och stärkelse förekommer i bärarmaterialet trots att halten inte deklareras. Detta är skälet till null och inte 0 - särskilt relevant vid bedömning för metabol häst"
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "rsmustang-mineral-rod",
+      "brand": "RS Mustang",
+      "manufacturer": "RS Mustang (Ridsportfoder / RS Mustang AB)",
+      "product": "RS Mustang Mineral RÖD",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 130,
+        "p_g": 20,
+        "mg_g": 50,
+        "na_g": 90,
+        "k_g": 2.2,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 1200,
+        "zn_mg": 3000,
+        "mn_mg": 1500,
+        "se_mg": 20,
+        "i_mg": 4,
+        "co_mg": 20,
+        "fe_mg": 700,
+        "vit_a_ie": 300000,
+        "vit_d3_ie": 15000,
+        "vit_e_mg": 10000,
+        "biotin_mg": 5
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": null,
+      "dose_max_g": null,
+      "dose_note": "Tillverkaren anger ingen numerisk giva. Utfodringsrekommendationer enligt produktbladet: 'Lämplig giva baseras på övrigt intag av mineraler från grov- och kraftfoder och hästens arbetsnivå, tillväxt, dräktighet/digivning. För utförlig foderstat kontakta foderrådgivare på RS Mustang.'",
+      "dose_table": null,
+      "package_sizes_kg": [
+        7,
+        15
+      ],
+      "retailers": [
+        {
+          "name": "Träbolaget",
+          "url": "https://trabolaget.se/produkt/rs-mustang-mineral-rod-15-kg/",
+          "price_sek": 482,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/mustang-mineral-rod-15-kg",
+          "price_sek": 499,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Stigtomta Kvarn",
+          "url": "https://stigtomtakvarn.se/mineraler/471-rs-mustang-mineral-rod-15-kg-7331876501982.html",
+          "price_sek": 549,
+          "package_kg": 15,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://rsmustang.se/wp-content/uploads/2024/06/MineralRod24.pdf",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://rsmustang.se/wp-content/uploads/2021/02/MineralR%C3%96D-1.jpg",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Tillverkaren publicerar ingen doseringsangivelse i gram, dl eller matt. Sokt 2026-07-30 i tillverkarens produktblad MineralRod24.pdf (rsmustang.se), samt hos aterforsaljarna trabolaget.se, hogstafoderbutik.se och stigtomtakvarn.se, som samtliga aterger produkttexten utan giva. Tillverkaren hanvisar i stallet till egen foderradgivning",
+        "Zink deklareras uppdelat (zinkoxid 1 500 mg + zinkklorid 1 500 mg) och har summerats till 3 000 mg/kg",
+        "Selen deklareras uppdelat (selenmetionin 3b815 8 mg + natriumselenit 3b802 12 mg) och har summerats till 20 mg/kg",
+        "Klor och svavel ej deklarerade",
+        "Ravaruanalys (protein/fett/fiber/starkelse/socker/energi) ej deklarerad",
+        "Ovriga deklarerade vitaminer ej i schemat: K3 40 mg, C 2 500 mg, B1 250 mg, B2 200 mg, B6 100 mg, B12 3 mg, niacin 250 mg, pantotensyra 200 mg, folinsyra 100 mg",
+        "Prisuppgift: tillverkaren rsmustang.se publicerar inga priser. Insamlade priser avser 15 kg och spanner 482-549 kr (2026-07-30); Trabolaget angav varan som slutsald men med publicerat ordinarie pris. Pris for 7 kg-forpackningen ej hittat publikt",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Produktbladet MineralRod24.pdf (rsmustang.se) listar under 'Analytiska beståndsdelar per kg foder' endast kalcium, fosfor, magnesium, kalium, Ca/P-kvot, natrium samt vitamin- och spårämnestillsatser - varken socker eller stärkelse. Sökt produktbladet samt återförsäljarna trabolaget.se, hogstafoderbutik.se och stigtomtakvarn.se 2026-07-30",
+        "Observation (ej ett värde): produktbladet anger däremot sammansättningen: natriumklorid, kalciumkarbonat, magnesiumoxid, monokalciumfosfat, vetefodermjöl, vete, vegetabiliskt fett och olja, kalcium lignosulfonat, betmelass, torkad betmassa, lusern, äppelarom. Vete och vetefodermjöl är stärkelsebärande och betmelass sockerbärande, dvs. både socker och stärkelse förekommer i bärarmaterialet trots att halten inte deklareras. Detta är skälet till null och inte 0 - särskilt relevant vid bedömning för metabol häst"
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "rsmustang-selen-e-vitamin",
+      "brand": "RS Mustang",
+      "manufacturer": "RS Mustang (Ridsportfoder / RS Mustang AB)",
+      "product": "RS Mustang Selen & E-vitamin",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": null,
+        "mg_g": null,
+        "na_g": null,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": 20,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": 20000,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_hast",
+      "dose_min_g": 40,
+      "dose_max_g": 40,
+      "dose_note": "Vuxen hast 40 g/dag, blandas i fodergivan. Medsant matt rymmer 20 g. Racker till en hast i ca 25 dagar (1 kg) / ca 62 dagar (2,5 kg).",
+      "dose_table": null,
+      "package_sizes_kg": [
+        1,
+        2.5
+      ],
+      "retailers": [],
+      "source_url": "https://rsmustang.se/wp-content/uploads/2024/06/Selen_E-vitamin_webb24.pdf",
+      "source_type": "produktblad_pdf",
+      "image_url": "https://rsmustang.se/wp-content/uploads/2024/08/Selen_Evitamin_stor.jpg",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Endast E-vitamin och selen deklareras; ovriga naringsamnen saknas helt i kallan",
+        "Selen deklareras som selenjast 3b811 20 mg/kg (organiskt selen)",
+        "Produktens form (pulver) anges inte uttryckligen i tillverkarens produktblad; sammansattning ar foderkalk, fodermjol, E-vitamin, lusern, selenjast",
+        "PRIS FORTFARANDE EJ FASTSTALLT 2026-07-31 efter riktad sokning i fyra butiker med JavaScript-renderade priser, lasta direkt i webblasare. EJ I SORTIMENTET hos Granngarden 2026-07-31 (granngarden.se/sok?q=mustang och ?q=rs mustang - noll produkttraffar; enbart Mustang-tandare av annat fabrikat). EJ I SORTIMENTET hos Hooks 2026-07-31 (hooks.se/search?q=mustang - 2 traffar: RS Mustang Nypon-Rosehip 900 g 289 kr samt en Stetson-keps; varumarket RS Mustang finns alltsa men bara med nyponprodukten). EJ I SORTIMENTET hos Foderboden 2026-07-31 (foderboden.se/sv/search?query=mustang - 8 traffar, samtliga grov-/kraftfoder: Original Musli, Senior Musli, Original Slobber Mash, Betfiber Slobber Pellets, Spannmalsfri Musli, Protein+ Pellets, Original Trotting Pellets; inget mineral- eller vitamintillskott). EJ I SORTIMENTET hos Djur&Natur 2026-07-31 (djurochnatur.se/?s=mustang - noll traffar; kompletterande sokning ?s=selen gav enbart HippoSelection Selen-E, Biofarmab Selo-E, saltsten och notkreatursprodukter). Produkten ar darmed fortfarande den enda i databasen helt utan pris.",
+        "Pris ej faststallt 2026-07-30. Sokt hos rsmustang.se (publicerar inga priser), hogstafoderbutik.se, foderboden.se, stigtomtakvarn.se, trabolaget.se, granngarden.se, hooks.se och stallbjorkas.se. Hooks tidigare produktsida for 1 kg gav 404 vid kontroll. Bjorkas Hast & Foder (stallbjorkas.se) listar 'RS Mustang Selen och E-vitamin' till 279 kr som bestallningsvara men anger ingen forpackningsstorlek, varfor priset inte kan kopplas till 1 kg eller 2,5 kg och darfor inte fors in i retailers[]. Produkten sags i ovrigt via lantbruks- och foderledet dar priser inte publiceras oppet",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Produktbladet Selen_E-vitamin_webb24.pdf (rsmustang.se) anger under 'Analytiska beståndsdelar per kg' endast E-vitamin 20 000 mg och selenjäst 20 mg - varken socker eller stärkelse. Sökt produktbladet samt hogstafoderbutik.se, foderboden.se, stigtomtakvarn.se och stallbjorkas.se 2026-07-30",
+        "Observation (ej ett värde): produktbladet anger sammansättningen foderkalk, fodermjöl, E-vitamin, lusern, selenjäst. Fodermjöl är en stärkelsebärande spannmålsråvara, så produkten är inte en ren oorganisk mineralprodukt och nollställning är inte grundad. Ingen sockerbärande råvara (melass e.d.) är angiven, men eftersom halten inte deklareras sätts även sugar_g till null",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Zink anges inte i den källa som använts (https://rsmustang.se/wp-content/uploads/2024/06/Selen_E-vitamin_webb24.pdf). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "svenskafoder-granngarden.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.2
+    },
+    {
+      "id": "st-hippolyt-gemuse-krauter-mineralien-nordic",
+      "brand": "St. Hippolyt",
+      "manufacturer": "St. Hippolyt Nordic (St. Hippolyt Sverige AB)",
+      "product": "Gemüse-Kräuter-Mineralien Nordic",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 110,
+        "p_g": 36,
+        "mg_g": 35,
+        "na_g": 50,
+        "k_g": 2,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 50,
+        "fat_g": 88,
+        "fibre_g": 35,
+        "starch_g": 90,
+        "sugar_g": 20,
+        "energy_mj": null,
+        "cu_mg": 790,
+        "zn_mg": 2661,
+        "mn_mg": 1102,
+        "se_mg": 14.2,
+        "i_mg": 23,
+        "co_mg": 3,
+        "fe_mg": 307,
+        "vit_a_ie": 270000,
+        "vit_d3_ie": 31000,
+        "vit_e_mg": 5200,
+        "biotin_mg": 5.1
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 20,
+      "dose_max_g": 20,
+      "dose_note": "20 g per 100 kg kroppsvikt dagligen tillsammans med grovfoder och/eller bete. Som komplement till låg ranson av kraftfoder. Kompletteringsfodret ska som mest utgöra 1,4 % av foderstaten inklusive hö. 1 mått = ca 150 g.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        10,
+        25
+      ],
+      "retailers": [
+        {
+          "name": "St. Hippolyt webbshop",
+          "url": "https://hippolyt.se/vare/gemuse-krauter-mineralien-nordic/?attribute_pa_mangd=10-kg",
+          "price_sek": 620,
+          "package_kg": 10,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "St. Hippolyt webbshop",
+          "url": "https://hippolyt.se/vare/gemuse-krauter-mineralien-nordic/?attribute_pa_mangd=25-kg",
+          "price_sek": 1275,
+          "package_kg": 25,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/gemse-krauter-mineralien-10-kg",
+          "price_sek": 620,
+          "package_kg": 10,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://hippolyt.se/vare/gemuse-krauter-mineralien-nordic/",
+      "source_type": "tillverkare",
+      "image_url": "https://hippolyt.se/wp-content/uploads/2026/02/30a497e7-28eb-4158-8084-f3c71c2a79f7.webp",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Deklarationsbasen anges inte uttryckligen; tolkad som per kg produkt (spårämnen anges 'per kg', analysvärden i %). Ingen torrsubstanshalt anges.",
+        "Järn, zink, mangan, koppar och selen deklareras både som totalvärde och uppdelat på oorganisk/organisk källa. Lagrade värden är tillverkarens angivna totalvärden (Fe 307, Zn 2 661, Mn 1 102, Cu 790, Se 14,2).",
+        "Klorid, svavel och energi ej deklarerade. Råaska 43 % deklareras men lagras ej (fält saknas i schemat).",
+        "Produkten är en nordisk marknadsvariant; den tyska originalprodukten Gemüse-Kräuter-Mineralien har annan deklaration och får inte förväxlas.",
+        "Priser hämtade 2026-07-30: hippolyt.se via WooCommerce Store API (art. 50303010 = 10 kg 620 kr, 50303025 = 25 kg 1 275 kr). Hogsta Ridsport listar produkten enbart som 'Gemüse-Kräuter-Mineralien - 10 kg' (620 kr) men produkttexten där anger uttryckligen Nordic-varianten; namnet på butikssidan saknar dock 'Nordic' och bör dubbelkollas mot artikelnummer vid nästa uppdatering.",
+        "dose_table satt till null 2026-07-30: tillverkaren doserar per 100 kg kroppsvikt (20 g), inte som viktklasstabell, så verktyget kan räkna direkt på hästens vikt. Ingen publicerad vikttabell hittad. Sökt hippolyt.se och hogstafoderbutik.se 2026-07-30."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "deklarerat",
+      "_ej_takkontrollerbara": [],
+      "_completeness": 1.0
+    },
+    {
+      "id": "st-hippolyt-microvital",
+      "brand": "St. Hippolyt",
+      "manufacturer": "St. Hippolyt Nordic (St. Hippolyt Sverige AB)",
+      "product": "MicroVital",
+      "category": "vitamin-mineraltillskott",
+      "form": "granulat",
+      "target": [
+        "arbete",
+        "avel",
+        "senior",
+        "unghast"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 20,
+        "p_g": 4,
+        "mg_g": 11,
+        "na_g": 10,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 150,
+        "fat_g": 93,
+        "fibre_g": 60,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 1000,
+        "zn_mg": 7500,
+        "mn_mg": 7000,
+        "se_mg": 9,
+        "i_mg": null,
+        "co_mg": 10,
+        "fe_mg": 2500,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": 2000,
+        "biotin_mg": 5
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 15,
+      "dose_max_g": 20,
+      "dose_note": "15-20 g per 100 kg kroppsvikt dagligen tillsammans med det dagliga fodret. Invänjs långsamt. OBS: Inte tillräckligt som heltäckande mineraltillskott. Kompletteringsfodret ska som mest utgöra 1,4 % av foderstaten inklusive hö. 1 mått = ca 120 g.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        3,
+        10
+      ],
+      "retailers": [
+        {
+          "name": "St. Hippolyt webbshop",
+          "url": "https://hippolyt.se/vare/microvital/?attribute_pa_mangd=3-kg",
+          "price_sek": 845,
+          "package_kg": 3,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "St. Hippolyt webbshop",
+          "url": "https://hippolyt.se/vare/microvital/?attribute_pa_mangd=10-kg",
+          "price_sek": 2595,
+          "package_kg": 10,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/blogg/fodersnack/hastens-palsbyte/microvital",
+          "price_sek": 845,
+          "package_kg": 3,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/leverantorer/st-hippolyt/microvital-10-kg",
+          "price_sek": 2595,
+          "package_kg": 10,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://hippolyt.se/vare/microvital/",
+      "source_type": "tillverkare",
+      "image_url": "https://hippolyt.se/wp-content/uploads/2025/12/59dfd62f-5de4-4245-8e46-bda27d5d4917.png",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Deklarationsbasen anges inte uttryckligen på den svenska produktsidan; tolkad som per kg produkt (spårämnen anges uttryckligen 'per kg', analysvärden i %). Ingen torrsubstanshalt anges.",
+        "Vitamin A, vitamin D3, jod, kalium, klorid, svavel, stärkelse, socker och energi ej deklarerade.",
+        "Form ej uttryckligen angiven på produktsidan; satt till 'granulat' utifrån sammansättningen (majsgroddar, krossade oljefrön, betfibrer m.m.). Bör verifieras mot förpackning.",
+        "Prisuppgift på hippolyt.se anges som 'Från 845,00 SEK' utan koppling till förpackningsstorlek — därför ej lagrat.",
+        "En separat 25 kg-variant finns som eget artikelnummer (hippolyt.se/vare/microvital-25-kg/); ej verifierad att deklarationen är identisk.",
+        "Prisuppdatering 2026-07-30: variantpriserna kunde läsas via hippolyt.se WooCommerce Store API (art. 51102003 = 3 kg 845 kr, 51102010 = 10 kg 2 595 kr). Samma priser hos Hogsta Ridsport. Noteringen ovan om att 'Från 845,00 SEK' inte kunde kopplas till förpackning är därmed löst.",
+        "dose_table satt till null 2026-07-30: tillverkaren doserar per 100 kg kroppsvikt (15–20 g), inte som viktklasstabell, så verktyget kan räkna direkt på hästens vikt. Ingen publicerad vikttabell hittad. Sökt hippolyt.se och hogstafoderbutik.se 2026-07-30.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Den analytiska deklarationen omfattar enbart råprotein, råfett, råfibrer, råaska, kalcium, fosfor, magnesium och natrium — varken socker eller stärkelse ingår. Sökt hippolyt.se produktsida, St. Hippolyts eget svenska informationsblad (hippolyt.se/vare/microvital/?datablad=dl, utskrivet 30/07/2026), st-hippolyt.de och hogstafoderbutik.se 2026-07-30. Värdena är därför null, INTE 0.",
+        "VARNING mot att tolka null som 0 för MicroVital: sammansättningen innehåller flera kolhydratbärande råvaror — majsgroddar, betfibrer, vetekli, morötter, ärtflingormjöl, fruktfibrer (äpplen, druvor) samt PalaSyrup (isomaltulos, ett disackarid-socker). Produkten innehåller alltså med säkerhet både socker och stärkelse i mätbar mängd; halten är bara okänd. En grundad nolla är här uteslutet.",
+        "Odeklarerade mikromineraler: Jod anges inte i den källa som använts (https://hippolyt.se/vare/microvital/). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "importerade-varumarken.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Jod"
+      ],
+      "_completeness": 0.8
+    },
+    {
+      "id": "trikem-e-selen",
+      "brand": "Trikem",
+      "manufacturer": "Trikem AB",
+      "product": "Trikem E+Selen",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "arbete",
+        "avel"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": 0.33,
+        "mg_g": null,
+        "na_g": 1.3,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 104,
+        "fat_g": 29,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": 500,
+        "mn_mg": 500,
+        "se_mg": 110,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": 25000,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 4,
+      "dose_max_g": 4,
+      "dose_note": "6 ml (4 g)/100 kg kroppsvikt och dag. Ex. hast 500 kg: 30 ml (20 g)/dag. Tillverkaren varnar: 'Bor ej overdoseras - innehaller selen.' Vid 20 g/dag ges 2,2 mg selen/dag. Karenstid 0 h.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        1,
+        4
+      ],
+      "retailers": [
+        {
+          "name": "Apotea",
+          "url": "https://www.apotea.se/trikem-eselen-1000-g",
+          "price_sek": 273,
+          "package_kg": 1,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/muskler-leder/vimital-e-plus-trikem",
+          "price_sek": 329,
+          "package_kg": 1,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/trikem-eselen-1000gr",
+          "price_sek": 339,
+          "package_kg": 1,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.trikem.se/en/shop/trikem-e-selen-15537",
+      "source_type": "tillverkare",
+      "image_url": "https://trikem.se/web/image/product.template/15537/image_1024?unique=cca89ee",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalcium deklareras som '<100 mg/kg' - satt till null.",
+        "Rafiber deklareras som '<0,5 %' - satt till null.",
+        "Mg, K, Cl, S, starkelse, socker, energi, Cu, I, Co, Fe samt vitamin A/D3/biotin deklareras inte.",
+        "Protein/fett omraknade fran % till g/kg (10,4 % / 2,9 %). P och Na omraknade fran mg/kg.",
+        "Selenkallan ar selenmetionin 3b8.12 (organiskt selen) 275 mg/kg som ger 110 mg Se/kg.",
+        "Aminosyror utan schemafalt: L-lysin 39 g/kg, DL-metionin 50 g/kg.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Analytiska beståndsdelar omfattar råprotein, råfett, växtfiber, råaska, Ca, Na och P - varken socker eller stärkelse anges. VARNING FÖR METABOLA HÄSTAR: tillverkarens sammansättning består av en enda råvara - 'Dextros' (druvsocker/glukos). Bekräftat både på produktsidan och i tillverkarens produktblad E+Selen_produktblad.pdf (hämtat 2026-07-30). Sockerhalten är därmed sannolikt mycket hög, men eftersom tillverkaren inte anger något tal har sugar_g lämnats null - INGEN siffra har härletts. Produkten bör inte rekommenderas till insulinresistenta hästar utan att halten först kontrolleras hos Trikem. Sökt trikem.se, apotea.se och hooks.se 2026-07-30.",
+        "starch_g: dextros är en monosackarid, inte stärkelse, och ingen stärkelsebärande råvara finns i den deklarerade sammansättningen. Nolla har ändå INTE satts eftersom bärarämnena i vitamin-E-preparatet (3a700) och selenmetioninet inte är deklarerade och sådana premixer ofta är stärkelse- eller maltodextrinbelagda.",
+        "Prisinsamling 2026-07-30: bada priserna ar ordinarie priser (ingen rea noterad). Hooks saljer produkten under det tidigare varumarkesnamnet 'E-Plus' (art.nr 800282) - bedomt som samma produkt, men Hooks produktbeskrivning namner endast E-vitamin och inte selen, sa kopplingen ar inte fullt verifierad.",
+        "Prisinsamling 2026-07-31: Foderboden saljer 'Trikem E+Selen 1000gr' for 339 kr (ordinarie pris inkl. moms, ingen rea, i lager). Produktnamnet anger forpackningen uttryckligen. Prisspridningen for 1 kg ar darmed 273-339 kr (Apotea 273, Hooks 329, Foderboden 339). Foderboden for inte 4 kg-forpackningen.",
+        "Pris ej funnet 2026-07-30 for 4 kg-forpackningen hos Apotea, Hooks, Granngarden och Vetapotek. Granngarden listar bade 1 kg och 4 kg men priset renderas via JavaScript och kunde inte lasas ut.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar anges inte i den källa som använts (https://www.trikem.se/en/shop/trikem-e-selen-15537). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "okant_sockerravara",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Järn",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.5
+    },
+    {
+      "id": "trikem-magnesium",
+      "brand": "Trikem",
+      "manufacturer": "Trikem AB",
+      "product": "Trikem Magnesium",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": null,
+        "p_g": 73,
+        "mg_g": 330,
+        "na_g": 39,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": 0,
+        "sugar_g": 0,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": null,
+        "mn_mg": null,
+        "se_mg": null,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 2,
+      "dose_max_g": 2,
+      "dose_note": "2 ml per 100 kg kroppsvikt och dag. Tillverkaren anger 10 ml = 10 g. Ex. hast 500 kg: 10 ml (10 g)/dag. Karenstid 0 h.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        0.75,
+        6
+      ],
+      "retailers": [
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/kosttillskott-trikem-magnesium-750-g-7394244101528/",
+          "price_sek": 119,
+          "package_kg": 0.75,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/kosttillskott-trikem-magnesium-750-g-7394244101528/",
+          "price_sek": 599,
+          "package_kg": 6,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/muskler-leder/vimital-magnesium-trikem",
+          "price_sek": 129,
+          "package_kg": 0.75,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/trikem-magnesium/15300",
+          "price_sek": 129,
+          "package_kg": 0.75,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/trikem-magnesium/15301",
+          "price_sek": 655,
+          "package_kg": 6,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.trikem.se/en/shop/trikem-magnesium-15539",
+      "source_type": "tillverkare",
+      "image_url": "https://trikem.se/web/image/product.template/15539/image_1024?unique=4384c73",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Kalcium anges i analystabellen som '17 kg/mg' - uppenbart enhetsfel i kallan, vardet ej tolkat. ca_g satt till null.",
+        "Aven Na och P anges med felaktig enhet '39 kg/mg' respektive '73 kg/mg' i analystabellen, men samma varden bekraftas i ingredienstabellen som 39 g/kg och 73 g/kg - dessa anvanda.",
+        "K, Cl, S, protein, fett, fiber, starkelse, socker, energi, samtliga sparamnen och vitaminer deklareras inte.",
+        "Produkten innehaller inga deklarerade tillsatser av sparamnen eller vitaminer - ren magnesiumkalla.",
+        "sugar_g och starch_g satta till 0 (GRUNDAD NOLLA, ej deklarerad siffra): tillverkarens sammansättning är 'magnesiumfosfathydrat, magnesiumoxid, natriumklorid, dikalciumfosfat' (trikem.se produktsida, kontrollerad 2026-07-30). Samtliga råvaror är oorganiska mineralsalter; ingen socker- eller stärkelsebärande råvara ingår och produkten har inga deklarerade tillsatser. Tillverkaren anger inget tal för socker eller stärkelse - nollan vilar på råvarusammansättningen, inte på en deklaration. Lämplig för metabola hästar ur kolhydratsynpunkt.",
+        "Granskning 2026-07-30: fosforhalten 73 g/kg är ovanligt hög för en ren magnesiumprodukt. Ej motbevisad, men värd att kontrollera mot förpackning.",
+        "Prisinsamling 2026-07-30: samtliga priser ar ordinarie priser (ingen rea noterad hos Vetapotek eller Hooks). Vetapoteks produktsida visar bade 750 g och 6000 g pa samma URL.",
+        "Prisinsamling 2026-07-31: Foderboden saljer bada storlekarna pa samma produktsida med variantvaljare; varianterna har egna URL-suffix (/15300 = 750 g, /15301 = 6 kg) och bada priserna ar avlasta efter att respektive variant valts i webblasaren. 750 g 129 kr - identiskt med Hooks. 6 kg 655 kr, vilket ar 56 kr HOGRE an Vetapoteks 599 kr. Ordinarie priser inkl. moms, ingen rea, bada i lager.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Selen, Zink anges inte i den källa som använts (https://www.trikem.se/en/shop/trikem-magnesium-15539). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "grundad_nolla",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Zink",
+        "Mangan",
+        "Järn",
+        "Selen",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.3
+    },
+    {
+      "id": "trikem-minerals",
+      "brand": "Trikem",
+      "manufacturer": "Trikem AB",
+      "product": "Trikem Minerals",
+      "category": "mineralfoder",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete",
+        "unghast",
+        "avel",
+        "senior"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 125,
+        "p_g": 47,
+        "mg_g": 40,
+        "na_g": 1.9,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 820,
+        "zn_mg": 1750,
+        "mn_mg": 1750,
+        "se_mg": 9,
+        "i_mg": 6,
+        "co_mg": 6.25,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 16,
+      "dose_max_g": 16,
+      "dose_note": "20 ml/100 kg kroppsvikt och dag. Tillverkaren anger 100 ml = 80 g, dvs 20 ml = 16 g. Ex. häst 500 kg: 100 ml (80 g)/dag; ponny 250 kg: 50 ml (40 g)/dag. Karenstid 0 h.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        12
+      ],
+      "retailers": [
+        {
+          "name": "Apotea",
+          "url": "https://www.apotea.se/trikem-minerals-12-kg",
+          "price_sek": 495,
+          "package_kg": 12,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/mineraltillskott-trikem-minerals-pellets-12-kg-7394244104116/",
+          "price_sek": 529,
+          "package_kg": 12,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://www.trikem.se/en/shop/1865000-trikem-minerals-12-kg-11781",
+      "source_type": "tillverkare",
+      "image_url": "https://trikem.se/web/image/product.template/11781/image_1024?unique=4875411",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Ca och P skiljer sig mellan tabellerna: tillsatstabellen anger 126 g Ca/kg och 46,6 g P/kg, analytiska bestandsdelar anger 125 000 mg/kg Ca (=125 g) och 47 000 mg/kg P (=47 g). Analytiska bestandsdelar anvanda har.",
+        "K, Cl, S, ravarde protein/fett/fiber, starkelse, socker och energi deklareras inte.",
+        "Fe och samtliga vitaminer (A, D3, E, biotin) deklareras inte - produkten ar ett rent mineralfoder utan vitaminer.",
+        "Kisel 30 g/kg och bor 250 mg/kg deklareras men saknar falt i schemat.",
+        "Notera: kallan anger 'Manganese sulphate monohydrate E5 5,65 mg' per kg vilket ar inkonsekvent mot mangan 1750 mg/kg (sannolikt ska vara 5,65 g) - ravarumangden ej anvand, endast grundamnesvardet 1750 mg Mn/kg.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Tillverkarens analytiska beståndsdelar omfattar endast kalcium, natrium och fosfor - varken socker eller stärkelse anges. NOLLA ÄR INTE MOTIVERAD: sammansättningen är 'torkad vetedrank (dried wheat stillage), monokalciumfosfat, kalciumkarbonat, magnesiumfosfathydrat, magnesiumoxid, natriumklorid, borsyra'. Vetedrank är en kolhydratbärande spannmålsråvara, så produkten innehåller med säkerhet en viss mängd socker och stärkelse - halten är bara okänd. Sökt trikem.se (produktsida + Minerals_produktblad.pdf), apotea.se och vetapotek.se 2026-07-30. Relevant för metabola hästar: pelleterad produkt med spannmålsbärare, halten bör efterfrågas hos tillverkaren.",
+        "Prisinsamling 2026-07-30: bada priserna avser 12 kg och ar ordinarie pris (ingen rea noterad). Hooks listar en Trikem Minerals-produkt till 469 kr men anger ingen forpackningsstorlek pa produktsidan - ej infogad da package_kg inte kunde verifieras.",
+        "Ej i sortimentet hos Hööks 2026-07-31 och ej i sortimentet hos Foderboden 2026-07-31. Sökt hooks.se/search?q=trikem (63 träffar) och ?q=trikem minerals (3 träffar: Electrolytes 1,5 kg, Zinc 500 g, Magnesium 750 g) samt foderboden.se/sv/search?query=trikem (51 träffar, samtliga tre sidor genomgångna) och ?query=Trikem Minerals. Trikem Minerals 12 kg finns inte längre hos någon av dem. Hööks 469 kr-notering ovan gick inte att återfinna 2026-07-31 - produkten verkar utgången ur Hööks sortiment.",
+        "Odeklarerade mikromineraler: Järn anges inte i den källa som använts (https://www.trikem.se/en/shop/1865000-trikem-minerals-12-kg-11781). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [
+        "Järn"
+      ],
+      "_completeness": 0.7
+    },
+    {
+      "id": "trikem-vitamins-flytande",
+      "brand": "Trikem",
+      "manufacturer": "Trikem AB",
+      "product": "Trikem Vitamins (flytande)",
+      "category": "vitamin-mineraltillskott",
+      "form": "flytande",
+      "target": [
+        "underhall",
+        "arbete",
+        "unghast",
+        "avel",
+        "senior"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 0.25,
+        "p_g": null,
+        "mg_g": null,
+        "na_g": 0.49,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 10,
+        "fat_g": 18,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 2640,
+        "zn_mg": 5000,
+        "mn_mg": 5000,
+        "se_mg": 27,
+        "i_mg": 84,
+        "co_mg": 9,
+        "fe_mg": null,
+        "vit_a_ie": 616000,
+        "vit_d3_ie": 181500,
+        "vit_e_mg": 19650,
+        "biotin_mg": 25
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 5,
+      "dose_max_g": 10,
+      "dose_note": "5-10 ml per 100 kg kroppsvikt och dag eller enligt foderstat. Tillverkaren anger 30 ml = 30 g (densitet ca 1,0 g/ml), sa ml ~ g. Karenstid 0 h.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        1,
+        2.5,
+        5
+      ],
+      "retailers": [
+        {
+          "name": "Hogsta Ridsport",
+          "url": "https://www.hogstafoderbutik.se/fodertillskott/vitaminer/vimital-multi-pro-balance",
+          "price_sek": 185,
+          "package_kg": 1,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-flytande-1000-ml-7394244101443/",
+          "price_sek": 175,
+          "package_kg": 1,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-flytande-1000-ml-7394244101443/",
+          "price_sek": 379,
+          "package_kg": 2.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-flytande-5000-ml-7394244102440/",
+          "price_sek": 649,
+          "package_kg": 5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/vimital-multi-pb-trikem",
+          "price_sek": 179,
+          "package_kg": 1,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/trikem-vitamins-1l/4389",
+          "price_sek": 185,
+          "package_kg": 1,
+          "checked": "2026-07-31"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/trikem-vitamins-1l/4390",
+          "price_sek": 329,
+          "package_kg": 2.5,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.trikem.se/en/shop/trikem-vitamins-15575",
+      "source_type": "tillverkare",
+      "image_url": "https://trikem.se/web/image/product.template/15575/image_1024?unique=526db7a",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Forpackningsstorlekar anges i ml (1000/2500/5000 ml); package_sizes_kg antar densitet 1,0 kg/l enligt tillverkarens '30 ml (30 g)'.",
+        "Fosfor deklareras som '<100 mg/kg' - satt till null.",
+        "Rafiber deklareras som '<0,5 %' - satt till null.",
+        "Mg, K, Cl, S, starkelse, socker, energi och Fe deklareras inte.",
+        "Vattenhalt 88,2 %, raska 3,5 % deklareras men saknar schemafalt.",
+        "Biotinraden i kallan har en trolig enhetsmiss: 'per 30 ml' anges som 740 mg medan per kg anges 25 mg. 740 mikrogram/30 g ger 24,7 mg/kg, sa per-kg-vardet 25 mg ar anvant.",
+        "Vitamin D anges som 3a671 (= vitamin D3) - tolkat som D3.",
+        "Ovriga vitaminer utan schemafalt (per kg): K3 825 mg, B1 2640, B2 400, B6 366, B12 3,6, niacinamid 1815, pantotensyra 865, folsyra 610 mg.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Analytiska beståndsdelar omfattar råprotein, råfett, råfiber, råaska, vattenhalt, Ca, Na och P - varken socker eller stärkelse anges. Sökt trikem.se (produktsida + Vitamins_flytande_produktblad.pdf), hogstafoderbutik.se och vetapotek.se 2026-07-30. Relevant för metabola hästar: detta är ett FLYTANDE tillskott men enligt tillverkarens sammansättning 'vatten, glycerin, borsyra' - alltså INGEN melass- eller sorbitolbärare. Glycerol är en polyol och räknas inte som socker eller stärkelse. Nolla är ändå inte satt eftersom produkten inte är en ren oorganisk mineralprodukt: färgämnet karamell E150 är sockerhärlett och vitaminpremixernas bärarämnen är odeklarerade. Sockerhalten bedöms låg men är inte belagd.",
+        "Prisinsamling 2026-07-31: Hööks saljer produkten som 'VITAMINS LIQUID 1L' (art.nr 800287) for 179 kr - produktbeskrivningen bekraftar identiteten uttryckligen: 'Trikem Vitamin - tidigare VIMITAL Multi Pro Balance' med doseringen 5-10 ml per 100 kg kroppsvikt och volymen 1000 ml, dvs samma produkt. Hooks URL innehaller fortfarande det gamla namnet (vimital-multi-pb). Foderboden saljer 1 L for 185 kr och 2,5 L for 329 kr pa samma produktsida med variantvaljare; varianterna har egna URL-suffix (/4389 respektive /4390) och 2,5 L var slut i lager. Samtliga ar ordinarie priser, ingen rea. Hooks 179 kr ar det lagsta 1 L-priset i databasen (tidigare 175-185 kr).",
+        "Prisinsamling 2026-07-30: OBS att enheten i retailers[].package_kg for denna produkt ar LITER, inte kg - butikerna saljer 1 L, 2,5 L och 5 L. Priserna ar ordinarie priser (ingen rea noterad). Vetapoteks produktsida visar alla tre varianterna pa samma URL.",
+        "Odeklarerade mikromineraler: Järn anges inte i den källa som använts (https://www.trikem.se/en/shop/trikem-vitamins-15575). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [
+        "Järn"
+      ],
+      "_completeness": 0.8
+    },
+    {
+      "id": "trikem-vitamins-pellets",
+      "brand": "Trikem",
+      "manufacturer": "Trikem AB",
+      "product": "Trikem Vitamins pellets",
+      "category": "vitamin-mineraltillskott",
+      "form": "pellets",
+      "target": [
+        "underhall",
+        "arbete",
+        "unghast",
+        "avel",
+        "senior"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 14,
+        "p_g": 8.4,
+        "mg_g": null,
+        "na_g": 3,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": 268,
+        "fat_g": 78,
+        "fibre_g": 53,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": 3000,
+        "zn_mg": 9000,
+        "mn_mg": 9000,
+        "se_mg": 45,
+        "i_mg": 100,
+        "co_mg": 15,
+        "fe_mg": null,
+        "vit_a_ie": 925000,
+        "vit_d3_ie": 200000,
+        "vit_e_mg": 30000,
+        "biotin_mg": 37
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 4,
+      "dose_max_g": 4,
+      "dose_note": "6 ml/100 kg kroppsvikt och dag. Tillverkaren anger 30 ml = 20 g, dvs 6 ml = 4 g. Ex. hast 500 kg: 30 ml (20 g)/dag. 'Bor ej overdoseras, innehaller selen.' Karenstid 0 h. Tidigare produktnamn: Multi.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        1,
+        3.5
+      ],
+      "retailers": [
+        {
+          "name": "Apohem",
+          "url": "https://www.apohem.se/djur/djurfoder-tillskott/foder-fodertillskott/trikem-vitamins-pellets-1000g",
+          "price_sek": 171,
+          "package_kg": 1,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-pellets-3500-g-7394244103799/",
+          "price_sek": 199,
+          "package_kg": 1,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-pellets-3500-g-7394244103799/",
+          "price_sek": 539,
+          "package_kg": 3.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "StallMagasinet",
+          "url": "https://stallmagasinet.se/trikem-vitamins-pellets-1000-g",
+          "price_sek": 199,
+          "package_kg": 1,
+          "checked": "2026-07-30"
+        }
+      ],
+      "source_url": "https://www.trikem.se/en/shop/trikem-vitamins-pellets-15547",
+      "source_type": "tillverkare",
+      "image_url": "https://trikem.se/web/image/product.template/15547/image_1024?unique=b61b1d6",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Mg, K, Cl, S, starkelse, socker och energi deklareras inte.",
+        "Fe deklareras inte.",
+        "Ca/Na/P omraknade fran mg/kg till g/kg (14 000 / 3 000 / 8 400 mg/kg).",
+        "Protein/fett/fiber omraknade fran % till g/kg (26,8 % / 7,8 % / 5,3 %).",
+        "Vitamin D anges som 'Vitamin D 3a671' (3a671 = vitamin D3) - tolkat som D3.",
+        "Ovriga deklarerade vitaminer utan schemafalt: K3 1250 mg/kg, B1 2750, B2 600, B6 600, B12 5,5, C 5500, niacinamid 2750, pantotensyra 650, folsyra 1000 mg/kg.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Analytiska beståndsdelar omfattar råprotein, råfett, råfiber, råaska, Ca, Na och P - varken socker eller stärkelse anges. NOLLA ÄR INTE MOTIVERAD: sammansättningen är 'torkad vetedrank (dried wheat stillage), borsyra', dvs en kolhydratbärande spannmålsråvara utgör bäraren, så produkten innehåller med säkerhet socker och stärkelse i okänd mängd. Sökt trikem.se (produktsida + Vitamins_produktblad.pdf), apohem.se, vetapotek.se och stallmagasinet.se 2026-07-30. Relevant för metabola hästar: pelleterad produkt med spannmålsbärare; dagsgivan är dock liten (20 g för 500 kg häst), vilket begränsar det absoluta intaget.",
+        "Prisinsamling 2026-07-30: alla angivna priser ar ordinarie priser (ingen rea noterad). Apohem anger uttryckligen 'Ordinarie pris 171 kr'. Vetapoteks produktsida visar bada varianterna (1000 g och 3500 g) pa samma URL.",
+        "Ej i sortimentet hos Hööks 2026-07-31 och ej i sortimentet hos Foderboden 2026-07-31. Sökt hooks.se/search?q=trikem vitamins (5 träffar, samtliga B-vitamin eller hundprodukter utom Vitamins Liquid 1L) och foderboden.se/sv/search?query=Trikem Vitamins (1 träff: Vitamins 1L, dvs den flytande varianten). Ingen av butikerna för pelletsvarianten - de för endast Trikem Vitamins flytande. Risk för förväxling: den flytande produkten har eget id trikem-vitamins-flytande och egen deklaration.",
+        "Odeklarerade mikromineraler: Järn anges inte i den källa som använts (https://www.trikem.se/en/shop/trikem-vitamins-pellets-15547). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [
+        "Järn"
+      ],
+      "_completeness": 0.9
+    },
+    {
+      "id": "trikem-zinc",
+      "brand": "Trikem",
+      "manufacturer": "Trikem AB",
+      "product": "Trikem Zinc",
+      "category": "enkelnaring",
+      "form": "pulver",
+      "target": [
+        "underhall",
+        "arbete"
+      ],
+      "declaration_basis": "per_kg_produkt",
+      "nutrients": {
+        "ca_g": 0.95,
+        "p_g": 6.2,
+        "mg_g": null,
+        "na_g": 4.2,
+        "k_g": null,
+        "cl_g": null,
+        "s_g": null,
+        "protein_g": null,
+        "fat_g": null,
+        "fibre_g": null,
+        "starch_g": null,
+        "sugar_g": null,
+        "energy_mj": null,
+        "cu_mg": null,
+        "zn_mg": 31000,
+        "mn_mg": null,
+        "se_mg": null,
+        "i_mg": null,
+        "co_mg": null,
+        "fe_mg": null,
+        "vit_a_ie": null,
+        "vit_d3_ie": null,
+        "vit_e_mg": null,
+        "biotin_mg": null
+      },
+      "dose_basis": "per_100kg_kroppsvikt",
+      "dose_min_g": 3.2,
+      "dose_max_g": 3.2,
+      "dose_note": "6 ml (3,2 g) per 100 kg kroppsvikt och dag eller enligt berakad foderstat. Ex. hast 500 kg: 30 ml (16 g)/dag = 500 mg zink/dag. Karenstid 0 h.",
+      "dose_table": null,
+      "package_sizes_kg": [
+        0.5,
+        3.5
+      ],
+      "retailers": [
+        {
+          "name": "Vetapotek",
+          "url": "https://vetapotek.se/produkt/zinktillskott-trikem-zinc-500-g-7394244103751/",
+          "price_sek": 139,
+          "package_kg": 0.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Hööks",
+          "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/immunforsvar/kompletteringsfoder-zinc-trikem",
+          "price_sek": 159,
+          "package_kg": 0.5,
+          "checked": "2026-07-30"
+        },
+        {
+          "name": "Foderboden",
+          "url": "https://foderboden.se/sv/products/trikem-zinc-500gr",
+          "price_sek": 155,
+          "package_kg": 0.5,
+          "checked": "2026-07-31"
+        }
+      ],
+      "source_url": "https://www.trikem.se/en/shop/trikem-zinc-15548",
+      "source_type": "tillverkare",
+      "image_url": "https://trikem.se/web/image/product.template/15548/image_1024?unique=ab634f0",
+      "image_source": "tillverkare",
+      "checked": "2026-07-30",
+      "confidence": "hog",
+      "data_gaps": [
+        "Endast zink deklareras som tillsats (zinkkloridhydroxidmonohydrat 3b609 55 g/kg = 31 g Zn/kg).",
+        "Mg, K, Cl, S, protein, fett, fiber, starkelse, socker, energi, Cu, Mn, Se, I, Co, Fe och samtliga vitaminer deklareras inte.",
+        "Ca, Na och P omraknade fran mg/kg till g/kg (950 / 4200 / 6200 mg/kg).",
+        "Marknadsfors for hud/karleder men har fullstandig deklarerad zinkhalt - inkluderad som enkelnaring.",
+        "sugar_g/starch_g: ej deklarerat av tillverkaren. Analytiska beståndsdelar omfattar endast Ca, Na, P och Zn - varken socker eller stärkelse anges. NOLLA ÄR INTE MOTIVERAD trots att zinkkällan är ett rent salt: tillverkarens sammansättning är 'Torkat vetedrank' (dried wheat stillage), dvs bäraren är en kolhydratbärande spannmålsråvara. Produkten innehåller därför socker och stärkelse i okänd mängd. Sökt trikem.se (produktsida + Zinc_produktblad.pdf), vetapotek.se och hooks.se 2026-07-30.",
+        "Prisinsamling 2026-07-30: bada priserna avser 500 g och ar ordinarie priser (ingen rea noterad).",
+        "Prisinsamling 2026-07-31: Foderboden saljer 'Trikem Zinc 500gr' for 155 kr (ordinarie pris inkl. moms, ingen rea, i lager). Forpackningen anges i produktnamnet. Prisspridningen for 500 g ar darmed 139-159 kr. Foderboden for inte 3500 g-forpackningen. Hooks pris 159 kr ar oforandrat 2026-07-31.",
+        "Pris ej funnet 2026-07-30 for 3500 g-forpackningen hos Vetapotek, Hooks, Apotea och Granngarden - produktsidan hos Vetapotek (zinktillskott-trikem-zinc-3500-g-7394244103928) kunde inte lasas ut med pris.",
+        "Odeklarerade mikromineraler: Jod, Järn, Kobolt, Koppar, Mangan, Selen anges inte i den källa som använts (https://www.trikem.se/en/shop/trikem-zinc-15548). Halten är därmed okänd, inte noll — och takkontrollen mot SLU 289:s maximala tolerans kan inte prövas för dessa ämnen."
+      ],
+      "_source_file": "trikem-ovriga-se.json",
+      "_sugar_status": "okant",
+      "_ej_takkontrollerbara": [
+        "Koppar",
+        "Mangan",
+        "Järn",
+        "Selen",
+        "Jod",
+        "Kobolt"
+      ],
+      "_completeness": 0.4
+    }
+  ]
+}

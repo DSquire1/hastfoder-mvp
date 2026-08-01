@@ -1,0 +1,3786 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foderstat → produktförslag (MVP)</title>
+<style>
+  :root{
+    --bg:#faf8f5; --ink:#1d1d1b; --muted:#6b665f; --line:#ddd7cd;
+    --brand:#863a20; --brand-soft:#f3e9e4;
+    --ok:#2f6b45; --ok-bg:#e8f2ec;
+    --warn:#8a6100; --warn-bg:#fbf1dc;
+    --bad:#9d2b20; --bad-bg:#fbe9e7;
+    --card:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 18px 80px}
+  h1{font-size:25px;margin:0 0 4px}
+  h2{font-size:17px;margin:0 0 14px;padding-bottom:7px;border-bottom:2px solid var(--brand)}
+  .h2row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
+    margin:0 0 14px;padding-bottom:7px;border-bottom:2px solid var(--brand);flex-wrap:wrap}
+  .h2row h2{border:0;margin:0;padding:0}
+  .slumpa{border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer;
+    padding:6px 13px;border-radius:6px;font:inherit;font-size:13px;font-weight:600;white-space:nowrap}
+  .slumpa:hover{background:var(--brand);color:#fff}
+  .slumpinfo{font-size:12.5px;color:var(--muted);margin:10px 0 0;font-style:italic}
+  h3{font-size:14px;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .banner{background:var(--warn-bg);border:1px solid #e3c98a;border-left:5px solid var(--warn);
+    padding:12px 14px;border-radius:6px;margin-bottom:20px;font-size:13.5px}
+  .banner strong{color:var(--warn)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:18px;margin-bottom:18px}
+  .grid{display:grid;gap:12px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px}
+  input,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:5px;
+    background:#fff;font:inherit;font-size:14px;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
+  .toggle{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+  .toggle button{border:0;background:#fff;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer;color:var(--muted)}
+  .toggle button.on{background:var(--brand);color:#fff;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--muted);border-bottom:2px solid var(--line);padding:7px 8px;font-weight:600}
+  td{padding:7px 8px;border-bottom:1px solid #eee}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  tr.deficit td{background:var(--bad-bg)}
+  tr.over td{background:var(--warn-bg)}
+  .pill{display:inline-block;padding:1px 8px;border-radius:11px;font-size:11px;font-weight:700}
+  .p-ok{background:var(--ok-bg);color:var(--ok)}
+  .p-low{background:var(--bad-bg);color:var(--bad)}
+  .p-high{background:var(--warn-bg);color:var(--warn)}
+  .note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+  .msg{padding:10px 12px;border-radius:6px;margin:9px 0;font-size:13px}
+  .m-bad{background:var(--bad-bg);border-left:4px solid var(--bad)}
+  .m-warn{background:var(--warn-bg);border-left:4px solid var(--warn)}
+  .m-ok{background:var(--ok-bg);border-left:4px solid var(--ok)}
+  .prod{border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:11px;background:#fff;
+    cursor:pointer;transition:border-color .12s,box-shadow .12s}
+  .prod:hover{border-color:var(--brand)}
+  /* Endast valt tillstånd markeras med ram. Rangordningen framgår av siffran —
+     en extra ram på förstaplatsen läses som ett urval och krockar med den. */
+  .prod.vald{border-color:var(--ok);border-width:2px;box-shadow:0 0 0 3px var(--ok-bg)}
+  .valdmark{font-size:11.5px;font-weight:700;color:var(--ok);background:var(--ok-bg);
+    padding:2px 9px;border-radius:11px;margin-left:8px}
+  .valjknapp{font-size:12px;color:var(--brand);margin-top:9px;font-weight:600}
+  .rt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:7px}
+  .rt td{padding:4px 6px;border-bottom:1px solid #f0eeea}
+  .rt td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .rt tr.bast td{background:var(--ok-bg);font-weight:600}
+  .spread{font-size:12.5px;color:var(--muted);margin-top:7px}
+  .delta{color:var(--ok);font-weight:600}
+
+  .bildslot{position:relative;width:58px;height:58px;flex:0 0 58px}
+  .bild{position:absolute;inset:0;width:58px;height:58px;border-radius:7px;
+    object-fit:contain;background:#fff;border:1px solid var(--line)}
+  .bild-img{z-index:1;padding:2px}
+  .bild-fb{display:flex;align-items:center;justify-content:center;font-weight:700;
+    font-size:17px;color:var(--brand);background:var(--brand-soft);letter-spacing:.03em;
+    border-color:#e0cfc7}
+
+  .barcell{width:38%;min-width:180px;padding-right:16px}
+  .barwrap{position:relative;height:17px;background:#efece6;border-radius:3px}
+  .barband{position:absolute;top:0;bottom:0;background:rgba(47,107,69,.13)}
+  .barbehov{position:absolute;top:-3px;bottom:-3px;width:2px;background:#4a4640}
+  .bar1{position:absolute;top:0;bottom:0;left:0;background:var(--brand);border-radius:3px 0 0 3px}
+  .bar2{position:absolute;top:0;bottom:0;background:var(--ok)}
+  .bartak{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--bad)}
+  .barspill{position:absolute;right:2px;top:0;bottom:0;display:flex;align-items:center;
+    color:#fff;font-weight:700;font-size:14px;line-height:1}
+  .baraxel{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);
+    margin-top:3px;letter-spacing:.02em}
+  .barleg{display:flex;gap:16px;font-size:11.5px;color:var(--muted);margin:10px 0 2px;flex-wrap:wrap}
+  .barleg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+  .prod-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .prod-n{font-weight:700;font-size:15.5px}
+  .prod-m{font-size:12px;color:var(--muted)}
+  .dose{background:var(--brand-soft);color:var(--brand);padding:4px 11px;border-radius:6px;
+    font-weight:700;font-size:14px;white-space:nowrap}
+  .rank{display:inline-block;width:21px;height:21px;line-height:21px;text-align:center;
+    background:var(--brand);color:#fff;border-radius:50%;font-size:11.5px;font-weight:700;margin-right:7px}
+  .chips{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}
+  .chip{font-size:11.5px;padding:2px 8px;border-radius:4px}
+  .c-fix{background:var(--ok-bg);color:var(--ok)}
+  .c-part{background:var(--warn-bg);color:var(--warn)}
+  .c-cap{background:var(--bad-bg);color:var(--bad)}
+  .c-miss{background:#f0eeea;color:var(--muted)}
+  details{margin-top:9px;font-size:13px}
+  summary{cursor:pointer;color:var(--brand);font-weight:600;font-size:12.5px}
+  .src{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:22px}
+  code{background:#f0eeea;padding:1px 5px;border-radius:3px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Från foderanalys till produktförslag</h1>
+<p class="sub">MVP. Räknar hästens behov enligt SLU:s utfodringsrekommendationer, jämför mot din
+grovfoderanalys och föreslår tillskott som täcker underskotten — med takkontroll mot samtliga
+toleransgränser samtidigt.</p>
+
+<div class="banner" id="datakalla">Läser produktdata…</div>
+
+<!-- ============ HÄSTEN ============ -->
+<div class="card">
+  <h2>1. Hästen</h2>
+  <div class="grid g4">
+    <div><label>Vikt vid normalhull (kg)</label><input type="number" id="vikt" value="500" min="50" max="1200" step="5"></div>
+    <div><label>Typ</label><select id="typ">
+      <option value="1.00" selected>Lättfödd</option>
+      <option value="1.05">Normalfödd</option>
+      <option value="1.10">Svårfödd</option>
+    </select></div>
+    <div><label>Hingst (+10 % energi)</label><select id="hingst">
+      <option value="1.00" selected>Nej</option><option value="1.10">Ja</option>
+    </select></div>
+    <div><label>Arbete</label><select id="arbete">
+      <option value="0" selected>Inget (underhåll)</option>
+      <option value="1">Lätt — energitillägg &lt;30 %</option>
+      <option value="2">Medel — 30–50 %</option>
+      <option value="3">Hårt — 50–75 %</option>
+      <option value="4">Mycket hårt — 75–130 %</option>
+    </select></div>
+  </div>
+  <p class="note">Ange vikten <strong>vid normalhull</strong>, inte aktuell vikt. Är hästen i över- eller
+  underhull ska foderstaten räknas på den vikt den skulle haft i hull 4–6. Samma regel som i
+  HästSveriges foderstatsprogram.</p>
+</div>
+
+<!-- ============ GROVFODER ============ -->
+<div class="card">
+  <div class="h2row">
+    <h2>2. Grovfoderanalys</h2>
+    <button class="slumpa" onclick="slumpaAnalys()">Slumpa en analys</button>
+  </div>
+  <div id="slumpinfo"></div>
+
+  <div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin-bottom:14px">
+    <div>
+      <label>Analysvärdena är angivna</label>
+      <div class="toggle">
+        <button id="bTS" class="on" onclick="setEnhet('ts')">per kg torrsubstans</button>
+        <button id="bFoder" onclick="setEnhet('foder')">per kg foder</button>
+      </div>
+    </div>
+    <div style="min-width:150px"><label>Torrsubstans (%)</label><input type="number" id="ts" value="89" step="0.1"></div>
+    <div style="min-width:150px"><label>Giva (kg ts/dygn)</label><input type="number" id="giva" value="9" step="0.1"></div>
+    <div style="font-size:12.5px;color:var(--muted);padding-bottom:8px" id="givaInfo"></div>
+  </div>
+
+  <h3>Energi och protein <span id="e1">(per kg ts)</span></h3>
+  <div class="grid g3">
+    <div><label>Omsättbar energi (MJ)</label><input type="number" id="energi" value="8.2" step="0.1"></div>
+    <div><label>Smältbart råprotein (g)</label><input type="number" id="smbrp" value="47" step="1"></div>
+    <div><label>Socker / WSC (g) — valfritt</label><input type="number" id="wsc" value="112" step="1"></div>
+  </div>
+
+  <h3>Makromineraler, g <span id="e2">(per kg ts)</span></h3>
+  <div class="grid g4">
+    <div><label>Kalcium (Ca)</label><input type="number" id="Ca" value="2.8" step="0.1"></div>
+    <div><label>Fosfor (P)</label><input type="number" id="P" value="2.4" step="0.1"></div>
+    <div><label>Magnesium (Mg)</label><input type="number" id="Mg" value="0.6" step="0.1"></div>
+    <div><label>Natrium (Na)</label><input type="number" id="Na" value="0.05" step="0.01"></div>
+  </div>
+
+  <h3>Mikromineraler, mg <span id="e3">(per kg ts)</span> — lämna tomt om ej analyserat</h3>
+  <div class="grid g4">
+    <div><label>Zink (Zn)</label><input type="number" id="Zn" value="21" step="0.1"></div>
+    <div><label>Koppar (Cu)</label><input type="number" id="Cu" value="5" step="0.1"></div>
+    <div><label>Mangan (Mn)</label><input type="number" id="Mn" value="20" step="0.1"></div>
+    <div><label>Järn (Fe)</label><input type="number" id="Fe" value="96" step="1"></div>
+  </div>
+  <div class="grid g4" style="margin-top:12px">
+    <div><label>Selen (Se)</label><input type="number" id="Se" placeholder="ej analyserat" step="0.01"></div>
+    <div><label>Jod (I)</label><input type="number" id="I" placeholder="ej analyserat" step="0.01"></div>
+    <div><label>Kobolt (Co)</label><input type="number" id="Co" placeholder="ej analyserat" step="0.01"></div>
+    <div style="display:flex;align-items:end"><button onclick="tabellvarden()"
+      style="width:100%;padding:8px;background:#fff;border:1px solid var(--brand);color:var(--brand);
+      border-radius:5px;font:inherit;font-size:13px;font-weight:600;cursor:pointer">Fyll i schablonvärden</button></div>
+  </div>
+  <p class="note">Selen sätts till 0 som schablon. Svenska jordar är selenfattiga och SLU anger att
+  tillskott behövs i de allra flesta fall — antagandet ska framtvinga en selenbrist, inte dölja den.</p>
+</div>
+
+<div id="ut"></div>
+
+<div class="msg m-bad" style="margin:26px 0 0;font-size:13.5px">
+  <strong>Detta är inte rådgivning.</strong> Sidan är en teknisk prototyp som räknar en
+  foderstat mot SLU:s publicerade normer. Den ersätter inte veterinär, husdjursagronom
+  eller foderrådgivare, och den känner inte din häst. Beräkningen bygger på uppgifter du
+  själv matar in och på tillverkarnas egna produktdeklarationer, som inte har granskats av
+  tredje part. Rådgör alltid med veterinär innan foderstaten ändras för en häst med
+  insulinresistens, PPID, PSSM, fång eller annan sjukdom. Ingen garanti lämnas för att
+  uppgifterna är korrekta eller aktuella, och inget ansvar tas för beslut som fattas
+  utifrån dem.
+</div>
+
+<div class="src">
+  <strong>Normer:</strong> SLU Rapport 289, <em>Utfodringsrekommendationer för häst</em> (Jansson red., 2013),
+  tabell 3, 15, 17, 31 och 32. Underhållsenergi enligt 0,5 × V<sup>0,75</sup>.
+  Behov redovisas som intervall där SLU anger intervall.<br>
+  <strong>Sockergräns:</strong> Borgia m.fl. (2011) — NSC under 170 g/kg ts vid PSSM. Detta är det enda
+  kvantitativa sockervärdet i det svenska underlaget; något allmänt gränsvärde finns inte.<br>
+  <strong>Toleransgränser:</strong> SLU 289 tabell 17, maximal toleransgräns.<br>
+  <strong>Produktdata:</strong> tillverkarnas egna deklarationer, insamlade 2026-07-31.
+  Priser är indikativa och hämtade ur återförsäljarnas webbutiker vid insamlingstillfället.
+  Produktbilder används inte — varje produkt visas med varumärkets initialer.
+  Fullständig källförteckning per produkt i
+  <a href="https://github.com/Dsquire1/hastfoder-mvp/blob/main/data/produkter.json"
+     style="color:var(--brand)">data/produkter.json</a>.<br>
+  <strong>Öppen källkod.</strong> Koden är fri att granska och återanvända — se
+  <a href="https://github.com/Dsquire1/hastfoder-mvp" style="color:var(--brand)">repot</a>.
+  Databasen är inte en officiell källa och har inget samband med SLU, SVA eller HästSverige.
+</div>
+
+</div>
+
+<script>
+/* ============================================================================
+   PRODUKTDATA
+   ----------------------------------------------------------------------------
+   Genereras av bygg-produkter.py ur ../Marknadsdatabas/produkter.json.
+   Redigera inte här — ändringar skrivs över vid nästa körning.
+
+   Per produkt, allt per kg produkt:
+     naring: { Ca,P,Mg,Na (g/kg) ; Zn,Cu,Mn,Fe,Se,I,Co (mg/kg) ; energi, smbrp }
+     odeklarerat: [ämnen tillverkaren inte deklarerar — INTE detsamma som noll]
+     dosMin, dosMax: g/dygn per 100 kg kroppsvikt (normaliserat vid bygget)
+   ============================================================================ */
+/* PRODUKTDATA-START */
+const PRODUKTKALLA = {"byggd": "2026-07-31", "antal_i_databas": 36, "antal_matchningsbara": 33, "referensvikt_per_hast_kg": 500};
+
+const PRODUKTER = [
+ {
+  "id": "dodson-horrell-ultimate-balancer",
+  "namn": "Ultimate Balancer",
+  "tillverkare": "Dodson & Horrell",
+  "kategori": "balanserare",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 30.0,
+  "dosMax": 140.0,
+  "dosBas": "per_hast",
+  "dosTabell": [
+   {
+    "vikt": 200,
+    "min": 150,
+    "max": 200
+   },
+   {
+    "vikt": 300,
+    "min": 250,
+    "max": 300
+   },
+   {
+    "vikt": 400,
+    "min": 350,
+    "max": 450
+   },
+   {
+    "vikt": 500,
+    "min": 450,
+    "max": 550
+   },
+   {
+    "vikt": 600,
+    "min": 550,
+    "max": 700
+   }
+  ],
+  "dosNot": "Tabell efter kroppsvikt: 200 kg 0,15 kg/dag (underhåll) – 0,2 kg/dag (lätt/moderat arbete); 300 kg 0,25–0,3 kg; 400 kg 0,35–0,45 kg; 500 kg 0,45–0,55 kg; 600 kg 0,55–0,7 kg. Fördelas på minst 3 lika måltider. Ej lämpligt vid moderat/hårt ar",
+  "naring": {
+   "Ca": 27,
+   "P": 11,
+   "Mg": 3,
+   "Na": 4,
+   "Cu": 250,
+   "Zn": 630,
+   "Mn": 520,
+   "Se": 3.2,
+   "Fe": 360,
+   "energi": 11.2,
+   "smbrp": 250,
+   "socker": 70,
+   "starkelse": 100,
+   "vitE": 1700
+  },
+  "odeklarerat": [
+   "I",
+   "Co"
+  ],
+  "ejTakkontroll": [
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "deklarerat",
+  "forp": 20,
+  "krPerKg": 32.85,
+  "krPerKgMax": 32.85,
+  "saljare": [
+   {
+    "namn": "Brogaarden AB",
+    "url": "https://brogaarden.se/products/ultimate-balancer-20kg",
+    "pris": 657,
+    "forp": 20,
+    "krPerKg": 32.85,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://cdn.shopify.com/s/files/1/0033/3139/1606/files/Ultimate_Balancer_S_web0916.pdf",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "eclipse-biomagnesium",
+  "namn": "BioMagnesium",
+  "tillverkare": "Eclipse Biofarmab",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 2.0,
+  "dosMax": 5.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Doseringsavsnittet anger 1 dosmatt = 10 g (ger 2,9 g magnesium): ponny 1 dosmatt, hast 2 dosmatt, stor hast 2,5 dosmatt/dag. OBS: kallan ar internt motsagelsefull - storleksavsnittet raknar dagsgivor utifran 20 g/dag. Dosintervallet 10-25 g",
+  "naring": {
+   "P": 11,
+   "Mg": 289,
+   "Na": 0,
+   "smbrp": 16,
+   "socker": 0,
+   "starkelse": 0
+  },
+  "odeklarerat": [
+   "Ca",
+   "Cu",
+   "Zn",
+   "Mn",
+   "Se",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Selen",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "grundad_nolla",
+  "forp": 0.4,
+  "krPerKg": 246.0,
+  "krPerKgMax": 422.5,
+  "saljare": [
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/muskler-leder/kompletteringsfoder-biomagnesium-eclipse-biofarmab",
+    "pris": 369,
+    "forp": 1.5,
+    "krPerKg": 246.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/eclipse-biofarmab/biomagnesium-1500g",
+    "pris": 369,
+    "forp": 1.5,
+    "krPerKg": 246.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/biomagnesium-400-g-eclipse-biofarmab",
+    "pris": 169,
+    "forp": 0.4,
+    "krPerKg": 422.5,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/biomagnesium",
+  "konfidens": "medel",
+  "kontrollerad": "2026-07-30",
+  "luckor": 11
+ },
+ {
+  "id": "krafft-magnesium",
+  "namn": "MAGNESIUM",
+  "tillverkare": "KRAFFT",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 1.6,
+  "dosMax": 1.6,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Blandas i fodret. Häst och ponny 8 g/dag. 15 ml = ca 8 g. En påse (500 g) räcker ca 50 dagar. Sammansättning: magnesiumoxid 100%.",
+  "naring": {
+   "Mg": 570,
+   "socker": 0,
+   "starkelse": 0
+  },
+  "odeklarerat": [
+   "Ca",
+   "P",
+   "Na",
+   "Cu",
+   "Zn",
+   "Mn",
+   "Se",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Selen",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "grundad_nolla",
+  "forp": 0.5,
+  "krPerKg": 498.0,
+  "krPerKgMax": 498.0,
+  "saljare": [
+   {
+    "namn": "Stigtomta Kvarn",
+    "url": "https://stigtomtakvarn.se/hem/7032-krafft-magnesium-500g-pase-7350015761766.html",
+    "pris": 249,
+    "forp": 0.5,
+    "krPerKg": 498.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "StallMagasinet",
+    "url": "https://stallmagasinet.se/krafft-magnesium-500-g",
+    "pris": 249,
+    "forp": 0.5,
+    "krPerKg": 498.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/fodertillskott-krafft-magnesium-500g",
+    "pris": 249,
+    "forp": 0.5,
+    "krPerKg": 498.0,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/magnesium/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
+ },
+ {
+  "id": "krafft-pure-vacuum-salt",
+  "namn": "PURE VACUUM SALT",
+  "tillverkare": "KRAFFT",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 5.0,
+  "dosMax": 20.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "5-20 g/dag per 100 kg kroppsvikt för hästar i lätt till hårt arbete. Sidans SLU-baserade riktlinjer för saltbehov: underhåll 5,1 g/100 kg, lätt arbete 7 g/100 kg, medelhårt arbete 9 g/100 kg, hårt arbete 9-13 g/100 kg. 1 dl = 140 g, 15 ml =",
+  "naring": {
+   "Na": 390,
+   "socker": 0,
+   "starkelse": 0
+  },
+  "odeklarerat": [
+   "Ca",
+   "P",
+   "Mg",
+   "Cu",
+   "Zn",
+   "Mn",
+   "Se",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Selen",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "grundad_nolla",
+  "forp": 5,
+  "krPerKg": 29.8,
+  "krPerKgMax": 29.8,
+  "saljare": [
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/pure-vaccum-salt-5-kg",
+    "pris": 149,
+    "forp": 5,
+    "krPerKg": 29.8,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/krafft/6822-salt-lost-5-kg-7350015761568.html",
+    "pris": 149,
+    "forp": 5,
+    "krPerKg": 29.8,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/salt/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
+ },
+ {
+  "id": "rsmustang-selen-e-vitamin",
+  "namn": "RS Mustang Selen & E-vitamin",
+  "tillverkare": "RS Mustang",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 8.0,
+  "dosMax": 8.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Vuxen hast 40 g/dag, blandas i fodergivan. Medsant matt rymmer 20 g. Racker till en hast i ca 25 dagar (1 kg) / ca 62 dagar (2,5 kg).",
+  "naring": {
+   "Se": 20,
+   "vitE": 20000
+  },
+  "odeklarerat": [
+   "Ca",
+   "P",
+   "Mg",
+   "Na",
+   "Cu",
+   "Zn",
+   "Mn",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "okant",
+  "forp": 1,
+  "krPerKg": null,
+  "krPerKgMax": null,
+  "saljare": [],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://rsmustang.se/wp-content/uploads/2024/06/Selen_E-vitamin_webb24.pdf",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 8
+ },
+ {
+  "id": "eclipse-rehalyt-basic",
+  "namn": "Rehalyt Basic",
+  "tillverkare": "Eclipse Biofarmab",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "arbete"
+  ],
+  "dosMin": 4.0,
+  "dosMax": 12.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Efter latt svettning 20-30 g, efter kraftig svettning 50-60 g. Kallan anger att 60 g ersatter salterna i ca 5 liter svett. Ges vid behov, inte som daglig underhallsgiva.",
+  "naring": {
+   "Ca": 4.5,
+   "Mg": 4.5,
+   "Na": 262,
+   "smbrp": 136,
+   "socker": 84,
+   "starkelse": 0
+  },
+  "odeklarerat": [
+   "P",
+   "Cu",
+   "Zn",
+   "Mn",
+   "Se",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Selen",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "deklarerat",
+  "forp": 1.5,
+  "krPerKg": 191.58,
+  "krPerKgMax": 283.0,
+  "saljare": [
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/elektrolyter-eclipse-biofarmab-rehalyt-basic-1-5-kg-7330824012525/",
+    "pris": 2299,
+    "forp": 12,
+    "krPerKg": 191.58,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/elektrolyter-eclipse-biofarmab-rehalyt-basic-1-5-kg-7330824012525/",
+    "pris": 329,
+    "forp": 1.5,
+    "krPerKg": 219.33,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/elektrolyter-eclipse-biofarmab-rehalyt-basic-3-kg-7330824012532/",
+    "pris": 679,
+    "forp": 3,
+    "krPerKg": 226.33,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Svensk Ridsport",
+    "url": "https://www.svenskridsport.com/products/eclipse-rehalyt-basic-3kg",
+    "pris": 849,
+    "forp": 3,
+    "krPerKg": 283.0,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.eclipsebiofarmab.se/produkter/hast/elektrolyter/rehalyt-basic",
+  "konfidens": "lag",
+  "kontrollerad": "2026-07-30",
+  "luckor": 15
+ },
+ {
+  "id": "eclipse-selo-e-vitamin",
+  "namn": "Selo-E Vitamin",
+  "tillverkare": "Eclipse Biofarmab",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 2.2,
+  "dosMax": 6.6,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "1 dosmatt = 22 g. Ponny 0,5 dosmatt/dag (11 g), hast 1 dosmatt/dag (22 g), stor hast over 600 kg 1,5 dosmatt/dag (33 g). Vid 22 g/dag ges 2 mg selen och 1550 mg E-vitamin/dag.",
+  "naring": {
+   "Na": 2,
+   "Se": 90,
+   "smbrp": 18,
+   "vitE": 70500
+  },
+  "odeklarerat": [
+   "Ca",
+   "P",
+   "Mg",
+   "Cu",
+   "Zn",
+   "Mn",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 0.9,
+  "krPerKg": 310.0,
+  "krPerKgMax": 365.56,
+  "saljare": [
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/kosttillskott-eclipse-biofarmab-selo-e-900-g-7330824009778/",
+    "pris": 279,
+    "forp": 0.9,
+    "krPerKg": 310.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/eclipse-biofarmab/seloe-1800gr",
+    "pris": 599,
+    "forp": 1.8,
+    "krPerKg": 332.78,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/eclipse-biofarmab/selo-e-900g",
+    "pris": 329,
+    "forp": 0.9,
+    "krPerKg": 365.56,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/e-vitamin/e-vitamin-900-g-selo-e-eclipse-biofarmab",
+    "pris": 329,
+    "forp": 0.9,
+    "krPerKg": 365.56,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/selo-e",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 11
+ },
+ {
+  "id": "trikem-e-selen",
+  "namn": "Trikem E+Selen",
+  "tillverkare": "Trikem",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 4.0,
+  "dosMax": 4.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "6 ml (4 g)/100 kg kroppsvikt och dag. Ex. hast 500 kg: 30 ml (20 g)/dag. Tillverkaren varnar: 'Bor ej overdoseras - innehaller selen.' Vid 20 g/dag ges 2,2 mg selen/dag. Karenstid 0 h.",
+  "naring": {
+   "P": 0.33,
+   "Na": 1.3,
+   "Zn": 500,
+   "Mn": 500,
+   "Se": 110,
+   "smbrp": 104,
+   "vitE": 25000
+  },
+  "odeklarerat": [
+   "Ca",
+   "Mg",
+   "Cu",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Järn",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 1,
+  "krPerKg": 273.0,
+  "krPerKgMax": 339.0,
+  "saljare": [
+   {
+    "namn": "Apotea",
+    "url": "https://www.apotea.se/trikem-eselen-1000-g",
+    "pris": 273,
+    "forp": 1,
+    "krPerKg": 273.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/muskler-leder/vimital-e-plus-trikem",
+    "pris": 329,
+    "forp": 1,
+    "krPerKg": 329.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/trikem-eselen-1000gr",
+    "pris": 339,
+    "forp": 1,
+    "krPerKg": 339.0,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.trikem.se/en/shop/trikem-e-selen-15537",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 12
+ },
+ {
+  "id": "trikem-magnesium",
+  "namn": "Trikem Magnesium",
+  "tillverkare": "Trikem",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 2.0,
+  "dosMax": 2.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "2 ml per 100 kg kroppsvikt och dag. Tillverkaren anger 10 ml = 10 g. Ex. hast 500 kg: 10 ml (10 g)/dag. Karenstid 0 h.",
+  "naring": {
+   "P": 73,
+   "Mg": 330,
+   "Na": 39,
+   "socker": 0,
+   "starkelse": 0
+  },
+  "odeklarerat": [
+   "Ca",
+   "Cu",
+   "Zn",
+   "Mn",
+   "Se",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Selen",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "grundad_nolla",
+  "forp": 0.75,
+  "krPerKg": 99.83,
+  "krPerKgMax": 172.0,
+  "saljare": [
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/kosttillskott-trikem-magnesium-750-g-7394244101528/",
+    "pris": 599,
+    "forp": 6,
+    "krPerKg": 99.83,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/trikem-magnesium/15301",
+    "pris": 655,
+    "forp": 6,
+    "krPerKg": 109.17,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/kosttillskott-trikem-magnesium-750-g-7394244101528/",
+    "pris": 119,
+    "forp": 0.75,
+    "krPerKg": 158.67,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/muskler-leder/vimital-magnesium-trikem",
+    "pris": 129,
+    "forp": 0.75,
+    "krPerKg": 172.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/trikem-magnesium/15300",
+    "pris": 129,
+    "forp": 0.75,
+    "krPerKg": 172.0,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.trikem.se/en/shop/trikem-magnesium-15539",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
+ },
+ {
+  "id": "trikem-zinc",
+  "namn": "Trikem Zinc",
+  "tillverkare": "Trikem",
+  "kategori": "enkelnaring",
+  "form": "pulver",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 3.2,
+  "dosMax": 3.2,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "6 ml (3,2 g) per 100 kg kroppsvikt och dag eller enligt berakad foderstat. Ex. hast 500 kg: 30 ml (16 g)/dag = 500 mg zink/dag. Karenstid 0 h.",
+  "naring": {
+   "Ca": 0.95,
+   "P": 6.2,
+   "Na": 4.2,
+   "Zn": 31000
+  },
+  "odeklarerat": [
+   "Mg",
+   "Cu",
+   "Mn",
+   "Se",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Mangan",
+   "Järn",
+   "Selen",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "okant",
+  "forp": 0.5,
+  "krPerKg": 278.0,
+  "krPerKgMax": 318.0,
+  "saljare": [
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/zinktillskott-trikem-zinc-500-g-7394244103751/",
+    "pris": 139,
+    "forp": 0.5,
+    "krPerKg": 278.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/trikem-zinc-500gr",
+    "pris": 155,
+    "forp": 0.5,
+    "krPerKg": 310.0,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/immunforsvar/kompletteringsfoder-zinc-trikem",
+    "pris": 159,
+    "forp": 0.5,
+    "krPerKg": 318.0,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.trikem.se/en/shop/trikem-zinc-15548",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
+ },
+ {
+  "id": "krafft-vitamin-e-pellets",
+  "namn": "VITAMIN E PELLETS",
+  "tillverkare": "KRAFFT",
+  "kategori": "enkelnaring",
+  "form": "pellets",
+  "malgrupp": [
+   "arbete",
+   "unghast",
+   "avel"
+  ],
+  "dosMin": 6.0,
+  "dosMax": 12.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Hästar i hårt arbete eller digivande ston 60 g/dag; normalt arbetande hästar eller föl 30 g/dag. 1 dl = ca 60 g. 2,5 kg räcker ca 80 dagar, 7 kg ca 230 dagar.",
+  "naring": {
+   "Na": 1,
+   "Se": 0,
+   "smbrp": 100,
+   "vitE": 17000
+  },
+  "odeklarerat": [
+   "Ca",
+   "P",
+   "Mg",
+   "Cu",
+   "Zn",
+   "Mn",
+   "I",
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Koppar",
+   "Zink",
+   "Mangan",
+   "Järn",
+   "Jod",
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 2.5,
+  "krPerKg": 84.14,
+  "krPerKgMax": 119.6,
+  "saljare": [
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/vitaminer-mineraler/8415-krafft-vitamin-e-7kg-pase-7350015761636.html",
+    "pris": 589,
+    "forp": 7,
+    "krPerKg": 84.14,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/fodertillskott-krafft-vitamin-e-pellets-7kg",
+    "pris": 589,
+    "forp": 7,
+    "krPerKg": 84.14,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/vitamin-e",
+    "pris": 299,
+    "forp": 2.5,
+    "krPerKg": 119.6,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/vitaminer-mineraler/8250-krafft-vitamin-e-2-5kg-7350015761629.html",
+    "pris": 299,
+    "forp": 2.5,
+    "krPerKg": 119.6,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/vitamin-e-pellets/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "st-hippolyt-gemuse-krauter-mineralien-nordic",
+  "namn": "Gemüse-Kräuter-Mineralien Nordic",
+  "tillverkare": "St. Hippolyt",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 20.0,
+  "dosMax": 20.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "20 g per 100 kg kroppsvikt dagligen tillsammans med grovfoder och/eller bete. Som komplement till låg ranson av kraftfoder. Kompletteringsfodret ska som mest utgöra 1,4 % av foderstaten inklusive hö. 1 mått = ca 150 g.",
+  "naring": {
+   "Ca": 110,
+   "P": 36,
+   "Mg": 35,
+   "Na": 50,
+   "Cu": 790,
+   "Zn": 2661,
+   "Mn": 1102,
+   "Se": 14.2,
+   "I": 23,
+   "Co": 3,
+   "Fe": 307,
+   "smbrp": 50,
+   "socker": 20,
+   "starkelse": 90,
+   "vitE": 5200
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "deklarerat",
+  "forp": 10,
+  "krPerKg": 51.0,
+  "krPerKgMax": 62.0,
+  "saljare": [
+   {
+    "namn": "St. Hippolyt webbshop",
+    "url": "https://hippolyt.se/vare/gemuse-krauter-mineralien-nordic/?attribute_pa_mangd=25-kg",
+    "pris": 1275,
+    "forp": 25,
+    "krPerKg": 51.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "St. Hippolyt webbshop",
+    "url": "https://hippolyt.se/vare/gemuse-krauter-mineralien-nordic/?attribute_pa_mangd=10-kg",
+    "pris": 620,
+    "forp": 10,
+    "krPerKg": 62.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/gemse-krauter-mineralien-10-kg",
+    "pris": 620,
+    "forp": 10,
+    "krPerKg": 62.0,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://hippolyt.se/vare/gemuse-krauter-mineralien-nordic/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 6
+ },
+ {
+  "id": "hippo-selection-standard",
+  "namn": "HippoSelection Standard",
+  "tillverkare": "Hippo",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 12.0,
+  "dosMax": 44.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Utfodringsanvisning. Rekommenderad daglig giva: HippoSelection Mineralfoder per häst (500 kg) och dag. Lätt till normalt arbete, 60-120 g. Hårt till intensivt arbete, 100-200 g. Lågdräktiga ston, 60-120 g. Högdräktiga ston, 100-200 g. Digiv",
+  "naring": {
+   "Ca": 90,
+   "P": 35,
+   "Mg": 35,
+   "Na": 65,
+   "Cu": 575,
+   "Zn": 2000,
+   "Mn": 1000,
+   "Se": 18,
+   "I": 12,
+   "Co": 8.0,
+   "Fe": 750,
+   "vitE": 4200
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "okant",
+  "forp": 5,
+  "krPerKg": 36.6,
+  "krPerKgMax": 45.0,
+  "saljare": [
+   {
+    "namn": "Ramsjö Gård",
+    "url": "https://ramsjo.se/produkt/hipposelection-standard-15kg/",
+    "pris": 549,
+    "forp": 15,
+    "krPerKg": 36.6,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://www.foderboden.se/product/hipposelection-standard-pellets-15kg",
+    "pris": 559,
+    "forp": 15,
+    "krPerKg": 37.27,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Djur&Natur",
+    "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-standard/",
+    "pris": 559,
+    "forp": 15,
+    "krPerKg": 37.27,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/hipposelection-standard-pellets-5kg",
+    "pris": 219,
+    "forp": 5,
+    "krPerKg": 43.8,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Djur&Natur",
+    "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-standard/",
+    "pris": 225,
+    "forp": 5,
+    "krPerKg": 45.0,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://issuu.com/svenskafoder/docs/220913_n_ringsdeklaration_mineralfoder_tillskott_v",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "hippo-selection-strength",
+  "namn": "HippoSelection Strength",
+  "tillverkare": "Hippo",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "unghast",
+   "avel"
+  ],
+  "dosMin": 12.0,
+  "dosMax": 40.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Rekommenderad daglig giva per häst (500 kg): Hästar i hårt till intensivt arbete 100-200 g. Långdräktiga ston 60-120 g. Högdräktiga ston 100-200 g. Digivande ston 100-200 g. Unghästar 60-200 g. Ponny och övriga hästar 60-120 g.",
+  "naring": {
+   "Ca": 115,
+   "P": 30,
+   "Mg": 40,
+   "Na": 65,
+   "Cu": 720,
+   "Zn": 2200,
+   "Mn": 1440,
+   "Se": 20,
+   "I": 14,
+   "Co": 12,
+   "Fe": 960,
+   "vitE": 5000
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "okant",
+  "forp": 5,
+  "krPerKg": 31.27,
+  "krPerKgMax": 47.0,
+  "saljare": [
+   {
+    "namn": "Ramsjö Gård",
+    "url": "https://ramsjo.se/produkt/hipposelection-strength-15kg/",
+    "pris": 469,
+    "forp": 15,
+    "krPerKg": 31.27,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/hipposelection-strength-pellets-15kg",
+    "pris": 579,
+    "forp": 15,
+    "krPerKg": 38.6,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Djur&Natur",
+    "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-strength/",
+    "pris": 585,
+    "forp": 15,
+    "krPerKg": 39.0,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Djur&Natur",
+    "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-strength/",
+    "pris": 235,
+    "forp": 5,
+    "krPerKg": 47.0,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/hipposelection-strength-pellets-5kg",
+    "pris": 235,
+    "forp": 5,
+    "krPerKg": 47.0,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://issuu.com/svenskafoder/docs/220913_n_ringsdeklaration_mineralfoder_tillskott_v",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 12
+ },
+ {
+  "id": "hippo-selection-success",
+  "namn": "HippoSelection Success",
+  "tillverkare": "Hippo",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 12.0,
+  "dosMax": 40.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Utfodringsanvisning. Rekommenderad giva per häst och dag (500 kg kroppsvikt): Hästar i lätt till normalt arbete 60-120 g. Hästar i hårt till intensivt arbete 100-200 g. Långdräktiga ston 60-120 g. Högdräktiga ston 100-200 g. Digivande ston ",
+  "naring": {
+   "Ca": 80,
+   "P": 35,
+   "Mg": 60,
+   "Na": 75,
+   "Cu": 695,
+   "Zn": 2080,
+   "Mn": 1300,
+   "Se": 20,
+   "I": 14,
+   "Co": 12,
+   "Fe": 880,
+   "vitE": 8000
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "okant",
+  "forp": 5,
+  "krPerKg": 38.6,
+  "krPerKgMax": 53.8,
+  "saljare": [
+   {
+    "namn": "Ramsjö Gård",
+    "url": "https://ramsjo.se/produkt/hipposelection-success-15kg/",
+    "pris": 579,
+    "forp": 15,
+    "krPerKg": 38.6,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Djur&Natur",
+    "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-success/",
+    "pris": 595,
+    "forp": 15,
+    "krPerKg": 39.67,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/hipposelection-success-pellets-15kg",
+    "pris": 619,
+    "forp": 15,
+    "krPerKg": 41.27,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Djur&Natur",
+    "url": "https://djurochnatur.se/produkter/hast/hastfoder/mineralfoder-salt/hipposelection-success/",
+    "pris": 235,
+    "forp": 5,
+    "krPerKg": 47.0,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/hipposelection-success-pellets-5kg",
+    "pris": 269,
+    "forp": 5,
+    "krPerKg": 53.8,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://issuu.com/svenskafoder/docs/220913_n_ringsdeklaration_mineralfoder_tillskott_v",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 12
+ },
+ {
+  "id": "krafft-miner-high-phosphorus",
+  "namn": "MINER HIGH PHOSPHORUS",
+  "tillverkare": "KRAFFT",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 16.0,
+  "dosMax": 36.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Vuxen häst i vila/lätt arbete ca 80 g/dag; medelhögt/högpresterande arbete ca 120 g/dag; dräktiga ston (mån 7-11) 120 g/dag; ston i tidig digivning ca 180 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g. Avsedd att återstäl",
+  "naring": {
+   "Ca": 33,
+   "P": 65,
+   "Mg": 60,
+   "Na": 50,
+   "Cu": 900,
+   "Zn": 3500,
+   "Mn": 1000,
+   "Se": 15,
+   "I": 5,
+   "Fe": 300,
+   "smbrp": 60,
+   "vitE": 5000
+  },
+  "odeklarerat": [
+   "Co"
+  ],
+  "ejTakkontroll": [
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 8,
+  "krPerKg": 33.95,
+  "krPerKgMax": 43.62,
+  "saljare": [
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/krafft/miner-high-phosphorus-20-kg",
+    "pris": 679,
+    "forp": 20,
+    "krPerKg": 33.95,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/haest/413-krafft-miner-vit-balance-pellets-20kg-7350015760202.html",
+    "pris": 679,
+    "forp": 20,
+    "krPerKg": 33.95,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-high-phosphorus-pellets-20kg",
+    "pris": 679,
+    "forp": 20,
+    "krPerKg": 33.95,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/miner-balance-p-8kg",
+    "pris": 349,
+    "forp": 8,
+    "krPerKg": 43.62,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/haest/405-krafft-miner-vit-balance-pell-8-kg-st-7314671660320.html",
+    "pris": 349,
+    "forp": 8,
+    "krPerKg": 43.62,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-high-phosphorus-pellets-8kg",
+    "pris": 349,
+    "forp": 8,
+    "krPerKg": 43.62,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-high-phosphorus/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "krafft-miner-original",
+  "namn": "MINER ORIGINAL",
+  "tillverkare": "KRAFFT",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 16.0,
+  "dosMax": 36.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Vuxen häst i vila/lätt arbete ca 80 g/dag; medelhögt/högpresterande arbete ca 120 g/dag; dräktiga ston (mån 7-11) 120 g/dag; ston i tidig digivning ca 180 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g.",
+  "naring": {
+   "Ca": 120,
+   "P": 40,
+   "Mg": 60,
+   "Na": 50,
+   "Cu": 900,
+   "Zn": 3500,
+   "Mn": 1000,
+   "Se": 15,
+   "I": 5,
+   "Fe": 300,
+   "smbrp": 40,
+   "vitE": 5000
+  },
+  "odeklarerat": [
+   "Co"
+  ],
+  "ejTakkontroll": [
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 8,
+  "krPerKg": 23.75,
+  "krPerKgMax": 37.38,
+  "saljare": [
+   {
+    "namn": "Hönsboa (Linzie Rengsjö AB)",
+    "url": "https://www.honsboa.se/Produkter/Hast/KRAFFT_Miner_Original_20_kg?id=402211",
+    "pris": 475,
+    "forp": 20,
+    "krPerKg": 23.75,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/krafft-miner-sack-20-kg",
+    "pris": 549,
+    "forp": 20,
+    "krPerKg": 27.45,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/haest/310-krafft-miner-bla-pellets-20kg-7350015760189.html",
+    "pris": 549,
+    "forp": 20,
+    "krPerKg": 27.45,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-original-pellets-20kg",
+    "pris": 549,
+    "forp": 20,
+    "krPerKg": 27.45,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/krafft-miner-8-kg",
+    "pris": 299,
+    "forp": 8,
+    "krPerKg": 37.38,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/haest/308-krafft-miner-bla-pell-8-kg-st-7314671660023.html",
+    "pris": 299,
+    "forp": 8,
+    "krPerKg": 37.38,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Stigtomta Kvarn",
+    "url": "https://stigtomtakvarn.se/mineraler/5071-5264-krafft-mineral-bla-pellets.html",
+    "pris": 299,
+    "forp": 8,
+    "krPerKg": 37.38,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-original-pellets-8kg",
+    "pris": 299,
+    "forp": 8,
+    "krPerKg": 37.38,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-original/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 11
+ },
+ {
+  "id": "krafft-miner-summer",
+  "namn": "MINER SUMMER",
+  "tillverkare": "KRAFFT",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 20.0,
+  "dosMax": 40.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Vuxen häst i vila/lätt arbete ca 100 g/dag; medelhögt/högpresterande arbete ca 150 g/dag; dräktiga ston (mån 7-11) 150 g/dag; ston i tidig digivning ca 200 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g. Avsedd för hästar ",
+  "naring": {
+   "Ca": 80,
+   "P": 40,
+   "Mg": 60,
+   "Na": 50,
+   "Cu": 900,
+   "Zn": 2800,
+   "Mn": 1000,
+   "Se": 15,
+   "I": 5,
+   "Fe": 300,
+   "smbrp": 50,
+   "vitE": 0
+  },
+  "odeklarerat": [
+   "Co"
+  ],
+  "ejTakkontroll": [
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 8,
+  "krPerKg": 22.95,
+  "krPerKgMax": 36.88,
+  "saljare": [
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-summer-pellets-20kg",
+    "pris": 459,
+    "forp": 20,
+    "krPerKg": 22.95,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/miner-gron",
+    "pris": 269,
+    "forp": 8,
+    "krPerKg": 33.62,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/haest/426-krafft-miner-gron-pell-8kg-summer-7350015761674.html",
+    "pris": 289,
+    "forp": 8,
+    "krPerKg": 36.12,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Stigtomta Kvarn",
+    "url": "https://stigtomtakvarn.se/mineraler/5073-6212-krafft-mineral-gron-pellets.html",
+    "pris": 289,
+    "forp": 8,
+    "krPerKg": 36.12,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-summer-pellets-8kg",
+    "pris": 295,
+    "forp": 8,
+    "krPerKg": 36.88,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-summer/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 11
+ },
+ {
+  "id": "krafft-miner-vitaminerals",
+  "namn": "MINER VITAMINERALS",
+  "tillverkare": "KRAFFT",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 16.0,
+  "dosMax": 36.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Vuxen häst i vila/lätt arbete ca 80 g/dag; medelhögt/högpresterande arbete ca 120 g/dag; dräktiga ston (mån 7-11) 120 g/dag; ston i tidig digivning ca 180 g/dag. Maxgiva 300 g/dag enligt tillverkaren. 1 dl väger ca 80 g.",
+  "naring": {
+   "Ca": 120,
+   "P": 20,
+   "Mg": 60,
+   "Na": 50,
+   "Cu": 1200,
+   "Zn": 3500,
+   "Mn": 1000,
+   "Se": 15,
+   "I": 5,
+   "Fe": 300,
+   "smbrp": 40,
+   "vitE": 15000
+  },
+  "odeklarerat": [
+   "Co"
+  ],
+  "ejTakkontroll": [
+   "Kobolt"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 8,
+  "krPerKg": 34.45,
+  "krPerKgMax": 47.38,
+  "saljare": [
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/mineraler-vitamineral-20-kg",
+    "pris": 689,
+    "forp": 20,
+    "krPerKg": 34.45,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-vitaminerals-pellets-20kg",
+    "pris": 719,
+    "forp": 20,
+    "krPerKg": 35.95,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/miner-rod",
+    "pris": 379,
+    "forp": 8,
+    "krPerKg": 47.38,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Glada Hästen",
+    "url": "https://gladahasten.se/krafft/843-krafft-miner-rod-extra-pell-8-kg-st-7314671660122.html",
+    "pris": 379,
+    "forp": 8,
+    "krPerKg": 47.38,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-krafft-miner-vitaminerals-pellets-8kg",
+    "pris": 379,
+    "forp": 8,
+    "krPerKg": 47.38,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.kraffthastfoder.se/produkter/produkter-alla/miner-vitaminerals/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 11
+ },
+ {
+  "id": "granngarden-hast-balans",
+  "namn": "Mineralfoder Granngården Häst Balans",
+  "tillverkare": "Granngården",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete"
+  ],
+  "dosMin": 10.0,
+  "dosMax": 40.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Ponnyer och hastar i vila 50-75 g; latt motion eller arbete 75-100 g; normal traning eller arbete 100-150 g; hard traning eller arbete 150-200 g. 1 dl mineralpellets vager cirka 100 g. Maxgiva 250 g per dag.",
+  "naring": {
+   "Ca": 120,
+   "P": 30,
+   "Mg": 50,
+   "Na": 60,
+   "Cu": 900,
+   "Zn": 2200,
+   "Mn": 1200,
+   "Se": 20,
+   "I": 5,
+   "Co": 5,
+   "Fe": 1000,
+   "vitE": 3000
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 8,
+  "krPerKg": 25.27,
+  "krPerKgMax": 34.88,
+  "saljare": [
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-balans-15kg",
+    "pris": 379,
+    "forp": 15,
+    "krPerKg": 25.27,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-balans-8kg",
+    "pris": 279,
+    "forp": 8,
+    "krPerKg": 34.88,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.granngarden.se/mineralfoder-granngarden-hast-balans-15kg",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "granngarden-hast-bas",
+  "namn": "Mineralfoder Granngården Häst Bas",
+  "tillverkare": "Granngården",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "lattfodrad"
+  ],
+  "dosMin": 10.0,
+  "dosMax": 30.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Ponnyer och hastar i vila 50-75 g; hastar i latt motion eller arbete 75-100 g; hastar i normal traning eller arbete 100-150 g. 1 dl mineralpellets vager cirka 100 g. Maxgiva 250 g per dag.",
+  "naring": {
+   "Ca": 140,
+   "P": 30,
+   "Mg": 45,
+   "Na": 60,
+   "Cu": 900,
+   "Zn": 2000,
+   "Mn": 1000,
+   "Se": 20,
+   "I": 5,
+   "Co": 5,
+   "Fe": 1000
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 8,
+  "krPerKg": 21.27,
+  "krPerKgMax": 33.62,
+  "saljare": [
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-bas-15kg",
+    "pris": 319,
+    "forp": 15,
+    "krPerKg": 21.27,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-bas-8kg",
+    "pris": 269,
+    "forp": 8,
+    "krPerKg": 33.62,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.granngarden.se/mineralfoder-granngarden-hast-bas-15kg",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "granngarden-hast-plus",
+  "namn": "Mineralfoder Granngården Häst Plus",
+  "tillverkare": "Granngården",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "arbete",
+   "avel"
+  ],
+  "dosMin": 10.0,
+  "dosMax": 40.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Ponny 50-75 g; hastar i normal traning eller arbete 100-125 g; hard traning eller arbete 150-200 g; draktiga och digivande ston 150-200 g. 1 dl mineralpellets vager cirka 100 g. Maxgiva 250 g per dag.",
+  "naring": {
+   "Ca": 100,
+   "P": 40,
+   "Mg": 60,
+   "Na": 65,
+   "Cu": 1000,
+   "Zn": 3000,
+   "Mn": 1500,
+   "Se": 20,
+   "I": 10,
+   "Co": 7,
+   "Fe": 1000,
+   "vitE": 6000
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 8,
+  "krPerKg": 33.93,
+  "krPerKgMax": 43.62,
+  "saljare": [
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-plus-15kg",
+    "pris": 509,
+    "forp": 15,
+    "krPerKg": 33.93,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/mineralfoder-granngarden-hast-plus-8kg",
+    "pris": 349,
+    "forp": 8,
+    "krPerKg": 43.62,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.granngarden.se/mineralfoder-granngarden-hast-plus-15kg",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 12
+ },
+ {
+  "id": "trikem-minerals",
+  "namn": "Trikem Minerals",
+  "tillverkare": "Trikem",
+  "kategori": "mineralfoder",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "unghast",
+   "avel",
+   "senior"
+  ],
+  "dosMin": 16.0,
+  "dosMax": 16.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "20 ml/100 kg kroppsvikt och dag. Tillverkaren anger 100 ml = 80 g, dvs 20 ml = 16 g. Ex. häst 500 kg: 100 ml (80 g)/dag; ponny 250 kg: 50 ml (40 g)/dag. Karenstid 0 h.",
+  "naring": {
+   "Ca": 125,
+   "P": 47,
+   "Mg": 40,
+   "Na": 1.9,
+   "Cu": 820,
+   "Zn": 1750,
+   "Mn": 1750,
+   "Se": 9,
+   "I": 6,
+   "Co": 6.25
+  },
+  "odeklarerat": [
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Järn"
+  ],
+  "sockerStatus": "okant",
+  "forp": 12,
+  "krPerKg": 41.25,
+  "krPerKgMax": 44.08,
+  "saljare": [
+   {
+    "namn": "Apotea",
+    "url": "https://www.apotea.se/trikem-minerals-12-kg",
+    "pris": 495,
+    "forp": 12,
+    "krPerKg": 41.25,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/mineraltillskott-trikem-minerals-pellets-12-kg-7394244104116/",
+    "pris": 529,
+    "forp": 12,
+    "krPerKg": 44.08,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.trikem.se/en/shop/1865000-trikem-minerals-12-kg-11781",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
+ },
+ {
+  "id": "eclipse-biomineral-total",
+  "namn": "BioMineral Total",
+  "tillverkare": "Eclipse Biofarmab",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pulver",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "unghast",
+   "avel",
+   "senior"
+  ],
+  "dosMin": 4.0,
+  "dosMax": 10.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "1 dosmatt = 20 g. Ponny 1 dosmatt/dag (20 g), hast 2 dosmatt/dag (40 g), stor hast over 600 kg 2,5 dosmatt/dag (50 g). Blandas i kraftfodret. BSD-markt, tavlingskarens 0. Vid 40 g/dag ges 1 mg selen/dag.",
+  "naring": {
+   "Ca": 200,
+   "P": 63,
+   "Mg": 25,
+   "Na": 45,
+   "Cu": 2000,
+   "Zn": 5500,
+   "Mn": 3750,
+   "Se": 25,
+   "I": 30,
+   "Fe": 500,
+   "socker": 0,
+   "starkelse": 0
+  },
+  "odeklarerat": [
+   "Co"
+  ],
+  "ejTakkontroll": [
+   "Kobolt"
+  ],
+  "sockerStatus": "grundad_nolla",
+  "forp": 1.2,
+  "krPerKg": 207.5,
+  "krPerKgMax": 207.5,
+  "saljare": [
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/biomineral-total-1200g",
+    "pris": 249,
+    "forp": 1.2,
+    "krPerKg": 207.5,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/kompletteringsfoder-biomineral-total-eclipse-biofarmab",
+    "pris": 249,
+    "forp": 1.2,
+    "krPerKg": 207.5,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.eclipsebiofarmab.se/produkter/hast/vitaminer-mineraler/biomineral-total",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "brogaarden-vitamins-minerals",
+  "namn": "Brogaarden Vitamins & Minerals",
+  "tillverkare": "Brogaarden",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "lattfodrad"
+  ],
+  "dosMin": 8.0,
+  "dosMax": 30.0,
+  "dosBas": "per_hast",
+  "dosTabell": [
+   {
+    "vikt": 200,
+    "min": 40,
+    "max": 50
+   },
+   {
+    "vikt": 300,
+    "min": 60,
+    "max": 75
+   },
+   {
+    "vikt": 400,
+    "min": 80,
+    "max": 100
+   },
+   {
+    "vikt": 500,
+    "min": 100,
+    "max": 125
+   },
+   {
+    "vikt": 600,
+    "min": 120,
+    "max": 150
+   }
+  ],
+  "dosNot": "Tabell efter kroppsvikt: 200 kg 40 g/dag (underhåll) – 50 g/dag (lätt/moderat arbete); 300 kg 60–75 g; 400 kg 80–100 g; 500 kg 100–125 g; 600 kg 120–150 g. Ges tillsammans med 1,75–2 kg hö/hösilage per 100 kg kroppsvikt. Medföljande mått in",
+  "naring": {
+   "Ca": 90,
+   "P": 35,
+   "Mg": 35,
+   "Na": 35,
+   "Cu": 1300,
+   "Zn": 4500,
+   "Mn": 3000,
+   "Se": 17,
+   "I": 32,
+   "Co": 1.5,
+   "Fe": 2500,
+   "energi": 6.4,
+   "smbrp": 150,
+   "socker": 45,
+   "starkelse": 25,
+   "vitE": 10000
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "deklarerat",
+  "forp": 5,
+  "krPerKg": 109.8,
+  "krPerKgMax": 109.8,
+  "saljare": [
+   {
+    "namn": "Brogaarden AB",
+    "url": "https://brogaarden.se/products/brogaarden-vitamins-minerals",
+    "pris": 549,
+    "forp": 5,
+    "krPerKg": 109.8,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://cdn.shopify.com/s/files/1/0033/3139/1606/files/Brogaarden_Vitamins_Minerals_S_web.0522.pdf",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
+ },
+ {
+  "id": "dodson-horrell-daily-vitamins-minerals",
+  "namn": "Daily Vitamins & Minerals",
+  "tillverkare": "Dodson & Horrell",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "lattfodrad",
+   "metabol"
+  ],
+  "dosMin": 7.0,
+  "dosMax": 26.0,
+  "dosBas": "per_hast",
+  "dosTabell": [
+   {
+    "vikt": 200,
+    "min": 35,
+    "max": 45
+   },
+   {
+    "vikt": 300,
+    "min": 55,
+    "max": 65
+   },
+   {
+    "vikt": 400,
+    "min": 70,
+    "max": 90
+   },
+   {
+    "vikt": 500,
+    "min": 90,
+    "max": 110
+   },
+   {
+    "vikt": 600,
+    "min": 110,
+    "max": 130
+   }
+  ],
+  "dosNot": "Tabell efter kroppsvikt: 200 kg 35 g/dag (underhåll) – 45 g/dag (lätt arbete); 300 kg 55–65 g; 400 kg 70–90 g; 500 kg 90–110 g; 600 kg 110–130 g. Ges tillsammans med 1,75–2 kg hö/hösilage per 100 kg kroppsvikt. 1 mått (100 ml) = 75 g.",
+  "naring": {
+   "Ca": 65,
+   "P": 20,
+   "Mg": 11,
+   "Na": 17.5,
+   "Cu": 1075,
+   "Zn": 5000,
+   "Mn": 2000,
+   "Se": 13,
+   "I": 12.5,
+   "Co": 3,
+   "Fe": 2000,
+   "energi": 6,
+   "smbrp": 110,
+   "socker": 45,
+   "starkelse": 15
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "deklarerat",
+  "forp": 2,
+  "krPerKg": 213.5,
+  "krPerKgMax": 213.5,
+  "saljare": [
+   {
+    "namn": "Brogaarden AB",
+    "url": "https://brogaarden.se/products/daily-vits-mins-suppl-2kg",
+    "pris": 427,
+    "forp": 2,
+    "krPerKg": 213.5,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://cdn.shopify.com/s/files/1/0033/3139/1606/files/Daily_Vits_Mins_S_web0315.pdf",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 9
+ },
+ {
+  "id": "st-hippolyt-microvital",
+  "namn": "MicroVital",
+  "tillverkare": "St. Hippolyt",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "granulat",
+  "malgrupp": [
+   "arbete",
+   "avel",
+   "senior",
+   "unghast"
+  ],
+  "dosMin": 15.0,
+  "dosMax": 20.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "15-20 g per 100 kg kroppsvikt dagligen tillsammans med det dagliga fodret. Invänjs långsamt. OBS: Inte tillräckligt som heltäckande mineraltillskott. Kompletteringsfodret ska som mest utgöra 1,4 % av foderstaten inklusive hö. 1 mått = ca 12",
+  "naring": {
+   "Ca": 20,
+   "P": 4,
+   "Mg": 11,
+   "Na": 10,
+   "Cu": 1000,
+   "Zn": 7500,
+   "Mn": 7000,
+   "Se": 9,
+   "Co": 10,
+   "Fe": 2500,
+   "smbrp": 150,
+   "vitE": 2000
+  },
+  "odeklarerat": [
+   "I"
+  ],
+  "ejTakkontroll": [
+   "Jod"
+  ],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 3,
+  "krPerKg": 259.5,
+  "krPerKgMax": 281.67,
+  "saljare": [
+   {
+    "namn": "St. Hippolyt webbshop",
+    "url": "https://hippolyt.se/vare/microvital/?attribute_pa_mangd=10-kg",
+    "pris": 2595,
+    "forp": 10,
+    "krPerKg": 259.5,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/st-hippolyt/microvital-10-kg",
+    "pris": 2595,
+    "forp": 10,
+    "krPerKg": 259.5,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "St. Hippolyt webbshop",
+    "url": "https://hippolyt.se/vare/microvital/?attribute_pa_mangd=3-kg",
+    "pris": 845,
+    "forp": 3,
+    "krPerKg": 281.67,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/blogg/fodersnack/hastens-palsbyte/microvital",
+    "pris": 845,
+    "forp": 3,
+    "krPerKg": 281.67,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://hippolyt.se/vare/microvital/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "pavo-18plus-vital",
+  "namn": "Pavo 18Plus Vital",
+  "tillverkare": "Pavo",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pellets",
+  "malgrupp": [
+   "senior",
+   "underhall"
+  ],
+  "dosMin": 16.5,
+  "dosMax": 16.5,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "16,5 gram per 100 kg kroppsvikt. Ponny (300 kg): 50 g. Häst (600 kg): 100 g.",
+  "naring": {
+   "Ca": 25.8,
+   "P": 10.2,
+   "Mg": 2.2,
+   "Na": 7.5,
+   "Cu": 2000,
+   "Zn": 2500,
+   "Mn": 2000,
+   "Se": 16,
+   "I": 25,
+   "smbrp": 108,
+   "socker": 45,
+   "starkelse": 17
+  },
+  "odeklarerat": [
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Järn",
+   "Kobolt"
+  ],
+  "sockerStatus": "deklarerat",
+  "forp": null,
+  "krPerKg": 73.62,
+  "krPerKgMax": 75.0,
+  "saljare": [
+   {
+    "namn": "Pavo webbshop",
+    "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-18plus-vital/",
+    "pris": 589,
+    "forp": 8,
+    "krPerKg": 73.62,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/leverantorer/pavo/pavo-18-plus-vital-8-kg",
+    "pris": 589,
+    "forp": 8,
+    "krPerKg": 73.62,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Pavo webbshop",
+    "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-18plus-vital/",
+    "pris": 15,
+    "forp": 0.2,
+    "krPerKg": 75.0,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.pavo.se/horsefeed/bas-allround/pavo-18plus-vital/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 15
+ },
+ {
+  "id": "pavo-dailyfit",
+  "namn": "Pavo DailyFit",
+  "tillverkare": "Pavo",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "block",
+  "malgrupp": [
+   "underhall",
+   "lattfodrad"
+  ],
+  "dosMin": 14.0,
+  "dosMax": 28.0,
+  "dosBas": "per_hast",
+  "dosTabell": [
+   {
+    "vikt": 300,
+    "min": 70,
+    "max": 70
+   },
+   {
+    "vikt": 600,
+    "min": 140,
+    "max": 140
+   }
+  ],
+  "dosNot": "Häst (600 kg): 1 brikett/dag. Ponny (300 kg): 0,5 brikett/dag. Tillverkaren anger brikettvikten till 140 g: 'Ein Brikett von nur 140 g enthält die gesamte Tagesdosis an Vitaminen, Mineralstoffen und Spurenelementen für ein Großpferd. Für Po",
+  "naring": {
+   "Ca": 24,
+   "P": 6,
+   "Mg": 2,
+   "Na": 3,
+   "Cu": 600,
+   "Zn": 1900,
+   "Mn": 2850,
+   "Se": 7.5,
+   "I": 23,
+   "energi": 7.4,
+   "smbrp": 145,
+   "socker": 85,
+   "starkelse": 45
+  },
+  "odeklarerat": [
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Järn",
+   "Kobolt"
+  ],
+  "sockerStatus": "deklarerat",
+  "forp": null,
+  "krPerKg": 68.38,
+  "krPerKgMax": 92.62,
+  "saljare": [
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/pavo-dailyfit-13kg",
+    "pris": 889,
+    "forp": 13,
+    "krPerKg": 68.38,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Pavo webbshop",
+    "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-dailyfit/",
+    "pris": 909,
+    "forp": 13,
+    "krPerKg": 69.92,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/pavo-summerfit-15kg",
+    "pris": 909,
+    "forp": 13,
+    "krPerKg": 69.92,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/pavo-dailyfit-45kg",
+    "pris": 379,
+    "forp": 4.5,
+    "krPerKg": 84.22,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Pavo webbshop",
+    "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-dailyfit/",
+    "pris": 389,
+    "forp": 4.5,
+    "krPerKg": 86.44,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/summerfit",
+    "pris": 389,
+    "forp": 4.5,
+    "krPerKg": 86.44,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/fodertillskott-pavo-dailyfit-30-p-42kg",
+    "pris": 389,
+    "forp": 4.2,
+    "krPerKg": 92.62,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.pavo.se/horsefeed/bas-allround/pavo-dailyfit/",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 22
+ },
+ {
+  "id": "pavo-vital",
+  "namn": "Pavo Vital",
+  "tillverkare": "Pavo",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "lattfodrad"
+  ],
+  "dosMin": 10.0,
+  "dosMax": 20.0,
+  "dosBas": "per_hast",
+  "dosTabell": [
+   {
+    "vikt": 300,
+    "min": 50,
+    "max": 50
+   },
+   {
+    "vikt": 600,
+    "min": 100,
+    "max": 100
+   }
+  ],
+  "dosNot": "Häst (600 kg): 100 gram per dag. Ponny (300 kg): 50 gram per dag.",
+  "naring": {
+   "Ca": 14.4,
+   "P": 2.6,
+   "Mg": 1.2,
+   "Na": 15.5,
+   "Cu": 800,
+   "Zn": 2500,
+   "Mn": 3750,
+   "Se": 10,
+   "I": 30,
+   "energi": 6.5,
+   "smbrp": 94,
+   "socker": 45,
+   "starkelse": 2.0,
+   "vitE": 6000
+  },
+  "odeklarerat": [
+   "Co",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Järn",
+   "Kobolt"
+  ],
+  "sockerStatus": "deklarerat",
+  "forp": 0.2,
+  "krPerKg": 65.95,
+  "krPerKgMax": 76.12,
+  "saljare": [
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/pavo-vital-20kg",
+    "pris": 1319,
+    "forp": 20,
+    "krPerKg": 65.95,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Pavo webbshop",
+    "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+    "pris": 1349,
+    "forp": 20,
+    "krPerKg": 67.45,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/vital-complete-20-kg",
+    "pris": 1349,
+    "forp": 20,
+    "krPerKg": 67.45,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Pavo webbshop",
+    "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+    "pris": 569,
+    "forp": 8,
+    "krPerKg": 71.12,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/pavo-vital-refill-8-kg",
+    "pris": 569,
+    "forp": 8,
+    "krPerKg": 71.12,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Granngården",
+    "url": "https://www.granngarden.se/fodertillskott-pavo-vital-refill-8kg",
+    "pris": 569,
+    "forp": 8,
+    "krPerKg": 71.12,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/pavo-vital-refill-8kg",
+    "pris": 569,
+    "forp": 8,
+    "krPerKg": 71.12,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Pavo webbshop",
+    "url": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+    "pris": 609,
+    "forp": 8,
+    "krPerKg": 76.12,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/mineraler/pavo-vital-8-kg",
+    "pris": 609,
+    "forp": 8,
+    "krPerKg": 76.12,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/pavo-vital-8kg",
+    "pris": 609,
+    "forp": 8,
+    "krPerKg": 76.12,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.pavo.se/horsefeed/bas-allround/pavo-vital/",
+  "konfidens": "medel",
+  "kontrollerad": "2026-07-30",
+  "luckor": 13
+ },
+ {
+  "id": "brogaarden-racing-mineral",
+  "namn": "Racing Mineral",
+  "tillverkare": "Brogaarden",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pellets",
+  "malgrupp": [
+   "arbete",
+   "avel",
+   "unghast"
+  ],
+  "dosMin": 15.0,
+  "dosMax": 50.0,
+  "dosBas": "per_hast",
+  "dosTabell": null,
+  "dosNot": "Hästar i träning 150 g/dag; avelshingstar 150 g/dag; dräktiga ston 225 g/dag; digivande ston 250 g/dag; unghästar och föl 150 g/dag; liten ponny 75 g/dag; större ponny 100–125 g/dag.",
+  "naring": {
+   "Ca": 126,
+   "P": 36,
+   "Mg": 16,
+   "Na": 33,
+   "Cu": 790,
+   "Zn": 1550,
+   "Mn": 1190,
+   "Se": 10,
+   "I": 20,
+   "Co": 4,
+   "Fe": 1630,
+   "vitE": 4000
+  },
+  "odeklarerat": [],
+  "ejTakkontroll": [],
+  "sockerStatus": "okant_sockerravara",
+  "forp": 10,
+  "krPerKg": 33.9,
+  "krPerKgMax": 33.9,
+  "saljare": [
+   {
+    "namn": "Brogaarden AB",
+    "url": "https://brogaarden.se/products/racing-mineral-10kg",
+    "pris": 339,
+    "forp": 10,
+    "krPerKg": 33.9,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "aterforsaljare",
+  "kalla": "https://brogaarden.se/products/racing-mineral-10kg",
+  "konfidens": "medel",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ },
+ {
+  "id": "trikem-vitamins-flytande",
+  "namn": "Trikem Vitamins (flytande)",
+  "tillverkare": "Trikem",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "flytande",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "unghast",
+   "avel",
+   "senior"
+  ],
+  "dosMin": 5.0,
+  "dosMax": 10.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "5-10 ml per 100 kg kroppsvikt och dag eller enligt foderstat. Tillverkaren anger 30 ml = 30 g (densitet ca 1,0 g/ml), sa ml ~ g. Karenstid 0 h.",
+  "naring": {
+   "Ca": 0.25,
+   "Na": 0.49,
+   "Cu": 2640,
+   "Zn": 5000,
+   "Mn": 5000,
+   "Se": 27,
+   "I": 84,
+   "Co": 9,
+   "smbrp": 10,
+   "vitE": 19650
+  },
+  "odeklarerat": [
+   "P",
+   "Mg",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Järn"
+  ],
+  "sockerStatus": "okant",
+  "forp": 1,
+  "krPerKg": 129.8,
+  "krPerKgMax": 185.0,
+  "saljare": [
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-flytande-5000-ml-7394244102440/",
+    "pris": 649,
+    "forp": 5,
+    "krPerKg": 129.8,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/trikem-vitamins-1l/4390",
+    "pris": 329,
+    "forp": 2.5,
+    "krPerKg": 131.6,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-flytande-1000-ml-7394244101443/",
+    "pris": 379,
+    "forp": 2.5,
+    "krPerKg": 151.6,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-flytande-1000-ml-7394244101443/",
+    "pris": 175,
+    "forp": 1,
+    "krPerKg": 175.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Hööks",
+    "url": "https://www.hooks.se/hooks-care/hastvard/fodertillskott/vitaminer/vimital-multi-pb-trikem",
+    "pris": 179,
+    "forp": 1,
+    "krPerKg": 179.0,
+    "kontrollerad": "2026-07-31"
+   },
+   {
+    "namn": "Hogsta Ridsport",
+    "url": "https://www.hogstafoderbutik.se/fodertillskott/vitaminer/vimital-multi-pro-balance",
+    "pris": 185,
+    "forp": 1,
+    "krPerKg": 185.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Foderboden",
+    "url": "https://foderboden.se/sv/products/trikem-vitamins-1l/4389",
+    "pris": 185,
+    "forp": 1,
+    "krPerKg": 185.0,
+    "kontrollerad": "2026-07-31"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.trikem.se/en/shop/trikem-vitamins-15575",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 12
+ },
+ {
+  "id": "trikem-vitamins-pellets",
+  "namn": "Trikem Vitamins pellets",
+  "tillverkare": "Trikem",
+  "kategori": "vitamin-mineraltillskott",
+  "form": "pellets",
+  "malgrupp": [
+   "underhall",
+   "arbete",
+   "unghast",
+   "avel",
+   "senior"
+  ],
+  "dosMin": 4.0,
+  "dosMax": 4.0,
+  "dosBas": "per_100kg_kroppsvikt",
+  "dosTabell": null,
+  "dosNot": "6 ml/100 kg kroppsvikt och dag. Tillverkaren anger 30 ml = 20 g, dvs 6 ml = 4 g. Ex. hast 500 kg: 30 ml (20 g)/dag. 'Bor ej overdoseras, innehaller selen.' Karenstid 0 h. Tidigare produktnamn: Multi.",
+  "naring": {
+   "Ca": 14,
+   "P": 8.4,
+   "Na": 3,
+   "Cu": 3000,
+   "Zn": 9000,
+   "Mn": 9000,
+   "Se": 45,
+   "I": 100,
+   "Co": 15,
+   "smbrp": 268,
+   "vitE": 30000
+  },
+  "odeklarerat": [
+   "Mg",
+   "Fe"
+  ],
+  "ejTakkontroll": [
+   "Järn"
+  ],
+  "sockerStatus": "okant",
+  "forp": 1,
+  "krPerKg": 154.0,
+  "krPerKgMax": 199.0,
+  "saljare": [
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-pellets-3500-g-7394244103799/",
+    "pris": 539,
+    "forp": 3.5,
+    "krPerKg": 154.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Apohem",
+    "url": "https://www.apohem.se/djur/djurfoder-tillskott/foder-fodertillskott/trikem-vitamins-pellets-1000g",
+    "pris": 171,
+    "forp": 1,
+    "krPerKg": 171.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "Vetapotek",
+    "url": "https://vetapotek.se/produkt/vitaminer-trikem-vitamins-pellets-3500-g-7394244103799/",
+    "pris": 199,
+    "forp": 1,
+    "krPerKg": 199.0,
+    "kontrollerad": "2026-07-30"
+   },
+   {
+    "namn": "StallMagasinet",
+    "url": "https://stallmagasinet.se/trikem-vitamins-pellets-1000-g",
+    "pris": 199,
+    "forp": 1,
+    "krPerKg": 199.0,
+    "kontrollerad": "2026-07-30"
+   }
+  ],
+  "bild": null,
+  "bildLokal": false,
+  "bildKalla": "tillverkare",
+  "kalla": "https://www.trikem.se/en/shop/trikem-vitamins-pellets-15547",
+  "konfidens": "hog",
+  "kontrollerad": "2026-07-30",
+  "luckor": 10
+ }
+];
+/* PRODUKTDATA-SLUT */
+
+/* ========================= NORMER (SLU 289) ============================== */
+// Makro, g per 100 kg kroppsvikt och dygn. [min, max] — punkt när SLU anger punkt.
+const MAKRO = [
+  {Ca:[4.0,4.0], P:[2.8,2.8], Mg:[1.5,1.5], NaCl:[5.1,5.1]},   // underhåll
+  {Ca:[6.0,6.0], P:[3.6,3.6], Mg:[1.9,1.9], NaCl:[7,7]},       // arbete <30 %
+  {Ca:[7.0,7.0], P:[4.2,4.2], Mg:[2.3,2.3], NaCl:[9,9]},       // 30–50 %
+  {Ca:[8.0,8.0], P:[5.8,5.8], Mg:[3.0,3.0], NaCl:[9,13]},      // 50–75 %
+  {Ca:[8.0,8.0], P:[5.8,5.8], Mg:[3.0,3.0], NaCl:[13,21]}      // 75–130 %
+];
+// Mikro, mg per 100 kg kroppsvikt och dygn.
+const MIKRO_UH  = {Fe:[40,50], Mn:[40,50], Cu:[10,12], Zn:[40,50], Co:[0.1,0.1], I:[0.35,0.35], Se:[0.2,0.2]};
+const MIKRO_ARB = {Fe:[80,100],Mn:[80,100],Cu:[20,25], Zn:[80,100],Co:[0.2,0.2], I:[0.35,0.35], Se:[0.2,0.2]};
+// Maximal toleransgräns, mg per 100 kg och dygn (SLU 289 tabell 17).
+const TAK = {Fe:3000, Mn:3000, Cu:2400, Zn:1500, Co:30, I:10, Se:5};
+// Energitillägg i procent av underhåll — bandens mittvärden.
+const ARBFAKTOR = [0, 0.15, 0.40, 0.62, 1.00];
+
+const MIKROLISTA = ["Zn","Cu","Mn","Fe","Se","I","Co"];
+const MAKROLISTA = ["Ca","P","Mg"];
+
+let enhet = "ts";
+let valdId = null;          // id på produkt som räknas in i foderstaten
+let sisteForslag = [];      // senaste utvärderingen, för uppslag vid val
+
+function valj(nyckel){
+  valdId = (valdId === nyckel) ? null : nyckel;
+  rakna();
+  const el = document.getElementById("cov-anchor");
+  if(el && valdId) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function setEnhet(e){
+  enhet = e;
+  bTS.className = e==="ts" ? "on" : "";
+  bFoder.className = e==="foder" ? "on" : "";
+  const t = e==="ts" ? "(per kg ts)" : "(per kg foder)";
+  e1.textContent = t; e2.textContent = t; e3.textContent = t;
+  rakna();
+}
+
+/* ---------- slumpad men sammanhängande analys ------------------------------
+   Värdena dras inte oberoende av varandra. Först lottas ett skördestadium,
+   sedan härleds resten ur det. SLU 308 avsnitt 4.5 (Zhao & Müller, 2016)
+   dokumenterar att högre NDF — alltså senare plantmognad — genomgående ger
+   lägre halter av Ca, P, Mg, Cu och Se, samtidigt som smältbarheten och
+   därmed energivärdet sjunker. Ett foder med 6 MJ och höga mineralhalter
+   förekommer helt enkelt inte.
+
+   Spridningen är kalibrerad mot SLU 308 tabell 2 (över 1 000 svenska
+   hästvallfoder) och mot medelvärden och standardavvikelser i Zhao & Müller.
+   -------------------------------------------------------------------------- */
+function slumpTal(medel, sd, min, max){
+  let u=0, v=0;
+  while(u===0) u=Math.random();
+  while(v===0) v=Math.random();
+  const z = Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+  return Math.max(min, Math.min(max, medel + z*sd));
+}
+const avr = (v,d) => Math.round(v*Math.pow(10,d))/Math.pow(10,d);
+
+function slumpaAnalys(){
+  const m = Math.random();                     // 0 = tidig skörd, 1 = sen
+  const typer = [
+    {namn:"hö",       ts:[84,91], sockerFaktor:1.00},
+    {namn:"hösilage", ts:[55,78], sockerFaktor:0.75},
+    {namn:"ensilage", ts:[32,48], sockerFaktor:0.35}
+  ];
+  const t = typer[Math.floor(Math.random()*typer.length)];
+  const tsH = avr(t.ts[0] + Math.random()*(t.ts[1]-t.ts[0]), 0);
+
+  // Energi och protein följer plantmognaden. Kvoten smb rp/MJ hålls dessutom
+  // inom 3,5–11,5 — energi och protein samvarierar i verkligheten, och en
+  // oberoende dragning ger annars foder som inte existerar.
+  const energi = avr(slumpTal(11.4 - 4.9*m, 0.45, 5.9, 12.4), 1);
+  let smbrp = slumpTal(112 - 88*m, 14, 8, 190);
+  smbrp = Math.round(Math.max(energi*3.5, Math.min(energi*11.5, smbrp)));
+
+  // Socker: högst vid tidig skörd, och lägre ju mer fodret jäst
+  const wsc = Math.round(slumpTal((165 - 80*m) * t.sockerFaktor, 22, 8, 240));
+
+  // Mineraler som samvarierar negativt med plantmognaden
+  const skala = 1.25 - 0.5*m;
+  const Ca_ = avr(slumpTal(4.6*skala, 1.5, 1.1, 12.0), 1);
+  const P_  = avr(slumpTal(2.7*skala, 0.6, 0.8, 4.8), 1);
+  const Mg_ = avr(slumpTal(1.7*skala, 0.5, 0.5, 3.4), 1);
+  const Cu_ = avr(slumpTal(4.9*skala, 1.4, 1.5, 11), 1);
+  const Se_ = avr(slumpTal(0.03, 0.03, 0, 0.18), 2);
+
+  // Ämnen utan tydligt mognadssamband — dras mot Zhao & Müllers fördelningar
+  const Zn_ = Math.round(slumpTal(23, 8, 8, 55));
+  const Mn_ = Math.round(slumpTal(85, 40, 15, 260));
+  const Fe_ = Math.round(slumpTal(150, 90, 35, 600));
+  const I_  = avr(slumpTal(0.25, 0.18, 0.02, 1.0), 2);
+  const Co_ = avr(slumpTal(0.09, 0.06, 0.01, 0.35), 2);
+  const Na_ = avr(slumpTal(0.25, 0.25, 0.02, 1.2), 2);
+
+  setEnhet("ts");
+  document.getElementById("ts").value=tsH;
+  document.getElementById("energi").value=energi;
+  document.getElementById("smbrp").value=smbrp;
+  document.getElementById("wsc").value=wsc;
+  document.getElementById("Ca").value=Ca_;  document.getElementById("P").value=P_;
+  document.getElementById("Mg").value=Mg_;  document.getElementById("Na").value=Na_;
+  document.getElementById("Zn").value=Zn_;  document.getElementById("Cu").value=Cu_;
+  document.getElementById("Mn").value=Mn_;  document.getElementById("Fe").value=Fe_;
+  document.getElementById("Se").value=Se_;  document.getElementById("I").value=I_;
+  document.getElementById("Co").value=Co_;
+
+  // Givan sätts till 1,8 kg ts per 100 kg — mitt i det rekommenderade spannet
+  document.getElementById("giva").value =
+    avr((num(document.getElementById("vikt"))||500)/100*1.8, 1);
+
+  const mognad = m<0.28 ? "tidigt skördat" : m<0.62 ? "medelsent skördat" : "sent skördat";
+  const kvot = avr(smbrp/energi, 1);
+  const passar = energi<8.2 ? "lätthållna hästar utan arbete"
+               : energi<9.6 ? "vuxna hästar i lätt arbete"
+               : energi<10.6 ? "hästar i medelhårt arbete"
+               : "avelsston, unghästar och hårt arbetande hästar";
+  slumpinfo.innerHTML = '<p class="slumpinfo">Slumpat: <strong>'+mognad+' '+t.namn
+    + '</strong>, '+tsH+' % ts, '+energi+' MJ/kg ts, kvot '+f1(kvot)+' g smb rp/MJ. '
+    + 'Passar närmast '+passar+'. Värdena är inbördes sammanhängande — '
+    + 'senare skörd ger både lägre energi och lägre mineralhalter.</p>';
+  valdId = null;
+  rakna();
+}
+
+function tabellvarden(){
+  // Schabloner för gräsvallfoder, per kg ts. Selen medvetet 0.
+  const v = enhet==="ts" ? {Se:0, I:0.34, Co:0.07} : {Se:0, I:0.30, Co:0.06};
+  Se.value=v.Se; I.value=v.I; Co.value=v.Co;
+  rakna();
+}
+
+const num = el => { const v = parseFloat(el.value); return isNaN(v) ? null : v; };
+const f1 = n => n.toLocaleString("sv-SE",{maximumFractionDigits:1});
+const f0 = n => n.toLocaleString("sv-SE",{maximumFractionDigits:0});
+const rng = ([a,b]) => a===b ? f1(a) : f1(a)+"–"+f1(b);
+
+function rakna(){
+  const vikt = num(vikt_) || 500;
+  const enh  = vikt/100;                    // enheter om 100 kg kroppsvikt
+  const tsH  = (num(ts)||89)/100;
+  const givaTS = num(giva) || 0;            // kg ts/dygn
+  const givaFoder = givaTS / tsH;
+  givaInfo.innerHTML = "= <strong>"+f1(givaFoder)+" kg foder</strong>/dygn<br>"
+                     + f1(givaTS/enh)+" kg ts per 100 kg häst";
+
+  // ---- omvandla analysvärden till per kg ts ----
+  const k = enhet==="foder" ? 1/tsH : 1;
+  const A = {};
+  ["energi","smbrp","wsc","Ca","P","Mg","Na"].concat(MIKROLISTA).forEach(id=>{
+    const raw = num(document.getElementById(id));
+    A[id] = raw===null ? null : raw*k;
+  });
+
+  // ---- tillfört per dygn ----
+  const till = {};
+  MAKROLISTA.forEach(m => till[m] = (A[m]||0)*givaTS);
+  till.NaCl = (A.Na||0)*givaTS*2.542;        // Na → NaCl
+  MIKROLISTA.forEach(m => till[m] = (A[m]||0)*givaTS);
+  const tillEnergi = (A.energi||0)*givaTS;
+  const tillProt   = (A.smbrp||0)*givaTS;
+
+  // ---- behov ----
+  const arbIdx = parseInt(arbete.value);
+  const uh = 0.5*Math.pow(vikt,0.75) * parseFloat(typ.value) * parseFloat(hingst.value);
+  const behEnergi = uh * (1+ARBFAKTOR[arbIdx]);
+  const behProt   = behEnergi*6;
+  const mk = MAKRO[arbIdx], mi = arbIdx===0 ? MIKRO_UH : MIKRO_ARB;
+
+  const beh = {};
+  MAKROLISTA.forEach(m => beh[m] = [mk[m][0]*enh, mk[m][1]*enh]);
+  beh.NaCl = [mk.NaCl[0]*enh, mk.NaCl[1]*enh];
+  MIKROLISTA.forEach(m => beh[m] = [mi[m][0]*enh, mi[m][1]*enh]);
+  const tak = {}; MIKROLISTA.forEach(m => tak[m] = TAK[m]*enh);
+
+  // ---- underskott mot NEDRE gränsen ----
+  const brist = {};
+  MAKROLISTA.concat(["NaCl"]).forEach(m => { const d = beh[m][0]-till[m]; if(d>0.001) brist[m]=d; });
+  MIKROLISTA.forEach(m => { const d = beh[m][0]-till[m]; if(d>0.0001) brist[m]=d; });
+
+  // ---- utvärdera produkter mot underskotten (görs före tabellen, så att en
+  //      vald produkt kan räknas in i den) ----
+  const bristLista = Object.keys(brist);
+  sisteForslag = bristLista.length
+    ? PRODUKTER.map(p => utvardera(p, brist, till, beh, tak, enh, vikt))
+               .filter(x => x.poang > 0)
+               .sort((a,b) => b.poang - a.poang
+                           || ((a.kostnad==null)-(b.kostnad==null))
+                           || a.kostnad - b.kostnad)
+    : [];
+  sisteForslag.forEach(r => r.nyckel = r.p.id);
+
+  // Kombinationer visas när de tillför något bästa enskilda produkt inte gör:
+  // antingen fler täckta ämnen, eller lika många till lägre kostnad. Det senare
+  // är det vanliga fallet — ett mineralfoder plus salt slår ofta ett stort
+  // mineralfoder som överdoseras för att ensamt nå upp till natriumbehovet.
+  const basta = sisteForslag.length ? sisteForslag[0] : null;
+  const bastEnkel = basta ? basta.tackta.length : 0;
+  const komboLista = bristLista.length
+    ? byggKombos(sisteForslag, brist, till, beh, tak, enh, vikt).filter(k =>
+        k.tackta.length > bastEnkel ||
+        (k.tackta.length >= bastEnkel && k.kostnad != null
+         && basta.kostnad != null && k.kostnad < basta.kostnad))
+    : [];
+
+  const alla = sisteForslag.concat(komboLista);
+  if(valdId && !alla.some(r => r.nyckel === valdId)) valdId = null;
+  const vald = alla.find(r => r.nyckel === valdId) || null;
+
+  // Tillskottets bidrag per ämne — summeras över kombinationens delar
+  const extra = {};
+  if(vald){
+    (vald.kombo ? vald.delar : [vald]).forEach(d => {
+      const b = bidrag(d.p, d.dos);
+      Object.keys(b).forEach(m => extra[m] = (extra[m]||0) + b[m]);
+    });
+  }
+  const tot = m => till[m] + (extra[m]||0);
+
+  // ================= UTDATA =================
+  let h = "";
+
+  /* --- täckningstabell --- */
+  h += '<div class="card" id="cov-anchor"><h2>3. Täckning'
+     + (vald ? ' — grovfoder plus <span style="color:var(--ok)">'
+               + (vald.kombo ? vald.delar.map(d=>d.p.namn).join(" + ") : vald.p.namn)+'</span>'
+             : ' från grovfodret')
+     + '</h2>';
+  if(vald)
+    h += '<div class="msg m-ok" style="margin-top:0">Räknar in <strong>'
+       + (vald.kombo ? vald.delar.map(d => f0(d.dosG)+' g '+d.p.namn).join(" och ")
+                     : f0(vald.dosG)+' g '+vald.p.namn)
+       + '</strong> per dygn. Klicka igen för att ta bort.</div>';
+  h += '<div class="barleg">'
+     + '<span><i style="background:var(--brand)"></i>Från grovfodret</span>'
+     + '<span><i style="background:var(--ok)"></i>Från tillskottet</span>'
+     + '<span><i style="background:#4a4640;width:3px"></i>Behovet (mittlinjen)</span>'
+     + '<span><i style="background:rgba(47,107,69,.30)"></i>Behovets intervall</span>'
+     + '<span><i style="background:var(--bad);width:3px"></i>Toleransgräns</span></div>'
+     + '<p class="note" style="margin:0 0 10px">Staplarna har samma skala på alla rader: '
+     + '<strong>0 till 200 % av behovet</strong>, med behovet i mitten. Når stapeln fram till '
+     + 'mittlinjen är behovet täckt. Ett ›-tecken betyder att värdet går utanför skalan — '
+     + 'det exakta talet står i kolumnen till höger.</p>';
+  h += '<table><thead><tr>'
+     + '<th>Post</th><th class="n" style="text-align:center">0 &nbsp;·&nbsp; behov &nbsp;·&nbsp; 200 %</th>'
+     + '<th class="n">Behov</th><th class="n">Tillfört</th>'
+     + '<th class="n">Av nedre&nbsp;gräns</th><th>Status</th></tr></thead><tbody>';
+
+  const grovMin = 1.0*enh, grovRek = [1.5*enh, 2.0*enh], grovMax = 3.0*enh;
+  h += rad("Grovfoder (kg ts)", rng([grovRek[0],grovRek[1]]), f1(givaTS),
+        givaTS/grovRek[0]*100, givaTS<grovMin?"low":(givaTS>grovMax?"high":(givaTS<grovRek[0]?"high":"ok")),
+        stapel(grovRek[0], grovRek[1], givaTS, 0, grovMax));
+  h += rad("Energi (MJ)", f0(behEnergi), f0(tillEnergi), tillEnergi/behEnergi*100,
+        tillEnergi<behEnergi*0.95?"low":(tillEnergi>behEnergi*1.15?"high":"ok"),
+        stapel(behEnergi, behEnergi, tillEnergi, 0, null));
+  h += rad("Smb råprotein (g)", f0(behProt), f0(tillProt), tillProt/behProt*100,
+        tillProt<behProt?"low":(tillProt>behProt*1.6?"high":"ok"),
+        stapel(behProt, behProt, tillProt, 0, null));
+
+  [["Ca","Kalcium (g)"],["P","Fosfor (g)"],["Mg","Magnesium (g)"],["NaCl","Natriumklorid (g)"]]
+    .forEach(([m,l]) => h += radM(l, beh[m], tot(m), null, extra[m]));
+  MIKROLISTA.forEach(m => h += radM(m+" (mg)", beh[m], tot(m), tak[m], extra[m]));
+
+  const kvot = tot("P")>0 ? tot("Ca")/tot("P") : 0;
+  h += '<tr class="'+(kvot<1.1?"deficit":"")+'"><td>Ca/P-kvot</td>'
+     + '<td class="barcell">'+stapel(1.2, 1.8, kvot, 0, null)+'</td><td class="n">1,2–1,8</td>'
+     + '<td class="n">'+f1(kvot)+'</td><td class="n">—</td><td>'
+     + (kvot<1.1?'<span class="pill p-low">under golv</span>'
+        : kvot<1.2?'<span class="pill p-high">vid golvet</span>'
+        : kvot<=1.8?'<span class="pill p-ok">i intervall</span>'
+        : '<span class="pill p-high">hög</span>')+'</td></tr>';
+  h += "</tbody></table>";
+
+  h += '<p class="note">Behoven visas som intervall där SLU 289 anger intervall. Procenttalet avser '
+     + '<strong>nedre</strong> gränsen — mot övre gränsen blir täckningen lägre. HästSveriges '
+     + 'foderstatsprogram räknar enbart mot övre gränsen och visar därför större underskott.<br><br>'
+     + '<strong>Om överskott.</strong> SLU 289 anger att behoven kan överskridas utan negativ '
+     + 'påverkan, men villkorar det för mikromineraler till överskott som kommer ur vallfodret, '
+     + 'och tillägger att flera mineralämnen stör varandras upptag och att överutfodring bör '
+     + 'undvikas. Statusmärket visar därför hur nära toleransgränsen värdet ligger, inte bara '
+     + 'att behovet är passerat. Marginalen från nedre behov till tak är 25× för selen, 29× för '
+     + 'jod, 38× för zink och 75× eller mer för övriga.</p>';
+
+  /* --- anmärkningar --- */
+  if(givaTS < grovMin)
+    h += msg("bad","Grovfodergivan understiger minimigivan 1 kg ts per 100 kg häst ("+f1(grovMin)+" kg ts). "
+      +"Öka givan innan något tillskott övervägs — den frågan går före mineralbalansen.");
+  else if(givaTS < grovRek[0])
+    h += msg("warn","Givan uppfyller minimigivan men ligger under rekommendationen 1,5–2 kg ts per 100 kg häst ("
+      +f1(grovRek[0])+"–"+f1(grovRek[1])+" kg ts).");
+  if(givaTS > grovMax)
+    h += msg("warn","Givan överstiger den övre gränsen för de flesta hästars konsumtionsförmåga (3 kg ts per 100 kg). "
+      +"Äter hästen upp den är det i sig inget problem.");
+  if(kvot>0 && kvot<1.1)
+    h += msg("bad","Ca/P-kvoten "+f1(kvot)+" ligger under SLU:s golv 1,1. Kvoten avser hela foderstaten, "
+      +"så ett kalciumrikt mineralfoder kan lyfta den — se förslagen nedan.");
+  if(tillEnergi > behEnergi*1.15)
+    h += msg("warn","Foderstaten ger "+f0(tillEnergi/behEnergi*100)+" % av energibehovet. Håller hästen önskat hull "
+      +"är det acceptabelt. Ökar hullet: minska givan eller ersätt en del med halm.");
+  // Överskott: SLU 289 accepterar att behoven överskrids, men villkorar det för
+  // mikromineraler till överskott som kommer ur vallfodret — och slår fast att
+  // överutfodring bör undvikas. Det skiljer sig från ett överskott man själv
+  // skapar med tillskott, vilket är hela poängen med takkontrollen.
+  const naraTak = MIKROLISTA.filter(m => tak[m] && tot(m)/tak[m] >= 0.4);
+  if(naraTak.length)
+    h += msg(naraTak.some(m => tot(m)/tak[m] >= 0.7) ? "bad" : "warn",
+      "Följande ligger över 40 % av toleransgränsen: "
+      + naraTak.map(m => m+" "+f0(tot(m)/tak[m]*100)+" %").join(", ")
+      + ". Selen och jod har de smalaste marginalerna av alla mikromineraler — "
+      + "25 respektive 29 gånger från nedre behov till tak — och är därför de "
+      + "som först blir kritiska när flera produkter staplas.");
+
+  if(A.wsc!==null){
+    const nsc = A.wsc;
+    h += nsc>=170
+      ? msg("bad","Socker/WSC "+f0(nsc)+" g/kg ts ligger över 170 g/kg ts. Borgia m.fl. (2011) fann att hö med "
+        +"170 g NSC/kg ts kunde utlösa korsförlamning hos PSSM-hästar. För en frisk häst finns inget belagt gränsvärde.")
+      : msg("ok","Socker/WSC "+f0(nsc)+" g/kg ts ligger under PSSM-gränsen 170 g/kg ts (Borgia m.fl., 2011). "
+        +"Något allmänt gränsvärde för friska hästar finns inte i det svenska underlaget — spridda tumregler "
+        +"om 10 eller 12 procent saknar stöd där.");
+  }
+  h += "</div>";
+
+  /* --- produktförslag --- */
+  h += '<div class="card"><h2>4. Produktförslag</h2>';
+
+  if(bristLista.length===0){
+    h += msg("ok","Grovfodret täcker samtliga nedre behovsgränser. Inget tillskott behövs för de ämnen "
+      +"som ingår i beräkningen. Kontrollera ändå selen och salt separat om de inte är analyserade.");
+  } else if(sisteForslag.length===0){
+    h += msg("warn","Ingen produkt i databasen kan täcka något underskott utan att spränga en toleransgräns.");
+  } else {
+    h += '<p class="note" style="margin-bottom:14px">Underskott mot nedre behovsgräns: <strong>'
+       + bristLista.join(", ")+'</strong>. Varje produkt doseras så att så många underskott '
+       + 'som möjligt täcks utan att någon toleransgräns överskrids. '
+       + '<strong>Klicka för att räkna in i tabellen ovan.</strong></p>';
+
+    // Sektionen ritas alltid ut. Att den saknas när inga kombinationer hittas
+    // gör frånvaron omöjlig att skilja från ett fel.
+    h += '<h3 style="margin-top:0">Kombinationer av två produkter</h3>';
+    if(komboLista.length){
+      h += '<p class="note" style="margin:-4px 0 11px">'+komboLista.length
+         + (komboLista.length===1 ? ' kombination slår' : ' kombinationer slår')
+         + ' den bästa enskilda produkten — de täcker fler ämnen, eller lika många billigare.</p>';
+      komboLista.slice(0,3).forEach((r,i) => h += kortKombo(r,i));
+    } else {
+      h += '<p class="note" style="margin:-4px 0 14px">Ingen kombination av två produkter '
+         + 'täcker mer än <strong>'+basta.p.namn+'</strong> gör ensam'
+         + (basta.kostnad!=null ? ', eller gör det billigare än '+f1(basta.kostnad)+' kr/dygn' : '')
+         + '. Det inträffar när en produkt redan löser samtliga underskott till lägsta kostnad — '
+         + 'kombinationer lönar sig framför allt när natrium ingår bland bristerna, eftersom '
+         + 'mineralfoder sällan når saltbehovet inom sin egen dosering.</p>';
+    }
+    h += '<h3>Enskilda produkter</h3>';
+    sisteForslag.slice(0,8).forEach((r,i) => h += kort(r,i));
+    h += '<p class="note" style="margin-top:14px">Rangordningen väger antal täckta underskott först, '
+       + 'kostnad därefter. Priser är indikativa och hämtade ur återförsäljarnas webbutiker vid '
+       + 'insamlingstillfället.</p>';
+  }
+  h += "</div>";
+
+  ut.innerHTML = h;
+}
+
+/* ---------- doseringsintervall i gram per dygn för en given vikt ---------- */
+function dosIntervall(p, vikt){
+  const t = p.dosTabell;
+  if(t && t.length){
+    if(vikt <= t[0].vikt)              return {min:t[0].min, max:t[0].max, kalla:"tabell"};
+    if(vikt >= t[t.length-1].vikt)     return {min:t[t.length-1].min, max:t[t.length-1].max, kalla:"tabell"};
+    for(let i=0;i<t.length-1;i++){
+      const a=t[i], b=t[i+1];
+      if(vikt>=a.vikt && vikt<=b.vikt){
+        const k=(vikt-a.vikt)/(b.vikt-a.vikt);
+        return {min:a.min+(b.min-a.min)*k, max:a.max+(b.max-a.max)*k, kalla:"tabell"};
+      }
+    }
+  }
+  return {min:p.dosMin*vikt/100, max:p.dosMax*vikt/100,
+          kalla:p.dosBas==="per_hast" ? "referensvikt" : "per 100 kg"};
+}
+
+/* ---------- vad en produkt tillför vid en given dos ---------- */
+function bidrag(p, dos){
+  const g = m => (p.naring[m]||0), o = {};
+  MAKROLISTA.forEach(m => o[m] = g(m)*dos);
+  o.NaCl = g("Na")*2.542*dos;
+  MIKROLISTA.forEach(m => o[m] = g(m)*dos);
+  return o;
+}
+
+/* ---------- kombinationer av två produkter -------------------------------
+   Girigt tvåstegsval: ta ett basförslag, räkna av vad det täcker, och lös
+   resten med en andra produkt. Toleransgränserna prövas mot grovfodret plus
+   den första produkten, så den andra kan aldrig doseras över taket.
+
+   Skälet att detta behövs: ett mineralfoder kan sällan täcka natrium inom sin
+   egen dosering. Rätt svar är mineralfoder plus salt, inte att överdosera
+   mineralfodret för att jaga saltet.                                        */
+function byggKombos(bas, brist, till, beh, tak, enh, vikt){
+  const ut = [], sedda = new Set();
+  bas.slice(0,6).forEach(a => {
+    const bA = bidrag(a.p, a.dos);
+    const till2 = {}; Object.keys(till).forEach(m => till2[m] = till[m] + (bA[m]||0));
+    const rest = {};
+    Object.keys(brist).forEach(m => { const d = beh[m][0]-till2[m]; if(d > 1e-4) rest[m] = d; });
+    if(!Object.keys(rest).length) return;              // a klarar allt ensam
+
+    PRODUKTER.forEach(pb => {
+      if(pb.id === a.p.id) return;
+      const b = utvardera(pb, rest, till2, beh, tak, enh, vikt);
+      if(!b || b.poang <= 0 || !b.tackta.length) return;
+      const nyckel = [a.p.id, pb.id].sort().join("+");
+      if(sedda.has(nyckel)) return;
+      sedda.add(nyckel);
+
+      const tackta = a.tackta.concat(b.tackta);
+      const kvar = Object.keys(rest).filter(m => b.tackta.indexOf(m) < 0);
+      const kostnad = (a.kostnad!=null && b.kostnad!=null) ? a.kostnad + b.kostnad : null;
+      ut.push({
+        nyckel, kombo:true, delar:[a, b], tackta, kvar, kostnad,
+        oprovade: [...new Set(a.oprovade.concat(b.oprovade))],
+        takBrytare: [...new Set(a.takBrytare.concat(b.takBrytare))],
+        poang: tackta.length*10 + kvar.length*3 - (a.takBrytare.length+b.takBrytare.length ? 4:0)
+      });
+    });
+  });
+  return ut.sort((x,y) => y.poang - x.poang
+                       || ((x.kostnad==null)-(y.kostnad==null))
+                       || x.kostnad - y.kostnad);
+}
+
+/* ---------- utvärdera en produkt ---------- */
+function utvardera(p, brist, till, beh, tak, enh, vikt){
+  const n = p.naring;
+  const g = m => (n[m]||0);                       // per kg produkt
+  // Dos (kg/dygn) som krävs för att täcka varje enskilt underskott
+  const kravDos = {};
+  Object.keys(brist).forEach(m=>{
+    let inneh = m==="NaCl" ? g("Na")*2.542 : g(m);
+    if(m==="NaCl" && !n.Na) inneh = 0;
+    if(inneh>0) kravDos[m] = brist[m]/inneh;      // g/kg → kg
+  });
+  const kanTacka = Object.keys(kravDos);
+  if(kanTacka.length===0) return {p, poang:0};
+
+  // Har tillverkaren en vikttabell används den mot hästens faktiska vikt.
+  // Annars skalas per-100-kg-dosen. Tabellen är alltid att föredra — den
+  // bygger inte på någon referensvikt.
+  const d = dosIntervall(p, vikt);
+  const maxDosProd = d.max/1000;                   // g/dygn → kg/dygn
+  const minDosProd = d.min/1000;
+
+  // Övre dosgräns: tillverkarens maxdos och samtliga toleransgränser
+  let takgrans = maxDosProd;
+  let begransadAv = null;
+  Object.keys(tak).forEach(m=>{
+    if(g(m)<=0) return;
+    const mx = (tak[m]-till[m])/g(m);
+    if(mx < takgrans){ takgrans = Math.max(0,mx); begransadAv = "toleransgränsen för "+m; }
+  });
+
+  // Vilka tak som hindrar full täckning
+  const idealDos = Math.max(...Object.values(kravDos));
+  const takBrytare = [];
+  Object.keys(tak).forEach(m=>{
+    if(g(m)<=0) return;
+    if((tak[m]-till[m])/g(m) < idealDos) takBrytare.push(m);
+  });
+  if(!takBrytare.length && idealDos > maxDosProd) begransadAv = "tillverkarens maxdos";
+
+  // MINSTA dos som täcker flest möjliga underskott — inte största kravdosen.
+  // Att maxa dosen för att jaga ett underskott produkten ändå inte klarar
+  // överdoserar allt annat i onödan.
+  const genomforbara = Object.values(kravDos).filter(d => d <= takgrans + 1e-12);
+  let dos = genomforbara.length ? Math.max(...genomforbara)
+                                : Math.min(takgrans, Math.min(...Object.values(kravDos)));
+  if(dos <= 0) return {p, poang:0};
+
+  // Utfall vid vald dos
+  const tackta=[], delvis=[], nara=[];
+  Object.keys(brist).forEach(m=>{
+    const inneh = m==="NaCl" ? g("Na")*2.542 : g(m);
+    if(inneh<=0) return;
+    const tillskott = inneh*dos;
+    if(tillskott >= brist[m]-1e-9) tackta.push(m); else delvis.push(m);
+  });
+  // Ämnen som närmar sig taket efter tillskott
+  Object.keys(tak).forEach(m=>{
+    const ny = till[m] + g(m)*dos;
+    if(ny > tak[m]*0.6 && g(m)>0) nara.push({m, andel: ny/tak[m]*100});
+  });
+  const saknas = Object.keys(brist).filter(m=>{
+    const inneh = m==="NaCl" ? g("Na")*2.542 : g(m);
+    return inneh<=0;
+  });
+
+  // Straff för att förvärra ett redan täckt överskott, och för att sänka Ca/P
+  // Endast materiella bidrag flaggas: produkten måste öka tillförseln med minst
+  // 10 % av vad grovfodret redan ger. Annars blir varje mineralfoder flaggat för
+  // järn, trots att bidraget är försumbart mot toleransgränsen.
+  let straff = 0; const forvarrar = [];
+  ["P","Fe"].forEach(m=>{
+    if(g(m)<=0 || till[m] <= beh[m][1]*1.2) return;
+    if(g(m)*dos > till[m]*0.10){ straff += 5; forvarrar.push(m); }
+  });
+  const kvotFore  = till.P>0 ? till.Ca/till.P : 99;
+  const nyCa = till.Ca + g("Ca")*dos, nyP = till.P + g("P")*dos;
+  const kvotEfter = nyP>0 ? nyCa/nyP : 99;
+  let bonus = 0, kvotEffekt = null;
+  if(kvotFore < 1.2 && kvotEfter >= 1.2){ bonus += 6; kvotEffekt = "lyfter Ca/P till "+f1(kvotEfter); }
+  else if(kvotFore >= 1.1 && kvotEfter < 1.1){ straff += 8; kvotEffekt = "sänker Ca/P till "+f1(kvotEfter); }
+  else if(kvotFore < 1.1 && kvotEfter < kvotFore){ straff += 8; kvotEffekt = "sänker Ca/P ytterligare"; }
+
+  // Odeklarerade ämnen som ligger under tak: takkontrollen har inte kunnat
+  // pröva dem. Det ska synas — annars passerar kontrollen utan att ha
+  // kontrollerat något.
+  const oprovade = (p.odeklarerat||[]).filter(m => m in tak);
+  const dosKalla = d.kalla;
+
+  const dosG = dos*1000;
+  const kostnad = p.krPerKg!=null ? dos*p.krPerKg : null;
+  const poang = tackta.length*10 + delvis.length*3 - (takBrytare.length?4:0) - straff + bonus;
+  return {p, dos, dosG, kostnad, tackta, delvis, saknas, nara, takBrytare, begransadAv, poang,
+          forvarrar, kvotEffekt, oprovade, dosKalla, underMin: dosG < d.min};
+}
+
+/* ---------- rendera produktkort ---------- */
+/* ---------- prisspridning och återförsäljarlista för en produkt ----------
+   Delas av de enskilda korten och kombinationskorten. Dosen skickas med så
+   att kronor per dygn kan visas per återförsäljare.                        */
+function saljareBlock(p, dos, rubrik){
+  const salj = (p.saljare||[]).filter(s => s.krPerKg!=null);
+  if(!salj.length) return "";
+  let h = "";
+  const lag=p.krPerKg, hog=p.krPerKgMax;
+  if(salj.length>1 && hog>lag){
+    const diff = (hog-lag)/lag*100;
+    h += '<div class="spread">Prisspridning <strong>'+f0(lag)+'–'+f0(hog)+' kr/kg</strong> '
+       + 'över '+salj.length+' alternativ — '+f0(diff)+' % skillnad mellan billigast och dyrast. '
+       + 'Samma dos kostar '+f1(dos*lag)+'–'+f1(dos*hog)+' kr/dygn beroende på var du köper.</div>';
+  }
+  h += '<details onclick="event.stopPropagation()"><summary>'
+     + (rubrik||"Återförsäljare")+' ('+salj.length+')</summary><table class="rt">';
+  salj.forEach((s,j) => {
+    h += '<tr class="'+(j===0?"bast":"")+'"><td>'
+       + (s.url ? '<a href="'+s.url+'" target="_blank" rel="noopener" style="color:var(--brand)">'
+            +(s.namn||'—')+'</a>' : (s.namn||'—'))
+       + (j===0 ? ' <span class="pill p-ok" style="font-size:10px">billigast</span>' : '')
+       + '</td><td class="n">'+(s.forp!=null?f1(s.forp)+' kg':'—')+'</td>'
+       + '<td class="n">'+(s.pris!=null?f0(s.pris)+' kr':'—')+'</td>'
+       + '<td class="n">'+f0(s.krPerKg)+' kr/kg</td>'
+       + '<td class="n">'+f1(dos*s.krPerKg)+' kr/dygn</td></tr>';
+  });
+  return h + '</table></details>';
+}
+
+/* ---------- kort för en kombination av två produkter ---------- */
+function kortKombo(r,i){
+  const ar = valdId===r.nyckel;
+  let h = '<div class="prod'+(ar?" vald":"")
+    + '" onclick="valj(\''+r.nyckel+'\')">'
+    + '<div class="prod-h"><div><span class="rank">'+(i+1)+'</span>'
+    + '<span class="prod-n">'+r.delar.map(d=>d.p.namn).join(" + ")+'</span>'
+    + (ar?'<span class="valdmark">räknas in ovan</span>':'')
+    + '<div class="prod-m" style="margin-left:28px">'
+    + r.delar.map(d=>d.p.tillverkare).join(" · ")+'</div></div>'
+    + '<div class="dose">'+r.delar.map(d=>f0(d.dosG)+' g').join(' + ')+'</div></div>';
+
+  // Varje del får sitt eget block med pris, spridning och återförsäljarlänkar —
+  // det är två separata inköp och båda behöver kunna hittas.
+  r.delar.forEach((d,j) => {
+    h += '<div style="margin-top:11px;padding-top:11px'
+       + (j>0 ? ';border-top:1px solid var(--line)' : '')+'">'
+       + '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">'
+       + '<div><strong style="font-size:14px">'+d.p.namn+'</strong>'
+       + '<span class="prod-m"> · '+d.p.tillverkare+'</span></div>'
+       + '<div style="font-size:13px;white-space:nowrap"><strong>'+f0(d.dosG)+' g/dygn</strong>'
+       + (d.kostnad!=null ? ' · '+f1(d.kostnad)+' kr/dygn' : ' · pris saknas')+'</div></div>'
+       + '<div class="chips" style="margin-top:6px">'
+       + d.tackta.map(m=>'<span class="chip c-fix">'+m+' täckt</span>').join('')+'</div>'
+       + saljareBlock(d.p, d.dos, "Köp "+d.p.namn+" hos")
+       + '</div>';
+  });
+
+  h += '<div class="chips" style="margin-top:11px">';
+  r.kvar.forEach(m => h += '<span class="chip c-part">'+m+' kvarstår</span>');
+  r.takBrytare.forEach(m => h += '<span class="chip c-cap">! dos kapad av '+m+'-tak</span>');
+  h += '</div>';
+
+  h += '<div style="margin-top:9px;font-size:13px;color:var(--muted)">'
+     + (r.kostnad!=null
+        ? 'Totalt ca <strong>'+f1(r.kostnad)+' kr/dygn</strong> · '+f0(r.kostnad*30)+' kr/månad'
+        : 'Pris saknas för minst en av produkterna')+'</div>';
+
+  if(r.oprovade.length)
+    h += msg("warn","Tillverkarna deklarerar inte "+r.oprovade.join(", ")
+      +". Takkontrollen har inte kunnat prövas för dessa.");
+
+  h += '<div class="valjknapp">'+(ar ? "✓ Räknas in i tabellen ovan — klicka för att ta bort"
+                                     : "Klicka för att räkna in båda i foderstaten")+'</div>';
+  return h+'</div>';
+}
+
+function kort(r,i){
+  const p=r.p, ar = valdId===p.id;
+  const konf = p.konfidens==="hog" ? "" :
+    ' <span class="chip c-cap" style="font-size:10.5px">konfidens '+p.konfidens+'</span>';
+  const meta = p.tillverkare+' · '+p.kategori+(p.forp ? ' · '+p.forp+' kg' : '');
+  // Bilden är antingen en lokal kopia (bilder/) eller en hotlänk till
+  // tillverkaren. Initialerna ligger alltid kvar under bilden — tar den bort
+  // sig själv vid laddningsfel syns de i stället.
+  const initialer = (p.tillverkare||p.namn).replace(/[^A-Za-zÅÄÖåäö ]/g,"")
+    .split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join("");
+  let bild = '<div class="bildslot"><div class="bild bild-fb">'+initialer+'</div>';
+  if(p.bild) bild += '<img class="bild bild-img" src="'+p.bild
+    + '" alt="'+p.namn.replace(/"/g,"&quot;")+'" loading="lazy" referrerpolicy="no-referrer"'
+    + ' onerror="this.remove()">';
+  bild += '</div>';
+
+  let h = '<div class="prod'+(ar?" vald":"")
+    + '" onclick="valj(\''+p.id+'\')">'
+    + '<div class="prod-h"><div style="display:flex;gap:12px;align-items:flex-start">'
+    + bild
+    + '<div><span class="rank">'+(i+1)+'</span>'
+    + '<span class="prod-n">'+p.namn+'</span>'+konf
+    + (ar?'<span class="valdmark">räknas in ovan</span>':'')
+    + '<div class="prod-m" style="margin-left:28px">'+meta+'</div></div></div>'
+    + '<div class="dose">'+f0(r.dosG)+' g/dygn</div></div>';
+
+  h += '<div class="chips">';
+  r.tackta.forEach(m => h += '<span class="chip c-fix">✓ '+m+' täckt</span>');
+  r.delvis.forEach(m => h += '<span class="chip c-part">~ '+m+' delvis</span>');
+  r.saknas.forEach(m => h += '<span class="chip c-miss">– '+m+' saknas i produkten</span>');
+  r.takBrytare.forEach(m => h += '<span class="chip c-cap">! dos kapad av '+m+'-tak</span>');
+  (r.forvarrar||[]).forEach(m => h += '<span class="chip c-cap">! ökar '+m+' som redan är i överskott</span>');
+  if(r.kvotEffekt) h += '<span class="chip '+(r.kvotEffekt.indexOf("lyfter")===0?"c-fix":"c-cap")+'">'+r.kvotEffekt+'</span>';
+  if(num(wsc)!==null && p.sockerStatus && p.sockerStatus!=="deklarerat" && p.sockerStatus!=="grundad_nolla")
+    h += '<span class="chip c-cap">sockerhalt ej deklarerad</span>';
+  h += '</div>';
+
+  // ---- pris och återförsäljare ----
+  const salj = (p.saljare||[]).filter(s => s.krPerKg!=null);
+  if(r.kostnad!=null){
+    h += '<div style="margin-top:9px;font-size:13px;color:var(--muted)">Kostnad ca <strong>'
+       + f1(r.kostnad)+' kr/dygn</strong> · '+f0(r.kostnad*30)+' kr/månad '
+       + '<span style="font-size:12px">(billigaste alternativet)</span></div>';
+  } else {
+    h += '<div style="margin-top:9px;font-size:13px;color:var(--muted)">Pris ej insamlat</div>';
+  }
+
+  h += saljareBlock(p, r.dos, "Återförsäljare");
+
+  if(r.oprovade && r.oprovade.length)
+    h += msg("warn","Tillverkaren deklarerar inte "+r.oprovade.join(", ")
+      +". Takkontrollen har därför inte kunnat prövas för "
+      +(r.oprovade.length>1?"dessa ämnen":"detta ämne")
+      +" — frånvaro av varning betyder här att uppgift saknas, inte att halten är noll.");
+  if(r.dosKalla === "referensvikt")
+    h += msg("warn","Tillverkaren doserar per häst utan att ange hästvikt. Dosen är skalad "
+      +"från en referensvikt på "+PRODUKTKALLA.referensvikt_per_hast_kg
+      +" kg — kontrollera mot förpackningen om din häst avviker mycket från den.");
+  if(r.underMin)
+    h += msg("warn","Beräknad dos ligger under tillverkarens rekommenderade minimidos. "
+      +"Kontrollera att produkten är avsedd att doseras så lågt.");
+  if(r.takBrytare.length)
+    h += msg("bad","Dosen är begränsad av toleransgränsen för "+r.takBrytare.join(", ")
+      +". Underskotten kan inte täckas fullt ut med denna produkt utan att riskera överdosering.");
+
+  const naraHoga = r.nara.filter(x=>x.andel>60);
+  if(naraHoga.length)
+    h += '<details onclick="event.stopPropagation()"><summary>Takutnyttjande efter tillskott</summary>'
+       + '<div style="margin-top:7px">'
+       + naraHoga.map(x=>x.m+": "+f0(x.andel)+" % av toleransgränsen").join(" · ")
+       + '</div></details>';
+
+  h += '<div class="valjknapp">'+(ar ? "✓ Räknas in i tabellen ovan — klicka för att ta bort"
+                                     : "Klicka för att räkna in i foderstaten")+'</div>';
+  h += '</div>';
+  return h;
+}
+
+/* ---------- små hjälpare ---------- */
+function rad(namn, behov, tillf, pct, status, bar){
+  const cls = status==="low" ? "deficit" : status==="high" ? "over" : "";
+  const pill = status==="low" ? '<span class="pill p-low">under</span>'
+             : status==="high" ? '<span class="pill p-high">över</span>'
+             : '<span class="pill p-ok">ok</span>';
+  return '<tr class="'+cls+'"><td>'+namn+'</td><td class="barcell">'+(bar||"")+'</td>'
+       + '<td class="n">'+behov+'</td><td class="n">'+tillf
+       + '</td><td class="n">'+f0(pct)+' %</td><td>'+pill+'</td></tr>';
+}
+/* ---------- liggande stapel ----------------------------------------------
+   Fast skala: 0 till 200 % av det nedre behovet, lika för alla rader. Det gör
+   staplarna jämförbara mellan ämnen och ger axeln en innebörd — tidigare var
+   skalan omsatt per rad och den tomma delen till höger betydde ingenting.
+
+   Behovslinjen står alltid mitt i stapeln. Frågan blir därmed enkel: når
+   stapeln fram till linjen eller inte?
+
+   Överskott utöver 200 % kapas och markeras med en pil. Det faktiska talet
+   står ändå i sifferkolumnen intill.                                        */
+const AXEL_MAX = 200;   // procent av nedre behovsgräns
+
+function stapel(nedre, ovre, franGrov, franTill, tak){
+  if(!(nedre > 0)) return '';
+  const pc = v => Math.max(0, Math.min(AXEL_MAX, v/nedre*100)) / AXEL_MAX * 100;
+  const total  = franGrov + (franTill||0);
+  const spiller = total/nedre*100 > AXEL_MAX;
+
+  const bandL = pc(nedre);
+  const bandB = ovre > nedre ? Math.max(pc(ovre) - bandL, 1.2) : 0;
+
+  let h = '<div class="barwrap" title="Grovfoder '+f1(franGrov)
+        + (franTill ? ' + tillskott '+f1(franTill) : '')
+        + ' = '+f1(total)+' · behov '+rng([nedre,ovre])+'">';
+  if(bandB > 0)
+    h += '<div class="barband" style="left:'+bandL+'%;width:'+bandB+'%"></div>';
+  h += '<div class="barbehov" style="left:'+bandL+'%"></div>'
+     + '<div class="bar1" style="width:'+pc(franGrov)+'%"></div>';
+  if(franTill > 0)
+    h += '<div class="bar2" style="left:'+pc(franGrov)+'%;width:'+(pc(total)-pc(franGrov))+'%"></div>';
+  if(tak && tak/nedre*100 <= AXEL_MAX)
+    h += '<div class="bartak" style="left:'+pc(tak)+'%" title="Toleransgräns '+f0(tak)+'"></div>';
+  if(spiller)
+    h += '<div class="barspill" title="Går utanför skalan">›</div>';
+  return h + '</div>';
+}
+
+function radM(namn, b, t, tak, extra){
+  const pct = b[0]>0 ? t/b[0]*100 : 0;
+  const takPct = tak ? t/tak*100 : null;
+  let status = "ok";
+  if(t < b[0]) status = "low";
+  else if(tak && t > tak) status = "high";
+  const cls = status==="low" ? "deficit" : status==="high" ? "over" : "";
+
+  // Ett överskott säger inget i sig — det som betyder något är hur nära
+  // toleransgränsen man kommit. 110 % och 400 % av behovet såg tidigare
+  // likadana ut här.
+  let pill;
+  if(status==="low")        pill = '<span class="pill p-low">under</span>';
+  else if(status==="high")  pill = '<span class="pill p-high">ÖVER TAK</span>';
+  else if(takPct!=null && takPct>=70)
+                            pill = '<span class="pill p-high">'+f0(takPct)+' % av tak</span>';
+  else if(takPct!=null && takPct>=40)
+                            pill = '<span class="pill p-high">'+f0(takPct)+' % av tak</span>';
+  else if(t > b[1])         pill = '<span class="pill p-ok">över behov'
+                                 + (takPct!=null ? ' · '+f0(takPct)+' % av tak' : '')+'</span>';
+  else                      pill = '<span class="pill p-ok">ok</span>';
+  const e = extra || 0;
+  const bidrag = e > 0.0001 ? ' <span class="delta">+'+f1(e)+'</span>' : '';
+  return '<tr class="'+cls+'"><td>'+namn+'</td>'
+       + '<td class="barcell">'+stapel(b[0], b[1], t-e, e, tak)+'</td>'
+       + '<td class="n">'+rng(b)+'</td><td class="n">'+f1(t)+bidrag+'</td>'
+       + '<td class="n">'+f0(pct)+' %</td><td>'+pill+'</td></tr>';
+}
+function msg(t,txt){ return '<div class="msg m-'+t+'">'+txt+'</div>'; }
+
+/* ---------- init ---------- */
+datakalla.innerHTML = '<strong>Verklig produktdata.</strong> '+PRODUKTER.length
+  +' matchningsbara produkter av '+PRODUKTKALLA.antal_i_databas+' i databasen, byggd '
+  +PRODUKTKALLA.byggd+'. Uppgifterna kommer ur tillverkarnas egna deklarationer och är '
+  +'kommersiella källor som inte granskats av tredje part. Doser angivna per häst är '
+  +'omräknade från en referensvikt på '+PRODUKTKALLA.referensvikt_per_hast_kg
+  +' kg. Produkterna visas med varumärkets initialer i stället för produktbild — '
+  +'bilderna tillhör tillverkarna och används inte i denna öppna prototyp. '
+  +'Detta är ett beräkningsunderlag, inte rådgivning.';
+
+const vikt_ = document.getElementById("vikt");
+document.querySelectorAll("input,select").forEach(el => {
+  el.addEventListener("input", rakna);
+  el.addEventListener("change", rakna);
+});
+rakna();
+</script>
+</body>
+</html>

@@ -96,7 +96,7 @@ try {
   (0, eval)(skript[1]
     .replace(/^const (PRODUKTER|FODERTABELL|KATEGORI|MAKRO|MAKRO_KAT|ARBFAKTOR|VIT_UH|TAK) /gm,
              "globalThis.$1 ")
-    .replace(/^let (extraFoder|valdId|enhet) /gm, "globalThis.$1 "));
+    .replace(/^let (extraFoder|valdId|enhet|sisteForslag) /gm, "globalThis.$1 "));
 } catch (e) { startfel = e; }
 
 console.log("\n=== 1. SIDAN STARTAR ===");
@@ -395,6 +395,105 @@ console.log("\n=== 15. FÄRGNYCKELN ===");
   kolla("valt tillskott förklaras när det finns",
         !harSeg("forslag") || /Valt tillskott/.test(nyckel()), nyckel().slice(0,160));
   globalThis.valdId = null; nollstall();
+}
+
+/* ---------- 16. kombinationer och flaggor ---------- */
+// byggKombos tog "de sex högst rankade" och sorterade sedan bort dem som klarar
+// allt ensamma. Rankade de sex bästa full täckning blev basen tom — noll
+// kombinationer, och bästa lösningen gick från 1,57 till 4,04 kr/dygn utan att
+// något i kombinationslogiken var fel.
+console.log("\n=== 16. KOMBINATIONER OCH FLAGGOR ===");
+nollstall();
+{
+  const pris = /class="fk-pris"><b>([\d,]+) kr/.exec(ut());
+  kolla("referensfallet hittar kombinationen om 1,57 kr",
+        pris !== null && pris[1] === "1,57", pris ? pris[1] : "inget pris");
+  kolla("kombinationen slår bästa enskilda produkt",
+        parseFloat(pris[1].replace(",", ".")) < sisteForslag[0].kostnad,
+        pris[1] + " mot " + sisteForslag[0].kostnad.toFixed(2));
+  // Fosfor har ingen toleransgräns i SLU 289 — villkoret är Ca/P-kvoten, som
+  // prövas för sig. En flagga utan gräns att närma sig är ingen varning.
+  kolla("ingen produkt flaggas för fosfor",
+        sisteForslag.every(r => (r.forvarrar || []).indexOf("P") < 0),
+        sisteForslag.filter(r => (r.forvarrar||[]).indexOf("P") >= 0).length + " flaggade");
+  kolla("ingen produkt får en överskottsflagga alls",
+        sisteForslag.every(r => (r.forvarrar || []).length === 0),
+        sisteForslag.filter(r => (r.forvarrar||[]).length).length + " flaggade");
+}
+// Takfrågan bärs av statuskolumnen och av takBrytare, inte av en produktflagga.
+noder.Fe.value = "700"; rakna();
+kolla("järn över taket syns på raden i stället",
+      /Järn \(mg\)[\s\S]{0,900}?(över tak|% av tak)/.test(ut()));
+nollstall();
+
+// Rubriken står i kortet och ska följa valet.
+nollstall();
+kolla("rubriken säger vad tabellen visar", /Täckning från grovfodret/.test(ut()));
+globalThis.valdId = "granngarden-hast-bas"; rakna();
+kolla("rubriken nämner det valda tillskottet", /Täckning — grovfoder plus/.test(ut()));
+globalThis.valdId = null; nollstall();
+
+// Ca/P är en kvot, inte ett ämne, och fanns i varken bristLista eller utanfor.
+// Sidan kunde säga "inget fattas längre" med kvoten på 0,6 och en varningsruta
+// om saken tre rader ned.
+{
+  nollstall();
+  noder.Ca.value = "1.5"; noder.P.value = "4.0"; rakna();
+  globalThis.valdId = sisteForslag[0].p.id; rakna();
+  const laagKvot = /Ca\/P-kvot<\/div>[\s\S]{0,900}?under golv/.test(ut());
+  kolla("låg Ca/P-kvot uppnådd i testfallet", laagKvot);
+  kolla("sammanfattningen påstår inte att allt är täckt",
+        !/Inget fattas längre/.test(verdikt()), verdikt().slice(0, 70));
+  kolla("Ca/P räknas som en post som återstår",
+        /Ca\/P-kvot/.test(verdikt()) && noder.kpiBrist.textContent !== "0",
+        "kpi " + noder.kpiBrist.textContent + " · " + verdikt().slice(0, 60));
+  globalThis.valdId = null; nollstall();
+}
+
+// Verbet i luckans etikett måste kunna följa läget — båda orden ska finnas i
+// markupen, CSS växlar mellan dem.
+nollstall();
+kolla("luckan har både Visa och Dölj",
+      /class="v-stangd">Visa</.test(ut()) && /class="v-oppen">Dölj</.test(ut()));
+
+// Grovfodergivan 7,1 mot rekommendationen 7,5–10 redovisades som "94 % · över":
+// allt utanför intervallet men innanför de absoluta gränserna delade statuskod.
+{
+  const status = () => {
+    const m = /tk-namn">Grovfoder \(kg ts\)<\/div>[\s\S]{0,1100}?tk-status[^"]*">([^<]*)</.exec(ut());
+    return m ? m[1] : "";
+  };
+  nollstall();
+  noder.giva.value = "7.1"; rakna();
+  kolla("under rekommendationen står som under", / · under$/.test(status()), status());
+  noder.giva.value = "12"; rakna();
+  kolla("över rekommendationen står som över", / · över$/.test(status()), status());
+  noder.giva.value = "9"; rakna();
+  kolla("inom rekommendationen står som ok", / · ok$/.test(status()), status());
+  noder.giva.value = "16"; rakna();
+  kolla("absoluta gränsen varnar fortfarande separat",
+        /överstiger den övre gränsen/.test(ut()));
+  nollstall();
+}
+// Ett tomt stapelspår läser som noll. Kraftfodret har ingen giva att mätas mot.
+laggTillTabell("havre"); extraFoder[0].kg = 1; rakna();
+kolla("kraftfoderraden har ingen tom mätare",
+      !/Kraftfoder \(kg ts\)<\/div><div class="tk-stapel">/.test(ut())
+      && /räknas i raderna nedan/.test(ut()));
+nollstall();
+
+// Energi och protein hade en gemensam åtgärdsmening som bara gällde energi.
+{
+  nollstall(); noder.smbrp.value = "20"; rakna();
+  kolla("proteinbrist pekar på proteinrikt vallfoder",
+        /lusern/.test(verdikt()) && !/energirikare/.test(verdikt()), verdikt().slice(-90));
+  nollstall(); noder.energi.value = "4"; rakna();
+  kolla("energibrist pekar på energirikt foder",
+        /energirikare/.test(verdikt()), verdikt().slice(-90));
+  noder.smbrp.value = "20"; rakna();
+  kolla("båda samtidigt får var sin åtgärd",
+        /Energin kräver/.test(verdikt()) && /proteinet/.test(verdikt()), verdikt().slice(-120));
+  nollstall();
 }
 
 /* ---------- sammanfattning ---------- */

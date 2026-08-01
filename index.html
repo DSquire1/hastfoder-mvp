@@ -32,6 +32,11 @@
   .hk-top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
     gap:12px;padding:12px 24px;background:var(--bg);border-bottom:1px solid var(--line);flex-wrap:wrap}
   .hk-logo{font-family:var(--serif);font-weight:600;font-size:24px;letter-spacing:-.01em}
+  /* Sidhuvudet är sticky och 66 px högt — samma tal som .hk-left redan räknar
+     med. Utan scroll-margin lägger webbläsaren ankarets överkant vid
+     fönstrets överkant, alltså bakom sidhuvudet, och de översta raderna i
+     båda spalterna hamnar utanför bild.                                     */
+  #verktyget, #cov-anchor{scroll-margin-top:78px}
   .hk-top .hk-meta{font-size:15px;color:var(--muted)}
   .wrap{max-width:1440px;margin:0 auto;padding:20px 24px 90px}
   .hk-cols{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start}
@@ -138,6 +143,12 @@
     list-style:none;flex-wrap:wrap}
   .fk-lucka>summary::-webkit-details-marker{display:none}
   .fk-lucka>summary em{font-style:normal;font-size:14px;font-weight:400;color:var(--muted)}
+  .fk-lucka>summary span::before{content:"▸ ";font-size:12px}
+  .fk-lucka[open]>summary span::before{content:"▾ "}
+  .fk-lucka>summary b{font-weight:inherit}
+  .fk-lucka .v-oppen{display:none}
+  .fk-lucka[open] .v-oppen{display:inline}
+  .fk-lucka[open] .v-stangd{display:none}
   .fk-lista{padding:0 10px 10px;display:flex;flex-direction:column;gap:8px}
   .fk-rad{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px 14px;
     align-items:center;padding:11px 14px;border:1px solid #efe8da;border-radius:4px;
@@ -156,9 +167,13 @@
     font-variant-numeric:tabular-nums;white-space:nowrap}
   .fk-mer{grid-column:1/-1;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
   .fk-mer>summary{font-size:14px;color:var(--brand);cursor:pointer;font-weight:600}
+  .fk-bilder{display:flex;gap:8px}
   @media(max-width:560px){
+    /* Regeln pekade på .bildslot som direkt barn av .fk-hero, men bilderna
+       ligger i en omslutande flexbox. Selektorn matchade därför ingenting,
+       omslaget blev en egen rutnätscell och la sig över produktnamnet. */
     .fk-hero{grid-template-columns:minmax(0,1fr) auto}
-    .fk-hero>.bildslot,.fk-hero>.bildpar{display:none}
+    .fk-hero>.fk-bilder{display:none}
     .fk-rad{grid-template-columns:minmax(0,1fr) auto}
     .fk-rad .a{display:none}
   }
@@ -236,6 +251,7 @@
   .tk-tackt{color:var(--ok)}
   .tk-neutral{color:var(--muted);font-weight:600}
   .tk-stapel{position:relative;height:16px;background:#f0eade;border-radius:2px;overflow:hidden}
+  .tk-utanmatare{font-size:13px;color:var(--ink30);font-style:italic}
   .tk-stapel.okand{background:repeating-linear-gradient(135deg,#f0eade 0 6px,#e8e0d0 6px 12px)}
   .tk-mid{position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--ink)}
   .tk-spill{position:absolute;right:3px;top:0;bottom:0;display:flex;align-items:center;
@@ -529,7 +545,8 @@
     <p>Skriv in värdena från grovfoderanalysen. Vi räknar mot SLU:s normer och visar vilka tillskott
     som täcker luckorna — och vad de kostar per dygn.</p>
     <div class="hk-cta-rad">
-      <a class="hk-cta" href="#verktyget">Börja med hästen</a>
+      <a class="hk-cta" href="#verktyget"
+         onclick="if(window.visaVansterFlik) window.visaVansterFlik(0)">Börja med hästen</a>
       <span>Tar 2 minuter · inget konto</span>
     </div>
     <div class="hk-stats">
@@ -4595,14 +4612,28 @@ function rakna(){
   const utanfor = [];
   if(tillEnergi < behEnergi*0.95) utanfor.push("Energi");
   if(!tacker(tillProt, behProt))  utanfor.push("Smb råprotein");
-  const antalKvar = kvarLista.length + utanfor.length;
+
+  //   Ca/P är en kvot, inte ett ämne, och fanns därför i varken bristLista
+  //   eller utanfor — sidan kunde säga "inget fattas längre" med kvoten på 0,6
+  //   och en varningsruta om saken tre rader ned. SLU 289 är tydligare om just
+  //   den än om något enskilt ämne: kvoten får aldrig understiga 1,1.
+  //
+  //   Till skillnad från energi och protein kan ett tillskott laga den — ett
+  //   kalciumrikt mineralfoder — så den hör till det som återstår, inte till
+  //   det som ligger utanför lösarens räckvidd.
+  const kvotNu = tot("P") > 0 ? tot("Ca")/tot("P") : 0;
+  const kvotBrist = tot("P") > 0 && kvotNu < 1.1;
+  const antalKvar = kvarLista.length + (kvotBrist ? 1 : 0) + utanfor.length;
 
   // ---- sammanfattning ----
   // Designen (3a) öppnar med "Sex ämnen fattas" och ämnena som chips, inte med
   // en mening. Rubriken bär svaret; korten under bär lösningen.
   {
     const kort = m => (AMNESNAMN[m]||m).replace(/\s*\([^)]*\)/, "");
-    const RAKNEORD = ["Inga","Ett","Två","Tre","Fyra","Fem","Sex","Sju","Åtta","Nio","Tio"];
+    // "ämne" är neutrum, "post" utrum: ett ämne, en post. Samma lista på båda
+    // gav "Ett post återstår".
+    const RAKNEORD  = ["Inga","Ett","Två","Tre","Fyra","Fem","Sex","Sju","Åtta","Nio","Tio"];
+    const RAKNEORD_U = ["Inga","En","Två","Tre","Fyra","Fem","Sex","Sju","Åtta","Nio","Tio"];
     const b1 = komboLista.length ? komboLista[0] : (sisteForslag.length ? sisteForslag[0] : null);
 
     if(tsGrovTot < grovMin){
@@ -4614,8 +4645,21 @@ function rakna(){
       // ursprungslistan inte längre svaret på frågan — den stod kvar och sade
       // "sex ämnen fattas" bredvid ett nyckeltal som sade två.
       const n = antalKvar;
-      const grovraden = 'Det löses inte med ett mineralfoder — utan med en större giva, '
-        + 'ett energirikare grovfoder eller ett kraftfoder under <strong>Övrigt</strong>.';
+      // Energi och protein hade en gemensam åtgärdsmening som i praktiken bara
+      // gällde energi: "ett energirikare grovfoder" hjälper inte mot ett
+      // proteinunderskott. HästSveriges foderstatsprogram skiljer på dem och
+      // pekar för protein på ett proteinrikt vallfoder, typiskt lusern — som
+      // finns i fodertabellen under Övrigt.
+      const ATGARD = {
+        "Energi": 'en större grovfodergiva, ett energirikare grovfoder eller ett '
+          + 'kraftfoder under <strong>Övrigt</strong>',
+        "Smb råprotein": 'en större grovfodergiva eller ett proteinrikt vallfoder — '
+          + 'lusern finns i fodertabellen under <strong>Övrigt</strong>'
+      };
+      const grovraden = utanfor.length === 1
+        ? 'Det löses inte med ett mineralfoder, utan med '+ATGARD[utanfor[0]]+'.'
+        : 'Det löses inte med ett mineralfoder. Energin kräver '+ATGARD["Energi"]
+          + '; proteinet '+ATGARD["Smb råprotein"]+'.';
 
       if(!n){
         h += '<div class="verdikt" style="border-left-color:var(--ok)"><strong>'
@@ -4626,7 +4670,7 @@ function rakna(){
                 + 'täckta'+(vald.kostnad!=null ? ' för '+kr(vald.kostnad)+' kr/dygn' : '')+'.'
               : 'Inget tillskott behövs för de ämnen som ingår.')
            + '</div></div>';
-      } else if(!kvarLista.length){
+      } else if(!kvarLista.length && !kvotBrist){
         // Allt lösaren kan åtgärda är åtgärdat. Kvar står grovfoderfrågan.
         h += '<div class="verdikt" style="border-left-color:var(--warn)"><strong>'
            + (utanfor.length === 1 ? utanfor[0]+' räcker inte' : 'Energi och protein räcker inte')
@@ -4637,10 +4681,16 @@ function rakna(){
            + '. '+grovraden+'</div></div>';
       } else {
         h += '<div class="verdikt"><strong>'
-           + (RAKNEORD[n] || n) + (n===1 ? " ämne fattas" : " ämnen fattas")
+           // "Ämnen" stämmer bara när allt som återstår är ämnen. Ca/P är en
+           // kvot och energi är ingen näring — då är "poster" det ord som
+           // täcker det som faktiskt räknats.
+           + (!kvotBrist && !utanfor.length
+              ? (RAKNEORD[n] || n) + (n===1 ? " ämne fattas" : " ämnen fattas")
+              : (RAKNEORD_U[n] || n) + (n===1 ? " post återstår" : " poster återstår"))
            + (vald ? " fortfarande" : "") + '</strong>'
            + '<div class="chips" style="margin-top:10px">'
            + kvarLista.map(m => '<span class="chip c-cap">'+kort(m)+'</span>').join("")
+           + (kvotBrist ? '<span class="chip c-cap">Ca/P-kvot</span>' : '')
            + utanfor.map(t => '<span class="chip c-part">'+t+'</span>').join("")
            + '</div>';
         if(b1 && !vald){
@@ -4661,6 +4711,10 @@ function rakna(){
         // Energi och protein har ingen produkt i databasen. Att lista dem som
         // chips utan att säga vad man gör åt dem vore att peka på ett problem
         // och gå därifrån.
+        if(kvotBrist)
+          h += '<div class="rad2">Ca/P-kvoten <strong>'+f1(kvotNu)+'</strong> ligger under '
+             + 'SLU:s golv 1,1. Den avser hela foderstaten — ett kalciumrikt mineralfoder '
+             + 'kan lyfta den.</div>';
         if(utanfor.length)
           h += '<div class="rad2">'+utanfor.join(" och ")+' ligger också under behovet. '
              + grovraden+'</div>';
@@ -4680,17 +4734,25 @@ function rakna(){
      + '<div style="text-align:right">Behov</div><div style="text-align:right">Tillfört</div>'
      + '<div style="text-align:right">Status</div></div>';
 
+  // 7,1 kg ts mot rekommendationen 7,5–10 redovisades som "94 % · över", därför
+  // att allt utanför intervallet men innanför de absoluta gränserna samlades
+  // under samma statuskod. Under är under, oavsett vilken gräns som avses.
   h += rad("Grovfoder (kg ts)", rng([grovRek[0],grovRek[1]]), f1(tsGrovTot),
         tsGrovTot/grovRek[0]*100,
-        tsGrovTot<grovMin?"low":(tsGrovTot>grovMax?"high":(tsGrovTot<grovRek[0]?"high":"ok")),
+        tsGrovTot < grovRek[0] ? "low" : (tsGrovTot > grovRek[1] ? "high" : "ok"),
         stapel(grovRek[0], grovRek[1],
                [{v:givaTS,     klass:"seg-grov",   namn:"grovfoderanalysen"},
                 {v:ex.tsGrov,  klass:"seg-ovrigt", namn:"övriga grovfoder"}], grovMax));
   if(ex.tsKraft > 0)
+    // Raden hade ett tomt stapelspår. Ett spår utan fyllning läser som noll,
+    // och kraftfodret ser då ut att inte bidra med något — trots att dess
+    // energi, protein och mineraler ligger i raderna nedanför. Det finns
+    // ingen giva att mäta det mot, så det ska inte heller ha någon mätare.
     h += '<div class="tk-rad tackt"><div class="tk-namn">Kraftfoder (kg ts)</div>'
-       + '<div class="tk-stapel"></div><div class="tk-tal">—</div>'
+       + '<div class="tk-utanmatare">räknas i raderna nedan, inte mot grovfodergivan</div>'
+       + '<div class="tk-tal">—</div>'
        + '<div class="tk-tal">'+f1(ex.tsKraft)+'</div>'
-       + '<div class="tk-status tk-neutral">utanför grovgivan</div></div>';
+       + '<div class="tk-status tk-neutral">ingen egen norm</div></div>';
   h += rad("Energi (MJ)", f0(behEnergi), f0(tillEnergi), tillEnergi/behEnergi*100,
         tillEnergi<behEnergi*0.95?"low":(tillEnergi>behEnergi*1.15?"high":"ok"),
         stapel(behEnergi, behEnergi,
@@ -4727,6 +4789,7 @@ function rakna(){
       return;
     }
     h += radM(kortNamn(m)+" (mg)", beh[m], tot(m), tak[m], extra[m], delarFor(m, extra[m]));
+
   });
 
   const kvot = tot("P")>0 ? tot("Ca")/tot("P") : 0;
@@ -4924,7 +4987,11 @@ function rakna(){
 
     if(visas.length){
       const pris = visas.map(r=>r.kostnad);
-      h += '<details class="fk-lucka" data-nyckel="lucka"><summary>Visa '+visas.length+' förslag till'
+      // Verbet måste följa läget. "Visa 8 förslag till" ovanför åtta synliga
+      // förslag beskriver inte vad knappen gör, utan vad den redan har gjort.
+      h += '<details class="fk-lucka" data-nyckel="lucka"><summary><span>'
+         + '<b class="v-stangd">Visa</b><b class="v-oppen">Dölj</b> '
+         + visas.length+' förslag till</span>'
          + '<em>'+kr(Math.min.apply(null,pris))+'–'+kr(Math.max.apply(null,pris))
          + ' kr/dygn</em></summary><div class="fk-lista">'
          + visas.map((r,k) => radKort(r, N, k+2)).join("")
@@ -5034,12 +5101,28 @@ function bidrag(p, dos){
    mineralfodret för att jaga saltet.                                        */
 function byggKombos(bas, brist, till, beh, tak, enh, vikt){
   const ut = [], sedda = new Set();
-  bas.slice(0,6).forEach(a => {
+
+  /* Basen togs tidigare som "de sex högst rankade", varefter var och en som
+     klarade allt ensam sorterades bort inne i loopen. Rankade de sex bästa
+     samtliga full täckning blev basen tom och inga kombinationer alls hittades
+     — vilket hände i referensfallet så fort poängsättningen justerades, och
+     tog den bästa lösningen från 1,57 till 4,04 kr/dygn utan att något i
+     kombinationslogiken var fel.
+
+     Urvalet ska ske före kapningen, inte efter. Det är just produkterna som
+     täcker mycket men inte allt som en andra produkt kan komplettera — en
+     produkt som redan klarar allt är ingen halva.                            */
+  const rester = new Map();
+  bas.forEach(a => {
     const bA = bidrag(a.p, a.dos);
     const till2 = {}; Object.keys(till).forEach(m => till2[m] = till[m] + (bA[m]||0));
     const rest = {};
     Object.keys(brist).forEach(m => { const d = beh[m][0]-till2[m]; if(d > 1e-4) rest[m] = d; });
-    if(!Object.keys(rest).length) return;              // a klarar allt ensam
+    if(Object.keys(rest).length) rester.set(a, {till2, rest});
+  });
+
+  bas.filter(a => rester.has(a)).slice(0,6).forEach(a => {
+    const {till2, rest} = rester.get(a);
 
     (KANDIDATER||PRODUKTER).forEach(pb => {
       if(pb.id === a.p.id) return;
@@ -5130,15 +5213,27 @@ function utvardera(p, brist, till, beh, tak, enh, vikt){
     return inneh<=0;
   });
 
-  // Straff för att förvärra ett redan täckt överskott, och för att sänka Ca/P
-  // Endast materiella bidrag flaggas: produkten måste öka tillförseln med minst
-  // 10 % av vad grovfodret redan ger. Annars blir varje mineralfoder flaggat för
-  // järn, trots att bidraget är försumbart mot toleransgränsen.
+  /* Fosfor och järn hade en egen straffregel: "ökar X som redan är i
+     överskott", −5 poäng. Den togs bort, i två steg och av två skäl.
+
+     Fosfor har ingen toleransgräns i SLU 289 — tabell 17 gäller spårämnena, och
+     för fosfor är Ca/P-kvoten hela villkoret. Regeln gav därför en röd flagga
+     bredvid en grön rad, i lägen där kvoten låg kvar på 1,7.
+
+     Järn har en gräns, så regeln skrevs först om till att mäta mot den. Då
+     visade det sig att den aldrig kan tända: taket är 3 000 mg per 100 kg,
+     alltså 15 000 mg för en 500-kilos häst, medan det största järnbidrag någon
+     produkt i databasen ger vid sin dos är 214 mg. För att bidraget ska vara
+     materiellt (>10 % av befintlig tillförsel) måste grovfodret ge under
+     1 600 mg; för att resultatet ska nå 40 % av taket måste det ge över
+     5 800 mg. Villkoren utesluter varandra.
+
+     En regel som ser ut som ett skyddsnät men aldrig kan lösa ut är värre än
+     inget skyddsnät. Takfrågan bärs i stället av två saker som fungerar:
+     statuskolumnen visar "N % av tak" från 40 % och "över tak" däröver, och
+     takBrytare kapar dosen innan en gräns nås.                               */
   let straff = 0; const forvarrar = [];
-  ["P","Fe"].forEach(m=>{
-    if(g(m)<=0 || till[m] <= beh[m][1]*1.2) return;
-    if(g(m)*dos > till[m]*0.10){ straff += 5; forvarrar.push(m); }
-  });
+
   const kvotFore  = till.P>0 ? till.Ca/till.P : 99;
   const nyCa = till.Ca + g("Ca")*dos, nyP = till.P + g("P")*dos;
   const kvotEfter = nyP>0 ? nyCa/nyP : 99;
@@ -5146,6 +5241,10 @@ function utvardera(p, brist, till, beh, tak, enh, vikt){
   if(kvotFore < 1.2 && kvotEfter >= 1.2){ bonus += 6; kvotEffekt = "lyfter Ca/P till "+f1(kvotEfter); }
   else if(kvotFore >= 1.1 && kvotEfter < 1.1){ straff += 8; kvotEffekt = "sänker Ca/P till "+f1(kvotEfter); }
   else if(kvotFore < 1.1 && kvotEfter < kvotFore){ straff += 8; kvotEffekt = "sänker Ca/P ytterligare"; }
+  // Ett fosforbidrag som pressar kvoten nedåt utan att bryta golvet är värt att
+  // nämna, men inte att straffa — och inte i rött.
+  else if(kvotEfter < kvotFore - 0.05 && kvotEfter < 1.4)
+    kvotEffekt = "sänker Ca/P till "+f1(kvotEfter)+", kvar i intervallet";
 
   // Odeklarerade ämnen som ligger under tak: takkontrollen har inte kunnat
   // pröva dem. Det ska synas — annars passerar kontrollen utan att ha
@@ -5266,7 +5365,7 @@ function heroKort(r, ogon, totalt, i){
   return '<div class="fk-hero'+(ar?" vald":"")+'" id="kort-'+id.replace(/[^\w-]/g,"_")
     + '" role="button" tabindex="0"'
     + ' onkeydown="kortTangent(event,this)" onclick="valj(\''+id+'\')">'
-    + '<div style="display:flex;gap:8px">'+delar.map(p=>bildFor(p,true)).join("")+'</div>'
+    + '<div class="fk-bilder">'+delar.map(p=>bildFor(p,true)).join("")+'</div>'
     + '<div><div class="fk-ogon">'+(ar ? "Vald · " : "")+ogon+'</div>'
     + '<div class="fk-namn">'+forslagsNamn(r)+'</div>'
     + '<div class="fk-meta">'+meta+'</div></div>'
@@ -5385,7 +5484,8 @@ function kort(r,i,bar){
   r.delvis.forEach(m => h += '<span class="chip c-part">~ '+m+' delvis</span>');
   r.saknas.forEach(m => h += '<span class="chip c-miss">– '+m+' saknas i produkten</span>');
   r.takBrytare.forEach(m => h += '<span class="chip c-cap">! dos kapad av '+m+'-tak</span>');
-  (r.forvarrar||[]).forEach(m => h += '<span class="chip c-cap">! ökar '+m+' som redan är i överskott</span>');
+  (r.forvarrar||[]).forEach(m => h += '<span class="chip c-cap">! driver '+kortNamn(m)
+    +' mot toleransgränsen</span>');
   if(r.kvotEffekt) h += '<span class="chip '+(r.kvotEffekt.indexOf("lyfter")===0?"c-fix":"c-cap")+'">'+r.kvotEffekt+'</span>';
   if(num(wsc)!==null && p.sockerStatus && p.sockerStatus!=="deklarerat" && p.sockerStatus!=="grundad_nolla")
     h += '<span class="chip c-cap">sockerhalt ej deklarerad</span>';
@@ -5685,13 +5785,28 @@ rakna();
   var b=document.body; if(!b) return;
   b.className=(b.className?b.className+' ':'')+'tab-in';
   var tabs=[].slice.call(document.querySelectorAll('.hk-tabs button'));
-  function visa(t){
+  /* Flikväxlingen skrollade till sidans absoluta topp. Det drog upp läsaren
+     förbi hjältebilden varje gång, trots att flikraden själv är sticky och
+     redan står kvar — det enda som skulle byta plats var innehållet under den.
+
+     Klick på en flik rör därför inte längre scrollpositionen. Knappen "Se
+     resultat" i foten är ett annat fall: där ber man uttryckligen om att få se
+     resultatet, och då skrollas flikraden upp till sitt fästläge — inte till
+     sidans topp, så att flikarna förblir synliga.                            */
+  var FLIKRAD_TOPP = 57;
+  function visa(t, hoppa){
     b.className=b.className.replace(/tab-(in|ut)/,'tab-'+t);
     tabs.forEach(function(x){x.className = x.getAttribute('data-t')===t ? 'on':'';});
-    window.scrollTo(0,0);
+    if(hoppa){
+      var tb=document.querySelector('.hk-tabs');
+      if(tb){
+        var flytt=tb.getBoundingClientRect().top - FLIKRAD_TOPP;
+        try{ if(flytt) window.scrollBy(0, flytt); }catch(e){}
+      }
+    }
   }
   tabs.forEach(function(t){t.addEventListener('click',function(){visa(t.getAttribute('data-t'));});});
-  var k=document.getElementById('hkVisa'); if(k) k.addEventListener('click',function(){visa('ut');});
+  var k=document.getElementById('hkVisa'); if(k) k.addEventListener('click',function(){visa('ut', true);});
   try{ uppdEnheter(typeof enhet!=="undefined"?enhet:'ts'); }catch(e){}
 
   /* viktreglage speglar sifferfältet */
@@ -5717,6 +5832,10 @@ rakna();
     if(vk.length>=4&&ln.length===3){
       ln.forEach(function(x,n){x.addEventListener('click',function(){visaL(n);});});
       visaL(0);
+      // "Börja med hästen" skrollade till verktyget men lämnade vänsterpanelen
+      // på den flik man råkade stå på — typiskt Grovfoder, dit Slumpa en analys
+      // byter. Knappen lovar hästen och ska då också visa hästen.
+      window.visaVansterFlik = visaL;
     }
   }catch(e){}
 
@@ -5809,8 +5928,18 @@ rakna();
   var ut=document.getElementById('ut'), sum=document.getElementById('hkSum');
   if(ut&&sum&&window.MutationObserver){
     var upd=function(){
-      var v=ut.querySelector('.verdikt');
-      if(v){ var t=v.textContent.replace(/\s+/g,' ').trim(); sum.textContent=t.length>90?t.slice(0,90)+'…':t; }
+      /* Foten byggdes av verdiktets hela textContent. Chipsen ligger som
+         separata element utan mellanrum i märkspråket, så resultatet blev
+         "Sex ämnen fattasNatriumkloridZinkKoppar…". Rubriken är redan en hel
+         mening — den plus priset räcker, och kan inte klistras ihop.        */
+      var v=ut.querySelector('.verdikt'), rubrik=v && v.querySelector('strong');
+      if(rubrik){
+        var pris=document.getElementById('kpiPris');
+        var txt=rubrik.textContent.replace(/\s+/g,' ').trim();
+        if(pris && pris.textContent && pris.textContent!=='—')
+          txt += ' · billigast ' + pris.textContent + ' kr/dygn';
+        sum.textContent=txt;
+      }
       try{
         var kb=document.getElementById('kpiBrist'),
             kp=document.getElementById('kpiPris'),

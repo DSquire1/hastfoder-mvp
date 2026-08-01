@@ -56,9 +56,13 @@ att läsa den uteblivna analysen som en nolla skulle fylla tabellen med brister
 som inte är belagda.
 
 **Säger vad den inte kan lösa.** Energi och protein ingår i bedömningen men inte
-i produktförslagen. Ett proteinunderskott löses med en större giva, ett
-energirikare grovfoder eller ett kraftfoder — och sidan säger det i stället för
-att peka på en påse mineraler.
+i produktförslagen, och de får var sin åtgärd: energi pekar på en större giva
+eller ett energirikare foder, protein på ett proteinrikt vallfoder som lusern.
+Sidan säger det i stället för att peka på en påse mineraler.
+
+**Räknar Ca/P-kvoten som en egen post.** Kvoten är inte ett ämne och föll därför
+tidigare mellan stolarna — SLU 289 är tydligare om den än om något enskilt ämne:
+den får aldrig understiga 1,1.
 
 ---
 
@@ -100,7 +104,7 @@ finns.
 node verktyg/test.js
 ```
 
-62 kontroller. Riggen bygger en minimal DOM och kör hela skriptet som webbläsaren
+84 kontroller. Riggen bygger en minimal DOM och kör hela skriptet som webbläsaren
 gör — den kontrollerar alltså att sidan **startar** innan den mäter siffror.
 Utgångskod 1 om något fallerar.
 
@@ -108,10 +112,10 @@ Kör den efter varje ändring i `index.html`. En syntaxkontroll räcker inte:
 prototypen har redan en gång levererats i ett skick där all matematik var korrekt
 men sidan aldrig kom igång.
 
-Fjorton grupper. De fyra sista prövar inre konsistens: att lösaren och tabellen
+Sjutton grupper. De sju sista prövar inre konsistens: att lösaren och tabellen
 svarar likadant på om ett behov är täckt, att radfiltret och sammanfattningen
 följer det valda förslaget, och att nyckeltalen räknar exakt de poster som listas
-bredvid dem. Samtliga fyra tillkom efter att fel av just den sorten hunnit
+bredvid dem. Samtliga tillkom efter att fel av just den sorten hunnit
 levereras — sidan kunde säga *"täcker alla sex"* i ett kort och *"99 % · under"*
 på raden intill, om samma foderstat.
 
@@ -167,12 +171,18 @@ annat.
 poäng = 10 × täckta underskott
       +  3 × delvis täckta
       −  4  om dosen kapats av en toleransgräns
-      −  5  per ämne i överskott som ökas materiellt
       +  6  om Ca/P lyfts från under 1,2 till minst 1,2
       −  8  om Ca/P pressas under 1,1
 ```
 
 Lika poäng bryts av pris.
+
+Straffet för att "öka ett ämne som redan är i överskott" är borttaget. Fosfor
+har ingen toleransgräns i SLU 289 — Ca/P-kvoten är villkoret, och den prövas för
+sig. För järn skrevs regeln om till att mäta mot taket, varpå det visade sig att
+den aldrig kunde tända: taket är 15 000 mg för en 500-kilos häst medan det största
+järnbidrag någon produkt ger vid sin dos är 214 mg. Takfrågan bärs av
+statuskolumnens "% av tak" och av doskapningen.
 
 **Vikterna har ingen källa.** De är en bedömning kodad som tal och är prototypens
 svagaste led. De avgör vilken produkt som hamnar överst och därmed vad en

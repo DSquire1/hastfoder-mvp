@@ -3437,6 +3437,15 @@ const TAK = {Fe:3000, Mn:3000, Cu:2400, Zn:1500, Co:30, I:10, Se:5};
 const ARBFAKTOR = [0, 0.25, 0.50, 0.75, 1.20];
 
 const MIKROLISTA = ["Zn","Cu","Mn","Fe","Se","I","Co"];
+
+/* Fullständiga namn i tabellen. Beteckningen står kvar inom parentes eftersom
+   det är så analysrapporten skriver dem — den som jämför rad för rad ska känna
+   igen sig. */
+const AMNESNAMN = {
+  Ca:"Kalcium (Ca)", P:"Fosfor (P)", Mg:"Magnesium (Mg)", NaCl:"Natriumklorid (NaCl)",
+  Zn:"Zink (Zn)", Cu:"Koppar (Cu)", Mn:"Mangan (Mn)", Fe:"Järn (Fe)",
+  Se:"Selen (Se)", I:"Jod (I)", Co:"Kobolt (Co)"
+};
 /* ---------- fodermedelstabell ------------------------------------------------
    Näringsvärden per kg torrsubstans ur SLU:s fodertabell för häst
    (se Kunskapsbank/07). Stärkelse ur SLU 289 tabell 29 där den finns —
@@ -4105,16 +4114,16 @@ function rakna(){
                [{v:(A.smbrp||0)*givaTS, klass:"seg-grov",   namn:"grovfodret"},
                 {v:ex.smbrp,            klass:"seg-ovrigt", namn:"övriga fodermedel"}], null));
 
-  [["Ca","Kalcium (g)"],["P","Fosfor (g)"],["Mg","Magnesium (g)"],["NaCl","Natriumklorid (g)"]]
-    .forEach(([m,l]) => h += radM(l, beh[m], tot(m), null, extra[m], delarFor(m, extra[m])));
+  ["Ca","P","Mg","NaCl"].forEach(m =>
+    h += radM(AMNESNAMN[m]+", g", beh[m], tot(m), null, extra[m], delarFor(m, extra[m])));
   MIKROLISTA.forEach(m => {
     if(oanalyserat.indexOf(m) >= 0 && tot(m) <= 0){
-      h += '<tr><td>'+m+' (mg)</td><td class="barcell"></td>'
+      h += '<tr><td>'+AMNESNAMN[m]+', mg</td><td class="barcell"></td>'
          + '<td class="n">'+rng(beh[m])+'</td><td class="n">—</td><td class="n">—</td>'
          + '<td><span class="pill p-high">ej analyserat</span></td></tr>';
       return;
     }
-    h += radM(m+" (mg)", beh[m], tot(m), tak[m], extra[m], delarFor(m, extra[m]));
+    h += radM(AMNESNAMN[m]+", mg", beh[m], tot(m), tak[m], extra[m], delarFor(m, extra[m]));
   });
 
   const kvot = tot("P")>0 ? tot("Ca")/tot("P") : 0;
@@ -4207,7 +4216,8 @@ function rakna(){
     h += msg("warn","Oljegivan "+f0(ex.oljaKg*1000)+" g överstiger SLU:s tak 75 g per 100 kg "
       +"kroppsvikt och dygn ("+f0(75*enh)+" g).");
   if(oanalyserat.length)
-    h += msg("warn","Grovfoderanalysen saknar värden för "+oanalyserat.join(", ")
+    h += msg("warn","Grovfoderanalysen saknar värden för "
+      +oanalyserat.map(m => AMNESNAMN[m] || m).join(", ")
       +". Dessa räknas varken som noll eller som täckta — inget underskott beräknas och "
       +"toleransgränsen kan inte prövas. Vill du att de ska ingå, fyll i analysvärdena eller "
       +"tryck på <em>Fyll i schablonvärden</em>. SLU 308 rekommenderar analys av järn, mangan, "
@@ -4240,7 +4250,7 @@ function rakna(){
   if(naraTak.length)
     h += msg(naraTak.some(m => tot(m)/tak[m] >= 0.7) ? "bad" : "warn",
       "Följande ligger över 40 % av toleransgränsen: "
-      + naraTak.map(m => m+" "+f0(tot(m)/tak[m]*100)+" %").join(", ")
+      + naraTak.map(m => (AMNESNAMN[m]||m)+" "+f0(tot(m)/tak[m]*100)+" %").join(", ")
       + ". Selen och jod har de smalaste marginalerna av alla mikromineraler — "
       + "25 respektive 29 gånger från nedre behov till tak — och är därför de "
       + "som först blir kritiska när flera produkter staplas.");
@@ -4270,7 +4280,7 @@ function rakna(){
     h += msg("warn","Ingen produkt i databasen kan täcka något underskott utan att spränga en toleransgräns.");
   } else {
     h += '<p class="note" style="margin-bottom:14px">Underskott mot nedre behovsgräns: <strong>'
-       + bristLista.join(", ")+'</strong>. Varje produkt doseras så att så många underskott '
+       + bristLista.map(m => AMNESNAMN[m] || m).join(", ")+'</strong>. Varje produkt doseras så att så många underskott '
        + 'som möjligt täcks utan att någon toleransgräns överskrids. '
        + '<strong>Klicka för att räkna in i tabellen ovan.</strong></p>';
 

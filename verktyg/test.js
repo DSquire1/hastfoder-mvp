@@ -131,24 +131,24 @@ nollstall();
  ["Energi (MJ)", 1, 74, "tillfört energi 74 MJ"],
  ["Smb råprotein (g)", 0, 317, "proteinbehov 317 g"],
  ["Smb råprotein (g)", 1, 423, "tillfört protein 423 g"],
- ["Kalcium (g)", 1, 25.2, "kalcium 25,2 g"],
- ["Fosfor (g)", 1, 21.6, "fosfor 21,6 g"],
- ["Magnesium (g)", 1, 5.4, "magnesium 5,4 g"],
- ["Cu (mg)", 1, 45, "koppar 45 mg"],
- ["Zn (mg)", 1, 189, "zink 189 mg"],
- ["Mn (mg)", 1, 180, "mangan 180 mg"]
+ ["Kalcium (Ca), g", 1, 25.2, "kalcium 25,2 g"],
+ ["Fosfor (P), g", 1, 21.6, "fosfor 21,6 g"],
+ ["Magnesium (Mg), g", 1, 5.4, "magnesium 5,4 g"],
+ ["Koppar (Cu), mg", 1, 45, "koppar 45 mg"],
+ ["Zink (Zn), mg", 1, 189, "zink 189 mg"],
+ ["Mangan (Mn), mg", 1, 180, "mangan 180 mg"]
 ].forEach(([etikett, kol, facit, namn]) => {
   const v = tal(etikett, kol);
   kolla(namn, nara(v, facit), v === null ? "raden hittades inte" : "fick " + v);
 });
-kolla("underskott = Mg, NaCl, Zn, Cu, Mn, Se",
-      underskott().join(",") === "Mg,NaCl,Zn,Cu,Mn,Se", underskott().join(", "));
+kolla("underskott = magnesium, salt, zink, koppar, mangan, selen",
+      underskott().join(",") === "Magnesium (Mg),Natriumklorid (NaCl),Zink (Zn),Koppar (Cu),Mangan (Mn),Selen (Se)", underskott().join(", "));
 
 /* ---------- 3. odeklarerat räknas inte som noll ---------- */
 console.log("\n=== 3. ODEKLARERAT SKILJS FRÅN NOLL ===");
-kolla("jod utan analysvärde ger inget underskott", underskott().indexOf("I") < 0);
-kolla("kobolt utan analysvärde ger inget underskott", underskott().indexOf("Co") < 0);
-kolla("selen ger underskott ändå — avsiktligt nollantagande", underskott().indexOf("Se") >= 0);
+kolla("jod utan analysvärde ger inget underskott", underskott().indexOf("Jod (I)") < 0);
+kolla("kobolt utan analysvärde ger inget underskott", underskott().indexOf("Kobolt (Co)") < 0);
+kolla("selen ger underskott ändå — avsiktligt nollantagande", underskott().indexOf("Selen (Se)") >= 0);
 kolla("varning om ej analyserade ämnen visas",
       ut().indexOf("varken som noll eller som täckta") > 0);
 
@@ -156,16 +156,16 @@ kolla("varning om ej analyserade ämnen visas",
 console.log("\n=== 4. BEFINTLIGT TILLSKOTT ===");
 const hastBas = PRODUKTER.find(p => p.namn.indexOf("Häst Bas") >= 0);
 noder.befProdukt.value = hastBas.id; noder.befDos.value = "50"; rakna();
-kolla("50 g Häst Bas lämnar bara NaCl", underskott().join(",") === "NaCl", underskott().join(", "));
+kolla("50 g Häst Bas lämnar bara natriumklorid", underskott().join(",") === "Natriumklorid (NaCl)", underskott().join(", "));
 kolla("produkten föreslås inte igen", ut().indexOf(hastBas.namn) < 0);
-kolla("magnesium når över behovet", tal("Magnesium (g)", 1) >= 7.5, "fick " + tal("Magnesium (g)", 1));
+kolla("magnesium når över behovet", tal("Magnesium (Mg), g", 1) >= 7.5, "fick " + tal("Magnesium (Mg), g", 1));
 nollstall();
 
 /* ---------- 5. flera fodermedel ---------- */
 console.log("\n=== 5. FLERA FODERMEDEL ===");
 laggTillTabell("lusern"); extraFoder[0].kg = 1; rakna();
-kolla("1 kg lusern höjer kalcium till 37,8 g", nara(tal("Kalcium (g)", 1), 37.8, 0.8),
-      "fick " + tal("Kalcium (g)", 1));
+kolla("1 kg lusern höjer kalcium till 37,8 g", nara(tal("Kalcium (Ca), g", 1), 37.8, 0.8),
+      "fick " + tal("Kalcium (Ca), g", 1));
 kolla("grovfoderraden räknar in lusernen", nara(tal("Grovfoder (kg ts)", 1), 9.9, 0.2),
       "fick " + tal("Grovfoder (kg ts)", 1));
 nollstall();
@@ -181,8 +181,8 @@ noder.kategori.value = "digi13"; rakna();
 kolla("digivande månad 1–3 ger 106 MJ", nara(tal("Energi (MJ)", 0), 106, 1),
       "fick " + tal("Energi (MJ)", 0));
 noder.kategori.value = "vaxt1324"; rakna();
-kolla("växande 13–24 mån har Ca-behov 37,5 g", nara(tal("Kalcium (g)", 0), 37.5, 0.5),
-      "fick " + tal("Kalcium (g)", 0));
+kolla("växande 13–24 mån har Ca-behov 37,5 g", nara(tal("Kalcium (Ca), g", 0), 37.5, 0.5),
+      "fick " + tal("Kalcium (Ca), g", 0));
 nollstall();
 noder.arbete.value = "2"; rakna();
 kolla("medelarbete ger 79 MJ (+50 %)", nara(tal("Energi (MJ)", 0), 79, 1),

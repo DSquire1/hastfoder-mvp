@@ -433,8 +433,9 @@
   .hk-stats span{font-size:14px;color:var(--muted)}
   /* Ingen fast bildproportion: höjden kommer från raden. min-height hindrar
      bara att bilden blir en remsa om texten skulle kortas ned. */
-  .hk-hero-bild{position:relative;min-height:360px;border:1px solid var(--line2);
-    border-radius:4px;overflow:hidden;background:var(--paper2)}
+  .hk-hero-bild{position:relative;min-height:360px;max-width:100%;
+    border:1px solid var(--line2);border-radius:4px;overflow:hidden;
+    background:var(--paper2)}
   /* Absolut positionerad, och det är hela poängen. Med height:100% mot en
      förälder utan bestämd höjd faller procenten tillbaka på bildens EGEN höjd
      — Pexels-filen är 1000×1250, alltså porträtt — och då satte bilden radens
@@ -513,7 +514,12 @@
   @media(max-width:1000px){
     .hk-hero{grid-template-columns:1fr;gap:28px;padding:36px 20px 32px}
     .hk-h1{font-size:44px}
-    .hk-hero-bild{aspect-ratio:16/9;max-height:320px}
+    /* min-height:360 från tvåspaltsläget måste nollas här. min-height vinner
+       över max-height, så rutan blev 360 hög — och med aspect-ratio 16/9 räknas
+       bredden då till 640 px, vilket rann ut ur skärmen. Höjden ska komma från
+       proportionen och spaltbredden, ingenting annat. */
+    .hk-hero-bild{aspect-ratio:16/9;min-height:0;max-height:320px;width:100%}
+    .hk-hero-txt{justify-content:flex-start}
     .hk-kpi{grid-template-columns:1fr 1fr}
     .hk-kpi .k-spar{grid-column:span 2}
   }

@@ -31,12 +31,24 @@
   /* ---- ram ---- */
   .hk-top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
     gap:12px;padding:12px 24px;background:var(--bg);border-bottom:1px solid var(--line);flex-wrap:wrap}
-  .hk-logo{font-family:var(--serif);font-weight:600;font-size:24px;letter-spacing:-.01em}
+  .hk-logo{font-family:var(--serif);font-weight:600;font-size:24px;letter-spacing:-.01em;
+    display:flex;align-items:center;gap:9px}
+  /* Prototypstatusen hör hemma bredvid namnet, inte i en banner. Mono och
+     versalt, samma språk som tabellrubrikerna. */
+  .hk-beta{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--brand);background:var(--brand-soft);
+    border:1px solid #e3d7c4;border-radius:3px;padding:3px 7px;position:relative;top:-1px}
   /* Sidhuvudet är sticky och 66 px högt — samma tal som .hk-left redan räknar
      med. Utan scroll-margin lägger webbläsaren ankarets överkant vid
      fönstrets överkant, alltså bakom sidhuvudet, och de översta raderna i
      båda spalterna hamnar utanför bild.                                     */
   #verktyget, #cov-anchor{scroll-margin-top:78px}
+  /* Uppåt från verktyget vill man normalt inte hela vägen till hjältebilden.
+     Ett fästläge vid verktygets överkant gör att skrollningen hakar fast där —
+     proximity, inte mandatory, så en beslutsam rörelse fortfarande tar sig
+     förbi. Inga andra fästlägen finns, så läsningen längre ned är oberörd. */
+  html{scroll-snap-type:y proximity}
+  #verktyget{scroll-snap-align:start}
   .hk-top .hk-meta{font-size:15px;color:var(--muted)}
   .wrap{max-width:1440px;margin:0 auto;padding:20px 24px 90px}
   .hk-cols{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start}
@@ -397,8 +409,14 @@
   .segforkl{font-size:13.5px;color:var(--muted);line-height:1.4;margin-top:6px}
 
   /* ---- hero ---- */
-  .hk-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;
-    max-width:1440px;margin:0 auto;padding:56px 24px 48px}
+  /* align-items:center lät bilden behålla sin egen höjd ur aspect-ratio 4/5,
+     alltså ~625 px i en spalt på 500. Textspalten slutar vid nyckeltalen runt
+     560, och mellanskillnaden blev ett tomrum nere till vänster plus lika
+     mycket extra scroll innan verktyget. Med stretch följer bilden texten i
+     stället för att bestämma höjden. */
+  .hk-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:stretch;
+    max-width:1440px;margin:0 auto;padding:44px 24px 40px}
+  .hk-hero-txt{display:flex;flex-direction:column;justify-content:center}
   .hk-h1{font-family:var(--serif);font-weight:600;letter-spacing:-.02em;font-size:60px;line-height:1.0;
     margin:0 0 18px;text-wrap:balance}
   .hk-h1 em{font-style:italic;font-weight:400}
@@ -413,9 +431,17 @@
     flex-wrap:wrap}
   .hk-stats b{display:block;font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.1}
   .hk-stats span{font-size:14px;color:var(--muted)}
-  .hk-hero-bild{position:relative;aspect-ratio:4/5;border:1px solid var(--line2);border-radius:4px;
-    overflow:hidden;background:var(--paper2)}
-  .hk-hero-bild img{width:100%;height:100%;object-fit:cover;display:block}
+  /* Ingen fast bildproportion: höjden kommer från raden. min-height hindrar
+     bara att bilden blir en remsa om texten skulle kortas ned. */
+  .hk-hero-bild{position:relative;min-height:360px;border:1px solid var(--line2);
+    border-radius:4px;overflow:hidden;background:var(--paper2)}
+  /* Absolut positionerad, och det är hela poängen. Med height:100% mot en
+     förälder utan bestämd höjd faller procenten tillbaka på bildens EGEN höjd
+     — Pexels-filen är 1000×1250, alltså porträtt — och då satte bilden radens
+     höjd igen trots att aspect-ratio tagits bort. Ur flödet bidrar den med
+     noll höjd, och rutan får sin höjd från textspalten. */
+  .hk-hero-bild img{position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;display:block}
   .hk-cred{position:absolute;left:10px;bottom:10px;background:rgba(250,246,238,.9);color:var(--muted);
     font-size:12px;padding:4px 8px;border-radius:3px}
 
@@ -558,7 +584,7 @@
 </head>
 <body>
 <div class="hk-top">
-  <div class="hk-logo">Hökoll</div>
+  <div class="hk-logo">Hökoll<span class="hk-beta">Beta</span></div>
   <div class="hk-topright">
     <span class="hk-meta" id="hkMeta">Foderanalys → produktförslag</span>
     <button class="hk-tbtn" id="hkDela">Dela</button>
@@ -581,7 +607,7 @@
     </div>
   </div>
   <div class="hk-hero-bild">
-    <img src="https://images.pexels.com/photos/19921165/pexels-photo-19921165.jpeg?auto=compress&cs=tinysrgb&w=1000&h=1250&fit=crop" alt="Hästar som äter hö">
+    <img src="https://images.pexels.com/photos/19921165/pexels-photo-19921165.jpeg?auto=compress&cs=tinysrgb&w=1200&h=900&fit=crop" alt="Hästar som äter hö">
     <span class="hk-cred">Foto: wolna zx på Pexels</span>
   </div>
 </section>
@@ -4688,16 +4714,20 @@ function rakna(){
       // proteinunderskott. HästSveriges foderstatsprogram skiljer på dem och
       // pekar för protein på ett proteinrikt vallfoder, typiskt lusern — som
       // finns i fodertabellen under Övrigt.
+      /* Tidigare: "Det löses inte med ett mineralfoder. Energin kräver …;
+         proteinet …". "Det" hade ingen tydlig syftning, och elipsen efter
+         semikolonet tvingade läsaren att bära med sig verbet. Nu står varje
+         ämne i en egen mening med eget subjekt och eget verb. */
       const ATGARD = {
-        "Energi": 'en större grovfodergiva, ett energirikare grovfoder eller ett '
-          + 'kraftfoder under <strong>Övrigt</strong>',
-        "Smb råprotein": 'en större grovfodergiva eller ett proteinrikt vallfoder — '
-          + 'lusern finns i fodertabellen under <strong>Övrigt</strong>'
+        "Energi": '<strong>Energin</strong> räcker inte till. Den höjs med en större '
+          + 'grovfodergiva, ett energirikare grovfoder eller ett kraftfoder.',
+        "Smb råprotein": '<strong>Proteinet</strong> räcker inte till. Det höjs med en '
+          + 'större grovfodergiva eller ett proteinrikt vallfoder, till exempel lusern.'
       };
-      const grovraden = utanfor.length === 1
-        ? 'Det löses inte med ett mineralfoder, utan med '+ATGARD[utanfor[0]]+'.'
-        : 'Det löses inte med ett mineralfoder. Energin kräver '+ATGARD["Energi"]
-          + '; proteinet '+ATGARD["Smb råprotein"]+'.';
+      const grovraden = utanfor.map(t => ATGARD[t]).join(" ")
+        + ' Båda läggs till under <strong>Övrigt</strong>.'
+          .replace("Båda", utanfor.length === 1 ? "Det" : "Båda")
+        + ' Ett mineralfoder hjälper inte här.';
 
       if(!n){
         h += '<div class="verdikt" style="border-left-color:var(--ok)"><strong>'
@@ -4761,11 +4791,10 @@ function rakna(){
     }
   }
 
-  if(vald)
-    h += '<div class="msg m-ok" style="margin-top:0">Räknar in <strong>'
-       + (vald.kombo ? vald.delar.map(d => f0(d.dosG)+' g '+d.p.namn).join(" och ")
-                     : f0(vald.dosG)+' g '+vald.p.namn)
-       + '</strong> per dygn. Klicka igen för att ta bort.</div>';
+  /* Rutan "Räknar in 153 g … per dygn" är borttagen. Samma sak stod redan i
+     rubriken ovanför ("Täckning — grovfoder plus …") och i sammanfattningen
+     ("Mineralerna är täckta av …"), och hur man ångrar sig står på kortet
+     självt ("✓ Räknas in ovan — klicka för att ta bort"). */
   // Filtret ligger i sidhuvudet (hk-filter). Ingen radräknare här — designen
   // låter tabellen börja direkt.
   h += '<div class="tk-huvud"><div>Post</div><div></div>'
@@ -5384,9 +5413,13 @@ function visningsNamn(p){
 /* En dos på 0,4 g blev "0 g" med heltalsavrundning — vilket läser som att
    produkten inte ska ges alls.                                              */
 function dosText(g){ return (g < 1 ? "<1" : f0(g)) + " g"; }
+/* "Häst Balans 153 g" säger inte om det är per dygn eller per giva. För en
+   enskild produkt ryms det i dosen; för en kombination skulle "g/dygn" på varje
+   del bli tjatigt, så tidsenheten står en gång på slutet.                     */
 function forslagsNamn(r){
-  return r.kombo ? r.delar.map(d => visningsNamn(d.p)+" "+dosText(d.dosG)).join(" + ")
-                 : visningsNamn(r.p)+" "+dosText(r.dosG);
+  return r.kombo
+    ? r.delar.map(d => visningsNamn(d.p)+" "+dosText(d.dosG)).join(" + ") + " per dygn"
+    : visningsNamn(r.p)+" "+dosText(r.dosG)+"/dygn";
 }
 function forslagsDelar(r){ return r.kombo ? r.delar.map(d => d.p) : [r.p]; }
 function forslagsId(r){ return r.kombo ? r.nyckel : r.p.id; }

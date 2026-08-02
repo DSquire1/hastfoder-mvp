@@ -144,7 +144,7 @@ function nollstall() {
   rakna();
 }
 
-/* ---------- 2. referensfallet ---------- */
+/* ---------- 1. referensfallet ---------- */
 console.log("\n=== 2. REFERENSFALLET (500 kg lättfödd, inget arbete, 9 kg ts Majbo) ===");
 nollstall();
 [["Energi (MJ)", 0, 53, "energibehov 53 MJ"],
@@ -164,7 +164,7 @@ nollstall();
 kolla("underskott = magnesium, salt, zink, koppar, mangan, selen",
       underskott().join(",") === "Magnesium,Natriumklorid,Zink,Koppar,Mangan,Selen", underskott().join(", "));
 
-/* ---------- 3. odeklarerat räknas inte som noll ---------- */
+/* ---------- 2. odeklarerat räknas inte som noll ---------- */
 console.log("\n=== 3. ODEKLARERAT SKILJS FRÅN NOLL ===");
 kolla("jod utan analysvärde ger inget underskott", underskott().indexOf("Jod") < 0);
 kolla("kobolt utan analysvärde ger inget underskott", underskott().indexOf("Kobolt") < 0);
@@ -172,7 +172,7 @@ kolla("selen ger underskott ändå — avsiktligt nollantagande", underskott().i
 kolla("varning om ej analyserade ämnen visas",
       ut().indexOf("varken som noll eller som täckta") > 0);
 
-/* ---------- 4. befintligt tillskott ---------- */
+/* ---------- 3. befintligt tillskott ---------- */
 console.log("\n=== 4. BEFINTLIGT TILLSKOTT ===");
 const hastBas = PRODUKTER.find(p => p.namn.indexOf("Häst Bas") >= 0);
 noder.befProdukt.value = hastBas.id; noder.befDos.value = "50"; rakna();
@@ -181,7 +181,7 @@ kolla("produkten föreslås inte igen", ut().indexOf(hastBas.namn) < 0);
 kolla("magnesium når över behovet", tal("Magnesium (g)", 1) >= 7.5, "fick " + tal("Magnesium (g)", 1));
 nollstall();
 
-/* ---------- 5. flera fodermedel ---------- */
+/* ---------- 4. flera fodermedel ---------- */
 console.log("\n=== 5. FLERA FODERMEDEL ===");
 laggTillTabell("lusern"); extraFoder[0].kg = 1; rakna();
 kolla("1 kg lusern höjer kalcium till 37,8 g", nara(tal("Kalcium (g)", 1), 37.8, 0.8),
@@ -195,7 +195,7 @@ kolla("kraftfoder räknas inte mot grovfodergivan", nara(tal("Grovfoder (kg ts)"
       "fick " + tal("Grovfoder (kg ts)", 1));
 nollstall();
 
-/* ---------- 6. hästkategorier ---------- */
+/* ---------- 5. hästkategorier ---------- */
 console.log("\n=== 6. HÄSTKATEGORIER ===");
 noder.kategori.value = "digi13"; rakna();
 kolla("digivande månad 1–3 ger 106 MJ", nara(tal("Energi (MJ)", 0), 106, 1),
@@ -212,7 +212,7 @@ kolla("arbetstillägg följer SLU 289 tabell 9",
       JSON.stringify(ARBFAKTOR));
 nollstall();
 
-/* ---------- 7. tillstånd i URL ---------- */
+/* ---------- 6. tillstånd i URL ---------- */
 console.log("\n=== 7. TILLSTÅND I URL ===");
 const kodad = b64enc(JSON.stringify({ v: 1, f: { vikt: "600" }, e: "ts", x: [], vald: null }));
 kolla("kodningen är URL-säker", /^[A-Za-z0-9_-]+$/.test(kodad));
@@ -224,7 +224,7 @@ location.hash = "#trasig-hash-gar-inte-att-avkoda";
 kolla("trasig länk hanteras tyst", lasTillstand() === false);
 location.hash = ""; nollstall();
 
-/* ---------- 8. tjugo slumpade analyser ---------- */
+/* ---------- 7. tjugo slumpade analyser ---------- */
 console.log("\n=== 8. TJUGO SLUMPADE ANALYSER ===");
 let krascher = 0, tomma = 0;
 const kategorier = Object.keys(KATEGORI);
@@ -242,7 +242,7 @@ kolla("inga krascher", krascher === 0, krascher + " av 20");
 kolla("alla gav ett resultat", tomma === 0, tomma + " tomma");
 nollstall();
 
-/* ---------- 9. tillgänglighet ---------- */
+/* ---------- 8. tillgänglighet ---------- */
 console.log("\n=== 9. TILLGÄNGLIGHET ===");
 kolla("produktkort är tangentbordsnåbara", (ut().match(/tabindex="0"/g) || []).length > 0);
 kolla("staplar har textalternativ", (ut().match(/aria-label=/g) || []).length > 0);
@@ -254,7 +254,7 @@ kolla("varje rad bär sina tal även utan kolumner",
       (ut().match(/class="tk-mob"/g) || []).length + " mobrader mot "
       + (ut().match(/class="tk-rad /g) || []).length + " rader");
 
-/* ---------- 10. tillstånd ---------- */
+/* ---------- 9. tillstånd ---------- */
 console.log("\n=== 10. TILLSTÅND ===");
 nollstall();
 noder.energi.value = ""; noder.ts.value = ""; rakna();
@@ -263,7 +263,7 @@ kolla("tomt formulär ber om energi och torrsubstans",
 nollstall();
 kolla("ifyllt formulär räknar igen", /fattas/.test(ut()));
 
-/* ---------- 11. inre motsägelser ---------- */
+/* ---------- 10. inre motsägelser ---------- */
 // Lösaren och tabellen ställde samma fråga med olika jämförelser och gav olika
 // svar: "täcker alla sex" bredvid en rad som sade "99 % · under".
 console.log("\n=== 11. INRE MOTSÄGELSER ===");
@@ -278,7 +278,7 @@ kolla("kombinationen som sägs täcka salt gör det också i tabellen",
       /Natriumklorid \(g\)[\s\S]{0,900}?tk-status[^"]*">\d+ % · täckt/.test(ut()));
 globalThis.valdId = null; nollstall();
 
-/* ---------- 12. radfiltret följer resultatet ---------- */
+/* ---------- 11. radfiltret följer resultatet ---------- */
 console.log("\n=== 12. RADFILTRET ===");
 const baraBrist = () => noder.__body.classList.contains("hk-brist");
 nollstall();
@@ -307,7 +307,7 @@ globalThis.valdId = null; nollstall();
         felvisade.map(m => m[2]).join(", "));
 }
 
-/* ---------- 13. sammanfattningen följer valet ---------- */
+/* ---------- 12. sammanfattningen följer valet ---------- */
 // Rubriken stod kvar på "Sex ämnen fattas" bredvid ett nyckeltal som sade två.
 console.log("\n=== 13. SAMMANFATTNINGEN ===");
 const verdikt = () => {
@@ -327,6 +327,8 @@ globalThis.valdId = null; nollstall();
 
 // Dos, förbehåll och återförsäljare fanns bara på de två stora korten. För de
 // åtta i listan gick informationen inte att nå alls.
+/* ---------- 13. gränssnittets löften ---------- */
+console.log("\n=== 14. GRÄNSSNITTETS LÖFTEN ===");
 kolla("varje förslag har sin detaljutfällning",
       (ut().match(/class="fk-mer"/g) || []).length ===
       (ut().match(/class="fk-(hero|rad)[" ]/g) || []).length,
@@ -337,7 +339,7 @@ kolla("varje förslag har sin detaljutfällning",
 // "Billigaste lösning" räknade på samtliga förslag, även en påse zink för
 // 10 öre som täcker ett av sex ämnen — och motsade sammanfattningen på
 // samma skärm.
-console.log("\n=== 14. NYCKELTALEN ===");
+console.log("\n=== 15. NYCKELTALEN ===");
 nollstall();
 {
   const kpi = noder.kpiPris.textContent;
@@ -379,7 +381,7 @@ nollstall();
 /* ---------- 15. färgnyckeln ---------- */
 // Övriga fodermedel har ett eget stapelsegment men fanns inte i nyckelns
 // villkor — färgen syntes i diagrammet utan att förklaras någonstans.
-console.log("\n=== 15. FÄRGNYCKELN ===");
+console.log("\n=== 16. FÄRGNYCKELN ===");
 {
   const nyckel = () => {
     const m = /stapelnyckel">([\s\S]*?)<\/div>(?![\s\S]{0,40}<i )/.exec(ut());
@@ -402,7 +404,7 @@ console.log("\n=== 15. FÄRGNYCKELN ===");
 // allt ensamma. Rankade de sex bästa full täckning blev basen tom — noll
 // kombinationer, och bästa lösningen gick från 1,57 till 4,04 kr/dygn utan att
 // något i kombinationslogiken var fel.
-console.log("\n=== 16. KOMBINATIONER OCH FLAGGOR ===");
+console.log("\n=== 17. KOMBINATIONER OCH FLAGGOR ===");
 nollstall();
 {
   const pris = /class="fk-pris"><b>([\d,]+) kr/.exec(ut());
@@ -487,16 +489,22 @@ nollstall();
   nollstall(); noder.smbrp.value = "20"; rakna();
   kolla("proteinbrist pekar på proteinrikt vallfoder",
         /lusern/.test(verdikt()) && !/energirikare/.test(verdikt()), verdikt().slice(-90));
+  kolla("ensam brist säger Det, inte Båda",
+        /Det läggs till under/.test(verdikt()), verdikt().slice(-80));
   nollstall(); noder.energi.value = "4"; rakna();
   kolla("energibrist pekar på energirikt foder",
         /energirikare/.test(verdikt()), verdikt().slice(-90));
   noder.smbrp.value = "20"; rakna();
-  kolla("båda samtidigt får var sin åtgärd",
-        /Energin kräver/.test(verdikt()) && /proteinet/.test(verdikt()), verdikt().slice(-120));
+  kolla("båda samtidigt får var sin mening",
+        /Energin<\/strong> räcker inte till/.test(ut())
+     && /Proteinet<\/strong> räcker inte till/.test(ut()), verdikt().slice(-140));
+  kolla("åtgärden pekar på Övrigt och avfärdar mineralfoder",
+        /Båda läggs till under/.test(verdikt()) && /mineralfoder hjälper inte/.test(verdikt()),
+        verdikt().slice(-100));
   nollstall();
 }
 
-/* ---------- 18. inklistrad analysrapport ---------- */
+/* ---------- 17. inklistrad analysrapport ---------- */
 // Fixturerna är avskrifter av verkliga rapporter ur Foderanalyser/. De tre
 // labben uttrycker enhetsbasen på tre olika sätt, och fel bas ger ett fel som
 // ser fullt rimligt ut — 11 % för ett hö med 89 % ts.
@@ -642,7 +650,7 @@ kolla("text utan analys ger inga värden",
         fel.map(k => k + " fick " + r.varden[k]).join(", "));
 }
 
-/* ---------- 19. PDF-uppladdning ---------- */
+/* ---------- 18. PDF-uppladdning ---------- */
 // pdf.js ger textfragment med koordinater, inte rader. Fixturen är de faktiska
 // fragmenten ur Foderanalyser/Optilab LG2400965-00 (test).pdf.
 console.log("\n=== 19. PDF-UPPLADDNING ===");
@@ -713,6 +721,23 @@ kolla("tomma fragment hoppas över",
 
   kolla("text utan brevhuvud ger ingen identitetsrad",
         rapportIdentitet("Torrsubstans 86 %").text === "");
+}
+
+
+// Doser är per dygn, och det ska framgå utan att man gissar.
+{
+  nollstall();
+  globalThis.valdId = "granngarden-hast-balans"; rakna();
+  kolla("enskild produkt visar dosen per dygn",
+        /class="fk-namn">[^<]*g\/dygn</.test(ut()),
+        (/class="fk-namn">([^<]*)</.exec(ut()) || [])[1]);
+  globalThis.valdId = "granngarden-hast-bas+krafft-pure-vacuum-salt"; rakna();
+  kolla("kombination anger tidsenheten en gång på slutet",
+        /class="fk-namn">[^<]*g \+ [^<]*g per dygn</.test(ut()),
+        (/class="fk-namn">([^<]*)</.exec(ut()) || [])[1]);
+  // Samma sak sades tre gånger: i rubriken, i sammanfattningen och i en egen ruta.
+  kolla("ingen egen Räknar in-ruta", !/Räknar in/.test(ut()));
+  globalThis.valdId = null; nollstall();
 }
 
 /* ---------- sammanfattning ---------- */

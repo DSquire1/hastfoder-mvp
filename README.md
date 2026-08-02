@@ -55,6 +55,13 @@ aldrig som ett underskott. Vitaminer analyseras nästan aldrig i grovfoder, och
 att läsa den uteblivna analysen som en nolla skulle fylla tabellen med brister
 som inte är belagda.
 
+**Läser analysrapporten åt dig.** Ladda upp PDF:en eller klistra in tabellen —
+Optilab, Agrilab och Eurofins känns igen, trots att de uttrycker enhetsbasen på
+tre olika sätt. Ingenting fylls i utan granskning: varje värde visas med den rad
+det kom från, och rapportens egna facit används som kontroll. Den utskrivna
+Ca/P-kvoten jämförs mot de inlästa värdena, och där båda baserna finns prövas
+att `per kg ts × ts % = per kg vara`.
+
 **Säger vad den inte kan lösa.** Energi och protein ingår i bedömningen men inte
 i produktförslagen, och de får var sin åtgärd: energi pekar på en större giva
 eller ett energirikare foder, protein på ett proteinrikt vallfoder som lusern.
@@ -73,7 +80,8 @@ den får aldrig understiga 1,1.
 2. Settings → Pages → Source: `main` / `/ (root)`
 3. Sidan blir tillgänglig på **https://dsquire1.github.io/hastfoder-mvp/**
 
-`index.html` är helt fristående — ingen byggkedja, inga beroenden, ingen server.
+`index.html` är fristående — ingen byggkedja, ingen server. Det enda externa
+beroendet är pdf.js, och det hämtas först om någon laddar upp en PDF.
 
 Väljer du ett annat reponamn behöver länkarna i denna fil och i sidfoten på
 `index.html` uppdateras.
@@ -98,13 +106,20 @@ Undantaget är **startsidans foto**, som hämtas från Pexels (wolna zx) och är
 enda externa bildförfrågan sidan gör. Det byts mot en egen stallbild när sådan
 finns.
 
+## Externa beroenden
+
+`index.html` har ett enda: **pdf.js från cdnjs**, som hämtas först när användaren
+väljer en PDF-fil. Den som aldrig laddar upp något kör sidan helt fristående, och
+går hämtningen inte igenom sägs det till med en tidsgräns på tolv sekunder i
+stället för att gränssnittet blir hängande.
+
 ## Testa
 
 ```
 node verktyg/test.js
 ```
 
-84 kontroller. Riggen bygger en minimal DOM och kör hela skriptet som webbläsaren
+116 kontroller. Riggen bygger en minimal DOM och kör hela skriptet som webbläsaren
 gör — den kontrollerar alltså att sidan **startar** innan den mäter siffror.
 Utgångskod 1 om något fallerar.
 
@@ -112,14 +127,20 @@ Kör den efter varje ändring i `index.html`. En syntaxkontroll räcker inte:
 prototypen har redan en gång levererats i ett skick där all matematik var korrekt
 men sidan aldrig kom igång.
 
-Sjutton grupper. De sju sista prövar inre konsistens: att lösaren och tabellen
+Nitton grupper. Grupp 11–17 prövar inre konsistens: att lösaren och tabellen
 svarar likadant på om ett behov är täckt, att radfiltret och sammanfattningen
 följer det valda förslaget, och att nyckeltalen räknar exakt de poster som listas
 bredvid dem. Samtliga tillkom efter att fel av just den sorten hunnit
 levereras — sidan kunde säga *"täcker alla sex"* i ett kort och *"99 % · under"*
 på raden intill, om samma foderstat.
 
-Riggen ser inte färg, layout eller utskrift.
+Grupp 18–19 prövar inläsningen av analysrapporter, med avskrifter av verkliga
+rapporter från tre labb som fixturer.
+
+Riggen ser inte färg, layout eller utskrift. Fyra fel av den sorten har hunnit
+levereras under arbetet, samtliga med grön testsvit — ett odefinierat
+CSS-variabelnamn, en selektor som aldrig matchade, en specificitetsförlust och
+en procenthöjd som föll tillbaka på bildens egen höjd.
 
 ## Uppdatera produktdata
 
@@ -207,8 +228,11 @@ Detta är en prototyp. De viktigaste bristerna:
 - **Pris viktas inte**, det bryter bara lika poäng
 - **Tillväxtenergi kräver att daglig tillväxt anges** — utan den visas bara
   underhållsbehovet för växande hästar
-- **Uppladdning av analysrapport är inte byggd.** Ytan finns i gränssnittet men
-  fälten fylls i för hand; funktionen kräver OCR
+- **Foton av analysrapporter kan inte läsas.** PDF med textlager fungerar, men
+  ett inskannat foto kräver OCR eller en multimodal modell — alltså en server.
+  Sidan säger det rakt ut i stället för att misslyckas tyst
+- **Inläsningen är prövad mot tre labb.** Ett fjärde format tolkas troligen
+  delvis; det som inte känns igen redovisas i granskningen
 - **Utskriftsformatet är inte verifierat.** Knappen är borttagen; Ctrl+P ger ett
   städat format men det är oprövat
 

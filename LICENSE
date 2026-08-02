@@ -1,27 +1,28 @@
-MIT License
+Upphovsrätt © 2026 Daniel Ahlenius. Med ensamrätt.
 
-Copyright (c) 2026 Daniel Ahlenius
+All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Koden i detta repository är upphovsrättsligt skyddad och publiceras här enbart
+för granskning. Ingen licens att använda, kopiera, ändra, sammanfoga,
+publicera, distribuera, underlicensiera eller sälja koden — helt eller delvis —
+upplåts genom att den är publikt läsbar.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Detta gäller även produktdatabasen och de sammanställda pris- och
+näringsuppgifterna.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Undantag: enskilda tredjepartskomponenter som sidan hämtar vid körning har egna
+licenser och omfattas inte av detta. För närvarande gäller det pdf.js
+(Apache License 2.0), som hämtas från cdnjs först när en användare laddar upp
+en PDF-fil.
+
+Vill du använda något härifrån — hör av dig.
 
 ---
 
-Licensen omfattar koden. Produktdata i data/ är sakuppgifter hamtade ur
-tredje parts publikationer och tillhor respektive rattighetshavare.
-Produktbilder licensieras inte av detta projekt. Se DATAKALLOR.md.
+The source code in this repository is protected by copyright and is published
+here for inspection only. No licence to use, copy, modify, merge, publish,
+distribute, sublicense or sell the code, in whole or in part, is granted by
+virtue of it being publicly readable.
+
+Third-party components fetched at runtime carry their own licences and are not
+covered by this notice.

@@ -72,7 +72,6 @@
   .h2row h2{border:0;margin:0;padding:0}
   h3{font-family:var(--mono);font-size:11px;margin:18px 0 8px;text-transform:uppercase;
     letter-spacing:.1em;color:var(--ink30);font-weight:500}
-  .sub{color:var(--ink70);margin:0 0 18px;font-size:17px}
 
   .slumpa{border:1px solid var(--line2);background:var(--card);color:var(--brand);cursor:pointer;
     padding:10px 16px;border-radius:4px;font:inherit;font-size:15px;font-weight:600;white-space:nowrap}
@@ -86,11 +85,10 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:20px;margin:0}
   .hk-right .card{padding:22px}
   .grid{display:grid;gap:12px}
-  .g2{grid-template-columns:repeat(2,1fr)}
   .g3{grid-template-columns:repeat(3,1fr)}
   .g4{grid-template-columns:repeat(4,1fr)}
   .hk-left .g4{grid-template-columns:repeat(2,1fr)}
-  @media(max-width:520px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  @media(max-width:520px){.g3,.g4{grid-template-columns:1fr}}
 
   label{display:block;font-size:13px;font-weight:600;color:var(--ink70);margin-bottom:4px}
   .grid>div,.fld,#vaxtFalt{position:relative}
@@ -113,15 +111,11 @@
   .toggle button.on{background:var(--card);color:var(--ink);font-weight:700}
 
   table{width:100%;border-collapse:collapse;font-size:16px}
-  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;
-    color:#9a9184;border-bottom:1px solid var(--line);padding:9px 8px;font-weight:600}
   td{padding:12px 8px;border-bottom:1px solid #efe8da}
-  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  td.n{text-align:right;font-variant-numeric:tabular-nums}
   tr.deficit td{background:var(--bad-bg)}
-  tr.over td{opacity:.55}
   .pill{display:inline-block;padding:0;border-radius:0;font-size:14px;font-weight:700;background:none!important}
   .p-ok{color:var(--ok)}
-  .p-low{color:var(--bad)}
   .p-high{color:var(--muted);font-weight:600}
   .note{font-size:15px;color:var(--ink70);margin:8px 0 0;line-height:1.5}
   .msg{padding:13px 16px;border-radius:4px;margin:10px 0;font-size:16px;background:var(--card);
@@ -195,7 +189,6 @@
   .prod.vald{border-color:var(--brand);border-width:2px;padding:15px;background:#fdfaf4}
   .valdmark{font-size:11px;font-weight:700;color:var(--ok);letter-spacing:.1em;text-transform:uppercase;
     margin-left:8px}
-  .valjknapp{font-size:15px;color:var(--brand);margin-top:10px;font-weight:600}
   .rt-rubrik{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;
     text-transform:uppercase;color:var(--ink30);margin-top:12px}
   .rt{width:100%;border-collapse:collapse;font-size:15px;margin-top:6px}
@@ -203,7 +196,6 @@
   .rt td.n{text-align:right;font-variant-numeric:tabular-nums}
   .rt tr.bast td{background:var(--ok-bg);font-weight:600}
   .spread{font-size:15px;color:var(--muted);margin-top:8px}
-  .delta{color:var(--ok);font-weight:700}
 
   .bildslot{position:relative;width:62px;height:62px;flex:0 0 62px}
   .bild{position:absolute;inset:0;width:62px;height:62px;border-radius:3px;
@@ -212,7 +204,6 @@
   .bild-fb{display:flex;align-items:center;justify-content:center;font-weight:700;
     font-size:15px;color:var(--brand);background:var(--brand-soft)}
 
-  .barcell{width:36%;min-width:170px;padding-right:16px}
   .barwrap{position:relative;height:16px;background:var(--track);border-radius:2px;overflow:hidden}
   .barband{position:absolute;top:0;bottom:0;background:rgba(74,107,61,.12)}
   .barbehov{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);z-index:2}
@@ -225,7 +216,6 @@
   .bartak{position:absolute;top:-2px;bottom:-2px;width:3px;background:var(--bad)}
   .barspill{position:absolute;right:2px;top:0;bottom:0;display:flex;align-items:center;
     color:#fff;font-weight:700;font-size:13px;line-height:1}
-  .baraxel{display:flex;justify-content:space-between;font-size:11px;color:var(--ink30);margin-top:3px}
   .verdikt{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--bad);
     border-radius:4px;padding:18px 20px;margin:0 0 16px;font-size:16px;line-height:1.5}
   .verdikt>strong{display:block;font-family:var(--serif);font-weight:600;font-size:26px;
@@ -241,7 +231,6 @@
   .tk-huvud{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;
     text-transform:uppercase;color:#9a9184;padding:8px 0;border-bottom:1px solid var(--line)}
   .tk-rad{padding:12px 0;border-bottom:1px solid #efe8da}
-  .tk-rad:last-child{border-bottom:0}
   .tk-rad.tackt{opacity:.5}
   .tk-rad.okand{opacity:.72}
   /* Täckta rader tonas ned — men bara det grovfodret bidrar med. Regeln dämpade
@@ -266,8 +255,6 @@
   .tk-utanmatare{font-size:13px;color:var(--ink30);font-style:italic}
   .tk-stapel.okand{background:repeating-linear-gradient(135deg,#f0eade 0 6px,#e8e0d0 6px 12px)}
   .tk-mid{position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--ink)}
-  .tk-spill{position:absolute;right:3px;top:0;bottom:0;display:flex;align-items:center;
-    color:#fff;font-weight:700;font-size:13px}
   /* Behov och tillfört som två kolumner kräver bredd som mobilen inte har.
      Enligt designbeslutet blir raden i stället ett staplat block där de två
      talen står ihop som en mening: "5,4 av 7,5". Att bara dölja kolumnerna
@@ -286,17 +273,11 @@
     .tk-stapel{grid-column:1/-1;order:4;margin-top:6px}
     .tk-tal{display:none}
   }
-  .radraknare{display:flex;justify-content:space-between;align-items:center;gap:10px;
-    font-size:13px;color:var(--muted);margin:12px 0 6px;flex-wrap:wrap}
-  .lankknapp{background:none;border:0;padding:0;font:inherit;font-size:13px;
-    color:var(--brand);font-weight:600;cursor:pointer;text-decoration:underline}
   .omber{margin-top:16px;background:#f0ebe0;border:1px solid #ddd5c6;border-radius:4px;
     padding:12px 15px}
   .omber summary{font-size:15px;color:var(--brand);font-weight:600;cursor:pointer}
   .omber .note{color:var(--ink70)}
   .omber .note{margin-top:9px}
-  .barleg{display:flex;gap:16px;font-size:13px;color:var(--muted);margin:10px 0 4px;flex-wrap:wrap}
-  .barleg i{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
   .prod-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
   .prod-n{font-weight:700;font-size:18px}
   .prod-m{font-size:14px;color:var(--muted)}
@@ -337,6 +318,10 @@
     .hk-left .g3,.hk-left .g4{grid-template-columns:repeat(3,1fr)}
     .hk-tabs{display:flex}
     .hk-foot{display:flex}
+    /* Två klistrade lister ovanpå varandra på mobil: sidhuvudet (57 px) och
+       flikraden (~53 px). Fästläget räknade bara med det ena, så nyckeltalens
+       etiketter hamnade bakom flikraden när skrollningen hakade fast. */
+    #verktyget, #cov-anchor{scroll-margin-top:118px}
     body.tab-in .hk-right{display:none}
     body.tab-ut .hk-left{display:none}
     .wrap{padding-bottom:120px}
@@ -346,9 +331,7 @@
     .hk-top{padding:10px 14px}
     h1{font-size:24px} h2{font-size:20px}
     .hk-left .g3,.hk-left .g4{grid-template-columns:repeat(2,1fr)}
-    table{font-size:15px} th,td{padding:10px 4px}
-    .barcell{display:none}
-    th:nth-child(2){display:none}
+    table{font-size:15px} td{padding:10px 4px}
     .prod-h{flex-direction:column;align-items:flex-start}
     .dose{align-self:flex-start}
     .rt td{padding:6px 3px;font-size:14px}
@@ -477,7 +460,6 @@
     margin-bottom:14px;text-align:center;display:flex;flex-direction:column;gap:3px}
   .hk-drop b{font-size:15px;color:var(--brand)}
   .hk-drop span{font-size:14px;color:var(--muted)}
-  .hk-drop em{font-style:normal;color:var(--ink30)}
   .hk-enhetsvarning{font-size:14px;color:var(--muted);line-height:1.45;margin:0 0 14px}
   /* ---- inklistrad analys ---- */
   .hk-drop[open]{text-align:left;padding:14px 16px;cursor:default}
@@ -542,7 +524,7 @@
 
     /* bort: allt man matar in i, allt man klickar på, allt man bläddrar i */
     .hk-hero,.hk-tabs,.hk-foot,.hk-left,.hk-filter,.hk-drop,.hk-topright,
-    #sparakort,.banner,.slumpa,.valjknapp,#slumpinfo,.toggle,.fk-lucka,
+    #sparakort,.banner,.slumpa,#slumpinfo,.toggle,.fk-lucka,
     .omber,.hk-lnav,.segforkl{display:none !important}
 
     .hk-top{display:none !important}
@@ -838,8 +820,8 @@ Fungerar med Optilab, Agrilab och Eurofins."></textarea>
   eller foderrådgivare — se
   <a href="https://github.com/Dsquire1/hastfoder-mvp/blob/main/ANSVARSFRISKRIVNING.md"
      style="color:var(--brand)">ansvarsfriskrivningen</a>.<br>
-  <strong>Öppen källkod.</strong> Koden är fri att granska och återanvända — se
-  <a href="https://github.com/Dsquire1/hastfoder-mvp" style="color:var(--brand)">repot</a>.
+  <strong>Källkoden är öppen för granskning</strong> men inte fri att återanvända —
+  se <a href="https://github.com/Dsquire1/hastfoder-mvp" style="color:var(--brand)">repot</a>.
   Databasen är inte en officiell källa och har inget samband med SLU, SVA eller HästSverige.
 </div>
 
@@ -5520,8 +5502,6 @@ function kortKombo(r,i,bar){
        + 'title="Tillverkarna deklarerar inte dessa — takkontrollen kan inte prövas">'
        + 'tak oprövat: '+r.oprovade.join(", ")+'</span></div>';
 
-  if(!bar) h += '<div class="valjknapp">'+(ar ? "✓ Räknas in ovan — klicka för att ta bort"
-                                              : "Klicka för att räkna in båda")+'</div>';
   return h+'</div>';
 }
 
@@ -5607,8 +5587,6 @@ function kort(r,i,bar){
        + naraHoga.map(x=>x.m+": "+f0(x.andel)+" % av toleransgränsen").join(" · ")
        + '</div></details>';
 
-  if(!bar) h += '<div class="valjknapp">'+(ar ? "✓ Räknas in ovan — klicka för att ta bort"
-                                              : "Klicka för att räkna in i foderstaten")+'</div>';
   h += '</div>';
   return h;
 }

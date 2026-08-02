@@ -137,10 +137,17 @@ på raden intill, om samma foderstat.
 Grupp 18–19 prövar inläsningen av analysrapporter, med avskrifter av verkliga
 rapporter från tre labb som fixturer.
 
-Riggen ser inte färg, layout eller utskrift. Fyra fel av den sorten har hunnit
-levereras under arbetet, samtliga med grön testsvit — ett odefinierat
-CSS-variabelnamn, en selektor som aldrig matchade, en specificitetsförlust och
-en procenthöjd som föll tillbaka på bildens egen höjd.
+Riggen ser inte färg eller layout. Fem fel av den sorten hann levereras med
+grön svit innan stilkontrollen fanns.
+
+```
+node verktyg/test-stil.js
+```
+
+Fyra kontroller: odefinierade CSS-variabler, selektorer som inte träffar något,
+motstridiga höjdregler, och kontrast på text mot färgad botten. Var och en är
+prövad genom att felet återinförs. Två av dem kräver `npm i jsdom`, de andra
+två kräver ingenting.
 
 ## Uppdatera produktdata
 
@@ -242,8 +249,14 @@ Detta är en prototyp. De viktigaste bristerna:
 
 Se [DATAKALLOR.md](DATAKALLOR.md).
 
-Koden är fri under MIT-licens, se [LICENSE](LICENSE). Licensen omfattar **koden**,
-inte produktdatan eller produktbilderna — dessa tillhör respektive rättighetshavare.
+**Koden är inte fri att återanvända.** Den är publicerad här för granskning —
+se [LICENSE](LICENSE). Att ett repository är publikt läsbart innebär inte att
+koden är upplåten; utan licens gäller upphovsrättens grundregel, alla rättigheter
+förbehållna.
+
+Produktdatan och produktbilderna tillhör respektive rättighetshavare och omfattas
+inte heller. Tredjepartskomponenter som hämtas vid körning — för närvarande
+pdf.js — har sina egna licenser.
 
 Projektet har inget samband med SLU, SVA, HästSverige eller något av de
 varumärken vars produkter förekommer i databasen.

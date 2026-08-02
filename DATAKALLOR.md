@@ -136,9 +136,9 @@ Utan bilder fungerar sidan fullt ut, vilket är hur den är konfigurerad nu.
 
 ## Licens
 
-**Koden** är fri under MIT-licens, se `LICENSE`.
+**Koden** är inte fri att återanvända, se `LICENSE`. Den är publicerad för granskning.
 
-**Produktdatan** omfattas inte av MIT-licensen. Näringsvärden och priser är
+**Produktdatan** omfattas inte heller. Näringsvärden och priser är
 sakuppgifter hämtade ur tredje parts publikationer och tillhör respektive
 rättighetshavare. Sammanställningen delas för granskning och återanvändning i
 samma anda, men utan anspråk på rättigheter till underliggande uppgifter.

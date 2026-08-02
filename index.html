@@ -452,6 +452,31 @@
   .hk-drop span{font-size:14px;color:var(--muted)}
   .hk-drop em{font-style:normal;color:var(--ink30)}
   .hk-enhetsvarning{font-size:14px;color:var(--muted);line-height:1.45;margin:0 0 14px}
+  /* ---- inklistrad analys ---- */
+  .hk-drop[open]{text-align:left;padding:14px 16px;cursor:default}
+  .hk-drop>summary{cursor:pointer;list-style:none}
+  .hk-drop>summary::-webkit-details-marker{display:none}
+  /* Knappen är ett <label>, och .hk-left label (0,1,1) sätter formulärets
+     etikettfärg — den slår .pdfknapp (0,1,0) och gjorde texten mörkbrun på
+     mörkbrunt. Selektorn måste väga tyngre än den den konkurrerar med. */
+  .hk-drop label.pdfknapp{display:inline-block;margin-top:12px;
+    border:1px solid var(--brand);background:var(--brand);color:#faf6ee;
+    border-radius:4px;padding:11px 18px;font-size:15px;font-weight:600;
+    letter-spacing:0;text-transform:none;cursor:pointer}
+  .hk-drop label.pdfknapp:hover{background:#4a2c14;border-color:#4a2c14}
+  .hk-drop label.pdfknapp input{display:none}
+  #analysText{width:100%;margin-top:12px;font:inherit;font-size:14px;line-height:1.4;
+    background:#fff;border:1px solid #d8cdb9;border-radius:3px;padding:10px;resize:vertical}
+  .tolk-id{margin-top:14px;padding:8px 11px;background:#fff;border:1px solid #d8cdb9;
+    border-radius:3px;font-size:14px;color:var(--ink70)}
+  .tolk-rubrik{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink30);margin:14px 0 6px}
+  .tolk-lista{display:flex;flex-direction:column;gap:1px}
+  .tolk-rad{display:grid;grid-template-columns:120px minmax(0,1fr) 88px;gap:10px;
+    align-items:baseline;padding:5px 0;border-bottom:1px solid #efe8da;font-size:14px}
+  .tolk-rad i{font-style:normal;font-size:12.5px;color:var(--ink30);overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .tolk-rad span{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
   .hk-range{-webkit-appearance:none;appearance:none;width:100%;height:5px;padding:0;margin-top:10px;
     background:#e2d8c4;border:0;border-radius:3px}
   .hk-range::-webkit-slider-thumb{-webkit-appearance:none;width:21px;height:21px;border-radius:50%;
@@ -627,10 +652,23 @@
   </div>
   <div id="slumpinfo"></div>
 
-  <div class="hk-drop">
-    <b>Ladda upp analysrapporten</b>
-    <span>PDF eller foto — fälten fylls i åt dig <em>(kommer)</em></span>
-  </div>
+  <details class="hk-drop" id="klistraIn">
+    <summary><b>Ladda upp eller klistra in analysrapporten</b>
+      <span>Fälten fylls i åt dig — du får granska innan något räknas</span></summary>
+    <label class="pdfknapp">Välj PDF-fil
+      <input type="file" accept="application/pdf,.pdf" onchange="valjPdf(this)"></label>
+    <p class="note" style="margin:8px 0 0">Eller markera tabellen i din PDF-läsare och
+    klistra in nedan. Ett inskannat foto går inte att läsa av — då får fälten fyllas i
+    för hand.</p>
+    <textarea id="analysText" rows="6" placeholder="Klistra in texten ur analysrapporten här.
+Fungerar med Optilab, Agrilab och Eurofins."></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="slumpa" onclick="tolkaInklistrad()">Tolka</button>
+      <button class="slumpa" onclick="document.getElementById('analysText').value='';
+        document.getElementById('tolkResultat').innerHTML='';">Rensa</button>
+    </div>
+    <div id="tolkResultat"></div>
+  </details>
   <div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin-bottom:6px">
     <div>
       <label>Analysvärdena är angivna</label>
@@ -5727,6 +5765,442 @@ function sattFilter(html){
     fb.className = kvar > 0 ? "on" : "";
     fa.className = kvar > 0 ? "" : "on";
   }
+}
+
+/* ============================================================================
+   INKLISTRAD ANALYSRAPPORT
+   ----------------------------------------------------------------------------
+   Nästan alla svenska grovfoderanalyser kommer som PDF med markerbar text.
+   Att låta användaren klistra in den kräver varken OCR eller server, och till
+   skillnad från bildtolkning kan vi visa exakt vilken rad varje värde kom från.
+
+   Tre labb dominerar, och de uttrycker enhetsbasen på tre olika sätt:
+
+     Agrilab   Parameter │ Enhet │ per kg Foder │ per kg Torrsubstans
+               — basen är kolumnen, enheten står FÖRE talen
+     Optilab   Analys │ Resultat │ Enhet
+               — basen står i enhetstexten: "g/kg TS" mot "g/kg vara"
+     Eurofins  Analys │ Resultat │ Enhet │ Metod/ref │ Lab
+               — som Optilab, plus dubbletter med skilda radkoder
+
+   Därav regeln som bär hela tolkningen: står enheten före talen är raden
+   tvåkolumnig och sista talet avser torrsubstans; står den efter är raden
+   enkolumnig och basen framgår av enhetstexten.
+
+   Allt normaliseras till per kg ts, eftersom det är basen analysrapporter
+   nästan alltid anger och den appen räknar i.                                */
+
+/* Ordningen är betydelsebärande: längre och mer specifika mönster måste stå
+   före kortare som de innehåller. "Kalcium/Fosfor" före "Kalcium", "Smältbart
+   råprotein" före "Råprotein". */
+const ANALYSLEXIKON = [
+  {m:/kalcium\s*\/\s*fosfor|\bca\s*\/\s*p\b/i,                    falt:null, roll:"caP"},
+  {m:/smb\s*rp\s*\/\s*oe|råprotein\s*smb\.?\s*\/\s*energi|smb\.?\s*råprotein\s*\/\s*energi/i,
+                                                                  falt:null, roll:"kvot"},
+  /* Bara "torrsubstans" — inte "\bts\b". Enhetstexten "g/kg TS" står på varje
+     mineralrad, så det mönstret gjorde hela rapporten till torrsubstans. */
+  {m:/torrsubstans/i,                                             falt:"ts"},
+  {m:/(smältbart|smb\.?)\s*(rå)?protein/i,                        falt:"smbrp"},
+  {m:/omsättbar\s*energi|energi\s*(till\s*)?häst/i,               falt:"energi"},
+  {m:/vattenlösliga\s*kolhydrater|socker|\bwsc\b/i,               falt:"wsc"},
+  {m:/råprotein|\brp\b/i,                                         falt:null, roll:"ignorerad"},
+  {m:/\bndf\b|neutral\s*detergent/i,                              falt:null, roll:"ignorerad"},
+  {m:/aska|\bfett\b|\bivos\b|smältbarhet/i,                       falt:null, roll:"ignorerad"},
+  {m:/kalium|svavel/i,                                            falt:null, roll:"ignorerad"},
+  {m:/kalcium/i,                                                  falt:"Ca"},
+  {m:/fosfor/i,                                                   falt:"P"},
+  {m:/magnesium/i,                                                falt:"Mg"},
+  {m:/natrium/i,                                                  falt:"Na"},
+  {m:/koppar/i,                                                   falt:"Cu"},
+  {m:/järn/i,                                                     falt:"Fe"},
+  {m:/mangan/i,                                                   falt:"Mn"},
+  {m:/zink/i,                                                     falt:"Zn"},
+  {m:/selen/i,                                                    falt:"Se"},
+  {m:/\bjod\b/i,                                                  falt:"I"},
+  {m:/kobolt/i,                                                   falt:"Co"}
+];
+
+const FALTNAMN = {ts:"Torrsubstans", energi:"Omsättbar energi", smbrp:"Smältbart råprotein",
+  wsc:"Socker (WSC)", Ca:"Kalcium", P:"Fosfor", Mg:"Magnesium", Na:"Natrium",
+  Cu:"Koppar", Fe:"Järn", Mn:"Mangan", Zn:"Zink", Se:"Selen", I:"Jod", Co:"Kobolt"};
+
+/* Rimlighetsprövningen av en inläsning använder samma intervall som
+   formulärets egen kontroll (RIMLIGT ovan, ur SLU 308 tabell 2), utökad med
+   de mikromineraler den inte täcker. Syftet här är ett annat: inte att avgöra
+   om fodret är ovanligt, utan om TOLKNINGEN är rimlig — ett kalciumvärde på 47
+   betyder nästan säkert att fel kolumn lästs, inte att höet är extremt.      */
+const TOLK_RIMLIGT = Object.assign(
+  {Na:[0,8,"g/kg ts"], Cu:[1,40,"mg/kg ts"], Fe:[10,3000,"mg/kg ts"],
+   Mn:[5,600,"mg/kg ts"], Zn:[5,150,"mg/kg ts"], Se:[0,2,"mg/kg ts"],
+   I:[0,5,"mg/kg ts"], Co:[0,3,"mg/kg ts"]},
+  RIMLIGT);
+
+function analysTal(t){
+  const v = parseFloat(String(t).replace(/\s/g,"").replace(",","."));
+  return isFinite(v) ? v : null;
+}
+
+/* PDF-läsare kopierar ofta en cell per rad i stället för en tabellrad per rad:
+   "Kalcium Ca" ⏎ "4.5" ⏎ "g/kg TS". Ordningen bevaras, bara radbrytningarna
+   tillkommer. Utan den här hopfogningen tolkas en sådan inklistring till noll
+   värden, vilket ser ut som att rapporten inte stöds.
+
+   Etiketten limmas ihop med de celler som följer tills nästa etikett tar vid,
+   så att den vanliga radtolkningen — enhetens position, tvåkolumnsformen —
+   fungerar oförändrat på resultatet.                                          */
+function fogaSammanCeller(rader){
+  const cell = rader.map(r => r.replace(/\s+/g," ").trim()).filter(Boolean);
+  const arEtikett = r => ANALYSLEXIKON.some(x => x.m.test(r));
+  const arVarde  = r => /^<?\s*\d+([.,]\d+)?$/.test(r);
+  const arEnhet  = r => /^(mg|µg|g|MJ|%|-)(\s*\/\s*(kg|MJ))?(\s*(ts|torrsubstans|vara|foder))?$/i.test(r);
+
+  const ut = [];
+  for(let i = 0; i < cell.length; i++){
+    if(!arEtikett(cell[i]) || /\d/.test(cell[i])){ ut.push(cell[i]); continue; }
+    let rad = cell[i], j = i + 1, tagna = 0;
+    while(j < cell.length && tagna < 4 && (arVarde(cell[j]) || arEnhet(cell[j]))){
+      rad += " " + cell[j]; j++; tagna++;
+    }
+    ut.push(rad);
+    i = j - 1;
+  }
+  return ut;
+}
+
+function tolkaAnalystext(text){
+  const helText = String(text||"");
+  const rader = fogaSammanCeller(helText.split(/\r?\n/));
+  const traffar = [], okanda = [], varningar = [];
+  let caPRapporterad = null;
+
+  /* Formen avgörs en gång för hela inklistringen, inte per rad. Agrilabs
+     tvåkolumnstabell känns igen på sina kolumnrubriker. Att i stället gissa
+     utifrån var enheten stod i varje rad föll på metodkolumner — "Norfor 60°C"
+     och "DS ISO 11885m:2009" ser ut som mätvärden. */
+  const tvakolumn = /per\s*kg\s*foder/i.test(helText)
+                 && /per\s*kg\s*torrsubstans/i.test(helText);
+
+  rader.forEach(rad0 => {
+    const rad = rad0.replace(/\s+/g," ").trim();
+    if(!rad) return;
+
+    const post = ANALYSLEXIKON.find(x => x.m.test(rad));
+    if(!post){
+      /* En rapport består till hälften av brevhuvud och sidfot: provnummer,
+         kundadress, datum, telefonnummer, blankettkod, juridisk text. Att
+         redovisa dem som "tolkades inte" antyder att något missats.
+
+         Skiljelinjen är enheten. Ett analysvärde har alltid en — g, mg, MJ, %
+         — medan "Rapport klar 20240708" och "Q-10-31 utg 3" har tal utan.
+         Bara rader med både tal och enhet kan vara mätvärden vi missat, och
+         bara de är värda att visa. */
+      if(/\d/.test(rad) && /(mg|µg|\bg\b|MJ|%)\s*(\/\s*kg)?/i.test(rad)) okanda.push(rad);
+      return;
+    }
+
+    // Tal som sitter ihop med bokstäver är metodkoder, inte mätvärden.
+    const tal = [];
+    const re = /(?:^|[\s(:|])(<\s*)?(\d+(?:[.,]\d+)?)(?![\w:°])/g;
+    let m2;
+    while((m2 = re.exec(rad)) !== null){
+      const v = analysTal(m2[2]);
+      if(v === null) continue;
+      if(v >= 1900 && v <= 2100 && Number.isInteger(v)) continue;   // årtal
+      tal.push({v, under: !!m2[1], pos: m2.index});
+    }
+    if(!tal.length) return;
+
+    if(post.roll === "caP"){ caPRapporterad = tal[tal.length-1].v; return; }
+    if(!post.falt) return;
+
+    /* Enhetstexten bär basen, och avsaknaden av basord är i sig ett besked:
+       "MJ/kg Ts" är torrsubstans, "MJ/kg" är varan som den är. Eurofins skriver
+       båda raderna med samma etikett och skiljer dem bara så — tolkas den nakna
+       som torrsubstans hamnar per-kg-värdet i fältet och energin blir 14 % låg. */
+    const medBas = /(mg|µg|g|MJ|%)\s*\/\s*kg\s*(ts|torrsubstans|vara|foder)\b/ig;
+    const utanBas = /(mg|µg|g|MJ)\s*\/\s*kg\b(?!\s*(ts|torrsubstans|vara|foder))/ig;
+    let basEnhet = null, m3;
+    while((m3 = medBas.exec(rad)) !== null) basEnhet = m3;
+    let nakenEnhet = null;
+    if(!basEnhet) while((m3 = utanBas.exec(rad)) !== null) nakenEnhet = m3;
+
+    let valt, bas;
+    if(tvakolumn){
+      // Torrsubstansens egen ts-kolumn är per definition 100 % och säger inget.
+      valt = post.falt === "ts" ? tal[0] : tal[tal.length-1];
+      bas  = post.falt === "ts" ? "foder" : "ts";
+    } else if(basEnhet || nakenEnhet){
+      const e = basEnhet || nakenEnhet;
+      bas  = basEnhet ? (/vara|foder/i.test(basEnhet[2]) ? "foder" : "ts") : "foder";
+      const fore = tal.filter(t => t.pos < e.index);
+      valt = fore.length ? fore[fore.length-1] : tal[0];
+    } else {
+      valt = tal[0];
+      bas  = post.falt === "ts" ? "foder" : "ts";
+    }
+    if(post.falt === "ts") bas = "foder";        // procenttalet avser alltid varan
+
+    traffar.push({falt:post.falt, varde:valt.v, under:valt.under, bas, rad});
+  });
+
+  // ---- välj ett värde per fält, med torrsubstansbasen först ----------------
+  const ts = (traffar.find(t => t.falt === "ts") || {}).varde || null;
+  const varden = {}, kallor = {};
+  ["ts","energi","smbrp","wsc","Ca","P","Mg","Na","Cu","Fe","Mn","Zn","Se","I","Co"].forEach(f => {
+    const kandidater = traffar.filter(t => t.falt === f);
+    if(!kandidater.length) return;
+    const iTs = kandidater.find(t => t.bas === "ts");
+    const vald = iTs || kandidater[0];
+    let v = vald.varde;
+    if(f !== "ts" && vald.bas === "foder"){
+      if(!ts){ varningar.push("Kunde inte räkna om "+FALTNAMN[f]+" till torrsubstans — torrsubstanshalten saknas."); return; }
+      v = v / (ts/100);
+    }
+    varden[f] = v;
+    kallor[f] = vald;
+
+    // Rapporterar labbet båda baserna är de varandras facit.
+    const iFoder = kandidater.find(t => t.bas === "foder");
+    if(f !== "ts" && iTs && iFoder && ts){
+      const vantat = iTs.varde * ts/100;
+      if(Math.abs(vantat - iFoder.varde) > Math.max(vantat*0.05, 0.05))
+        varningar.push(FALTNAMN[f]+": rapportens två baser går inte ihop ("
+          + iTs.varde+" per kg ts mot "+iFoder.varde+" per kg foder vid "+ts+" % ts).");
+    }
+  });
+
+  // ---- rapportens egna facit ----------------------------------------------
+  if(caPRapporterad != null && varden.Ca != null && varden.P > 0){
+    const rakn = varden.Ca / varden.P;
+    if(Math.abs(rakn - caPRapporterad) > 0.15)
+      varningar.push("Ca/P stämmer inte: rapporten anger "+caPRapporterad
+        +" men de inlästa värdena ger "+rakn.toFixed(1)+". Kontrollera kalcium och fosfor.");
+  }
+  Object.keys(varden).forEach(f => {
+    const r = TOLK_RIMLIGT[f];
+    if(r && (varden[f] < r[0] || varden[f] > r[1]))
+      varningar.push(FALTNAMN[f]+" "+f1(varden[f])+" ligger utanför det rimliga intervallet "
+        + r[0]+"–"+r[1]+" "+(r[2]||"per kg ts")+". Kontrollera att rätt kolumn lästs.");
+  });
+  traffar.filter(t => t.under).forEach(t =>
+    varningar.push(FALTNAMN[t.falt]+" angavs som mindre än "+t.varde
+      +" — värdet ligger under labbets mätgräns och används som det står."));
+
+  return {varden, kallor, ts, okanda, varningar, antal:Object.keys(varden).length};
+}
+
+/* ---------- PDF-uppladdning ------------------------------------------------
+   pdf.js körs i webbläsaren och hämtas först när användaren faktiskt väljer en
+   fil. Sidan förblir alltså helt fristående tills funktionen används, och den
+   som aldrig laddar upp något märker inte att biblioteket finns.
+
+   Det enda PDF-uppladdningen gör utöver inklistringen är att slippa markera:
+   texten går genom exakt samma tolk. Ett inskannat foto sparat som PDF saknar
+   textlager och kan inte läsas — det ska sägas rakt ut, inte misslyckas tyst. */
+const PDFJS_BAS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+let pdfjsLaddning = null;
+
+function laddaPdfjs(){
+  if(pdfjsLaddning) return pdfjsLaddning;
+  pdfjsLaddning = new Promise(function(ok, fel){
+    if(window.pdfjsLib) return ok(window.pdfjsLib);
+    /* onerror är inte att lita på: en blockerad eller mycket långsam begäran
+       kan låta script-elementet hänga utan att någondera händelsen utlöses,
+       och användaren blir kvar på "Läser …" för alltid. Tidsgränsen gör det
+       till ett besked i stället för en gåta. */
+    let klar = false;
+    const avbrott = setTimeout(function(){
+      if(!klar){ klar = true; pdfjsLaddning = null;
+        fel(new Error("hämtningen av pdf.js tog för lång tid")); }
+    }, 12000);
+    const el = document.createElement("script");
+    el.src = PDFJS_BAS + "pdf.min.js";
+    el.onload = function(){
+      if(klar) return; klar = true; clearTimeout(avbrott);
+      if(!window.pdfjsLib){ pdfjsLaddning = null;
+        return fel(new Error("biblioteket saknar pdfjsLib")); }
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_BAS + "pdf.worker.min.js";
+      ok(window.pdfjsLib);
+    };
+    el.onerror = function(){
+      if(klar) return; klar = true; clearTimeout(avbrott); pdfjsLaddning = null;
+      fel(new Error("kunde inte hämta pdf.js"));
+    };
+    document.head.appendChild(el);
+  });
+  return pdfjsLaddning;
+}
+
+/* pdf.js ger textfragment i innehållsordning med koordinater, inte rader.
+   Fragment på samma höjd hör till samma tabellrad; utan gruppering blir varje
+   cell en egen rad, vilket tolken visserligen klarar men sämre — kolumnernas
+   inbördes ordning går förlorad och tvåkolumnsformen kan inte kännas igen.   */
+function raderUrTextfragment(items){
+  const rader = [];
+  items.forEach(function(it){
+    if(!it.str || !it.str.trim()) return;
+    const y = it.transform[5], x = it.transform[4];
+    let rad = rader.find(function(r){ return Math.abs(r.y - y) <= 3; });
+    if(!rad){ rad = {y:y, celler:[]}; rader.push(rad); }
+    rad.celler.push({x:x, t:it.str});
+  });
+  return rader
+    .sort(function(a,b){ return b.y - a.y; })
+    .map(function(r){
+      return r.celler.sort(function(a,b){ return a.x - b.x; })
+        .map(function(c){ return c.t; }).join(" ").replace(/\s+/g," ").trim();
+    })
+    .filter(Boolean);
+}
+
+function textUrPdf(fil){
+  return laddaPdfjs().then(function(lib){
+    return fil.arrayBuffer();
+  }).then(function(buf){
+    return window.pdfjsLib.getDocument({data:buf}).promise;
+  }).then(function(dok){
+    const sidor = [];
+    let kedja = Promise.resolve();
+    for(let i = 1; i <= dok.numPages; i++){
+      (function(n){
+        kedja = kedja
+          .then(function(){ return dok.getPage(n); })
+          .then(function(sida){ return sida.getTextContent(); })
+          .then(function(innehall){ sidor.push(raderUrTextfragment(innehall.items).join("\n")); });
+      })(i);
+    }
+    return kedja.then(function(){ return sidor.join("\n"); });
+  });
+}
+
+function valjPdf(input){
+  const fil = input && input.files && input.files[0];
+  if(!fil) return;
+  const ruta = document.getElementById("analysText");
+  const ut2 = document.getElementById("tolkResultat");
+  if(ut2) ut2.innerHTML = msg("ok", "Läser <strong>" + fil.name + "</strong> …");
+  textUrPdf(fil).then(function(text){
+    if(ruta) ruta.value = text;
+    if(!text.trim()){
+      if(ut2) ut2.innerHTML = msg("warn", "PDF:en innehåller ingen text — den är "
+        + "troligen ett inskannat foto. Då finns inget att läsa av, och fälten "
+        + "får fyllas i för hand.");
+      return;
+    }
+    tolkaInklistrad();
+  }).catch(function(e){
+    if(ut2) ut2.innerHTML = msg("warn", "Kunde inte läsa PDF:en (" + e.message
+      + "). Markera tabellen i din PDF-läsare och klistra in texten i stället.");
+  });
+}
+
+/* Brevhuvudet filtreras bort ur analysen, men det svarar på en fråga som är
+   värd att ställa innan man litar på siffrorna: är det här rätt rapport? Labb,
+   provnummer, märkning och datum plockas därför ut och visas över granskningen.
+
+   Etikett och värde kan stå på samma rad eller på var sin, beroende på hur
+   texten kom in, så mönstren tillåter radbrytning mellan dem. Värdet kapas vid
+   nästa kända etikett — annars svalde "Märkning" resten av raden i rapporter
+   där två fält delar rad.                                                    */
+const ETIKETTORD = "Rapport klar|Analysrapport klar|Prov inkom|Provet ankom|Ankomst"
+  + "|Kopia|Kund|Beställare|Djur|Fodertyp|Order|Journalnummer|Sida|Artikel"
+  + "|Provmärkning|Märkning|Analys|Resultat|Enhet|Metod|Lab";
+const NASTA_ETIKETT = new RegExp("\\s+(" + ETIKETTORD + ")\\b", "i");
+/* Ett tomt fält i en tabellayout svalde nästa kolumns rubrik: Eurofins skriver
+   "Provmärkning:" utan värde, och till höger på samma rad står "Djur Hästar".
+   Ett värde som börjar med en etikett är därför inget värde.                 */
+const BORJAR_MED_ETIKETT = new RegExp("^(" + ETIKETTORD + ")\\b", "i");
+
+function plockaFalt(text, monster){
+  const m = monster.exec(text);
+  if(!m || !m[1]) return null;
+  let v = m[1].replace(/\s+/g," ").trim();
+  const kap = NASTA_ETIKETT.exec(v);
+  if(kap) v = v.slice(0, kap.index).trim();
+  if(BORJAR_MED_ETIKETT.test(v)) return null;
+  return v.replace(/[·•|:,-]+$/,"").trim() || null;
+}
+
+function formateraDatum(d){
+  if(!d) return null;
+  const rent = d.replace(/-/g,"");
+  return rent.length === 8 ? rent.slice(0,4)+"-"+rent.slice(4,6)+"-"+rent.slice(6,8) : d;
+}
+
+function rapportIdentitet(text){
+  const labbM = /\b(optilab|agrilab|eurofins|hushållningssällskapet|vidilab)\b/i.exec(text);
+  const labb = labbM ? labbM[1].charAt(0).toUpperCase()+labbM[1].slice(1).toLowerCase() : null;
+  const prov = plockaFalt(text, /prov\s*nummer\s*:?\s*\n?\s*([A-Za-zÅÄÖ]{0,4}[\d][\w-]{3,})/i)
+            || plockaFalt(text, /journalnummer\s*:?\s*\n?\s*([\w-]+)/i);
+  const markning = plockaFalt(text, /(?:prov)?märkning\s*:?\s*\n?\s*([^\n]{1,45})/i)
+                || plockaFalt(text, /order\s*id\s*:?\s*\n?\s*([^\n]{1,45})/i);
+  const artikel = plockaFalt(text, /artikel\s*:?\s*\n?\s*([^\n]{1,45})/i)
+               || plockaFalt(text, /fodertyp\s*:?\s*\n?\s*([^\n]{1,45})/i);
+  const datum = formateraDatum(plockaFalt(text,
+      /(?:rapport klar|analysrapport klar|ankomst\s*datum)\s*:?\s*\n?\s*(\d{4}-?\d{2}-?\d{2})/i));
+  const delar = [labb, prov, markning, artikel, datum].filter(Boolean);
+  return {labb, prov, markning, artikel, datum, text: delar.join(" · ")};
+}
+
+let sisteTolkning = null;
+
+function tolkaInklistrad(){
+  const ruta = document.getElementById("analysText");
+  const ut2 = document.getElementById("tolkResultat");
+  if(!ruta || !ut2) return;
+  const r = tolkaAnalystext(ruta.value);
+  sisteTolkning = r;
+
+  if(!r.antal){
+    ut2.innerHTML = '<div class="msg m-warn">Hittade inga analysvärden i texten. '
+      + 'Markera hela tabellen i PDF:en, inklusive rubrikraden, och klistra in igen. '
+      + 'Är rapporten ett foto går den inte att klistra in — fyll i fälten för hand.</div>';
+    return;
+  }
+
+  let h = "";
+  const id = rapportIdentitet(ruta.value);
+  if(id.text) h += '<div class="tolk-id">'+id.text.replace(/</g,"&lt;")+'</div>';
+  h += '<div class="tolk-rubrik">Läste ' + r.antal + ' värden</div><div class="tolk-lista">';
+  Object.keys(r.varden).forEach(f => {
+    const k = r.kallor[f];
+    h += '<div class="tolk-rad"><b>'+FALTNAMN[f]+'</b>'
+       + '<i>'+k.rad.replace(/</g,"&lt;").slice(0,70)+'</i>'
+       + '<span>'+(f==="ts" ? f1(r.varden[f])+" %" : f1(r.varden[f])
+         + (k.bas==="foder" ? " ↺" : ""))+'</span></div>';
+  });
+  h += '</div>';
+  if(Object.values(r.kallor).some(k => k.bas === "foder"))
+    h += '<p class="note">↺ = värdet stod per kg foder och har räknats om till per kg ts '
+       + 'med torrsubstanshalten '+f1(r.ts)+' %.</p>';
+  r.varningar.forEach(v => h += '<div class="msg m-warn">'+v+'</div>');
+  if(r.okanda.length)
+    h += '<details style="margin-top:8px"><summary>'+r.okanda.length
+       + (r.okanda.length===1 ? ' rad såg ut som ett mätvärde men känns inte igen'
+                              : ' rader såg ut som mätvärden men känns inte igen')
+       + '</summary><div class="note">'
+       + r.okanda.slice(0,12).map(x => x.replace(/</g,"&lt;")).join('<br>')+'</div></details>';
+  h += '<button class="slumpa" style="margin-top:12px" onclick="tillampaTolkning()">'
+     + 'Fyll i fälten med dessa värden</button>';
+  ut2.innerHTML = h;
+}
+
+function tillampaTolkning(){
+  if(!sisteTolkning || !sisteTolkning.antal) return;
+  // Allt är normaliserat till per kg ts, så växlaren måste stå där.
+  setEnhet("ts");
+  Object.keys(sisteTolkning.varden).forEach(f => {
+    const el = document.getElementById(f);
+    /* Punkt, inte komma. <input type="number"> avvisar decimalkomma tyst och
+       sätter fältet till tomt — 3,1 försvann medan 33 blev kvar. */
+    if(el) el.value = String(Math.round(sisteTolkning.varden[f]*1000)/1000);
+  });
+  const d = document.getElementById("klistraIn"); if(d) d.open = false;
+  const si = document.getElementById("slumpinfo");
+  if(si) si.innerHTML = '<p class="slumpinfo">Ifyllt från inklistrad analys: '
+    + sisteTolkning.antal + ' värden, omräknade till per kg ts. '
+    + 'Kontrollera dem mot rapporten innan du litar på resultatet.</p>';
+  rakna();
 }
 
 /* ---------- init ----------
